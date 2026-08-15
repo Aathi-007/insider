@@ -10,6 +10,7 @@ import UserDetailModal from './components/UserDetailModal';
 import RiskTrendChart from './components/RiskTrendChart';
 import RequestTrackerChart from './components/RequestTrackerChart';
 import ActivityTimeline from './components/ActivityTimeline';
+import UserDirectory from './components/UserDirectory';
 
 import RuleAccuracyPanel from './components/RuleAccuracyPanel';
 import DepartmentHeatmap from './components/DepartmentHeatmap';
