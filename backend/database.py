@@ -96,6 +96,49 @@ def create_tables(conn):
         known_locations TEXT,
         known_devices TEXT,
         usual_department TEXT,
+        last_updated TEXT,
+        baseline_window_days INTEGER DEFAULT 30,
+        last_recalculated TEXT
+    )
+    ''')
+    
+    # Table: shift_change_log
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS shift_change_log (
+        log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id TEXT,
+        old_hour_start INTEGER,
+        old_hour_end INTEGER,
+        new_hour_start INTEGER,
+        new_hour_end INTEGER,
+        detected_date TEXT,
+        reason TEXT
+    )
+    ''')
+    
+    # Table: trusted_devices
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS trusted_devices (
+        device_id TEXT,
+        user_id TEXT,
+        device_name TEXT,
+        status TEXT DEFAULT 'unrecognized',
+        added_by TEXT,
+        added_date TEXT,
+        notes TEXT,
+        PRIMARY KEY (device_id, user_id)
+    )
+    ''')
+    
+    # Table: employee_hr_status
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS employee_hr_status (
+        user_id TEXT PRIMARY KEY,
+        employment_status TEXT DEFAULT 'active',
+        travel_declared BOOLEAN DEFAULT 0,
+        travel_start_date TEXT,
+        travel_end_date TEXT,
+        notice_period_start_date TEXT,
         last_updated TEXT
     )
     ''')
@@ -110,6 +153,10 @@ def create_tables(conn):
         reasons TEXT,
         flagged_at TEXT,
         reviewed BOOLEAN DEFAULT 0,
+        status TEXT DEFAULT 'new',
+        assigned_to_analyst TEXT,
+        analyst_notes TEXT,
+        resolved_at TEXT,
         FOREIGN KEY (event_id) REFERENCES activity_logs(event_id)
     )
     ''')
@@ -158,6 +205,42 @@ def load_csv_to_db(conn):
     
     return len(data_to_insert)
 
+def seed_employee_hr_status(conn):
+    from datetime import datetime
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM employee_hr_status")
+    
+    # Fetch all user_ids from activity_logs
+    cursor.execute("SELECT DISTINCT user_id FROM activity_logs")
+    user_ids = [row[0] for row in cursor.fetchall()]
+    if not user_ids:
+        user_ids = [f"U{i:03d}" for i in range(1, 31)]
+        
+    last_updated = datetime.now().isoformat()
+    
+    # 2 users on travel: U002 and U003
+    # 1 user in notice period: U004
+    # 1 user on leave: U005
+    hr_records = []
+    for uid in user_ids:
+        if uid == 'U002':
+            hr_records.append((uid, 'active', 1, '2026-08-01', '2026-08-30', None, last_updated))
+        elif uid == 'U003':
+            hr_records.append((uid, 'active', 1, '2026-08-10', '2026-08-20', None, last_updated))
+        elif uid == 'U004':
+            hr_records.append((uid, 'notice_period', 0, None, None, '2026-08-01', last_updated))
+        elif uid == 'U005':
+            hr_records.append((uid, 'on_leave', 0, None, None, None, last_updated))
+        else:
+            hr_records.append((uid, 'active', 0, None, None, None, last_updated))
+            
+    cursor.executemany("""
+        INSERT INTO employee_hr_status (user_id, employment_status, travel_declared, travel_start_date, travel_end_date, notice_period_start_date, last_updated)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, hr_records)
+    conn.commit()
+    print(f"Seeded employee HR status for {len(hr_records)} users.")
+
 def main():
     print("Initializing UEBA Database...")
     conn = get_connection()
@@ -172,13 +255,16 @@ def main():
         rows_loaded = load_csv_to_db(conn)
         print(f"Total rows successfully loaded: {rows_loaded}")
         
+        # Seed employee HR status
+        seed_employee_hr_status(conn)
+        
         # Print summary
         print("\n" + "="*40)
         print("DATABASE SUMMARY")
         print("="*40)
         
         cursor = conn.cursor()
-        tables = ['users', 'resources', 'access_violations', 'activity_logs', 'user_baselines', 'risk_events']
+        tables = ['users', 'resources', 'access_violations', 'activity_logs', 'user_baselines', 'risk_events', 'trusted_devices', 'employee_hr_status']
         
         for table in tables:
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table,))

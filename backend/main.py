@@ -118,6 +118,31 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class RegisterDeviceRequest(BaseModel):
+    user_id: str
+    device_id: str
+    device_name: str
+
+class UpdateHRStatusRequest(BaseModel):
+    user_id: str
+    employment_status: str  # 'active', 'notice_period', 'on_leave'
+    travel_declared: bool
+    travel_start_date: str = None
+    travel_end_date: str = None
+    notice_period_start_date: str = None
+
+class AssignAlertRequest(BaseModel):
+    analyst_name: str
+
+class AddNoteRequest(BaseModel):
+    note: str
+
+class ResolveAlertRequest(BaseModel):
+    resolution_status: str = None  # 'resolved_false_positive' or 'resolved_confirmed_threat'
+    final_note: str = None
+    resolution: str = None
+    note: str = None
+
 @app.post("/login")
 def login(request: LoginRequest):
     conn = get_connection()
@@ -238,7 +263,8 @@ def get_alerts(api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         query = """
-        SELECT r.risk_event_id, r.user_id, a.user_name, a.department, r.risk_score, r.reasons, r.flagged_at, r.reviewed
+        SELECT r.risk_event_id, r.user_id, a.user_name, a.department, r.risk_score, r.reasons, r.flagged_at, r.reviewed,
+               r.status, r.assigned_to_analyst, r.analyst_notes, r.resolved_at
         FROM risk_events r
         JOIN activity_logs a ON r.event_id = a.event_id
         WHERE r.risk_score > 60
@@ -256,7 +282,11 @@ def get_alerts(api_key: str = Depends(get_api_key)):
                 "risk_score": row['risk_score'],
                 "reasons": str(row['reasons']).split(',') if pd.notnull(row['reasons']) and str(row['reasons']) != "" else [],
                 "flagged_at": row['flagged_at'],
-                "reviewed": bool(row['reviewed'])
+                "reviewed": bool(row['reviewed']),
+                "status": row['status'],
+                "assigned_to_analyst": row['assigned_to_analyst'],
+                "analyst_notes": row['analyst_notes'],
+                "resolved_at": row['resolved_at']
             })
         return alerts
     finally:
@@ -294,6 +324,151 @@ def get_daily_risk(api_key: str = Depends(get_api_key)):
         """
         df = pd.read_sql_query(query, conn)
         return df.to_dict(orient="records")
+    finally:
+        conn.close()
+
+@app.get("/analytics/department-behaviour")
+def get_department_behaviour(range: str = "week", api_key: str = Depends(get_api_key)):
+    from datetime import timedelta
+    conn = get_connection()
+    try:
+        query = """
+        SELECT r.risk_score, r.reasons, r.flagged_at, r.status, a.department
+        FROM risk_events r
+        JOIN activity_logs a ON r.event_id = a.event_id
+        """
+        df = pd.read_sql_query(query, conn)
+        
+        # Parse flagged_at
+        df['flagged_dt'] = pd.to_datetime(df['flagged_at'])
+        
+        now = datetime.now()
+        
+        # Filter for range
+        if range == "month":
+            cutoff = now - timedelta(days=30)
+            df_period = df[df['flagged_dt'] >= cutoff]
+        elif range == "alltime":
+            df_period = df
+        else: # default: week
+            cutoff = now - timedelta(days=7)
+            df_period = df[df['flagged_dt'] >= cutoff]
+            
+        this_week_cutoff = now - timedelta(days=7)
+        last_week_cutoff_start = now - timedelta(days=14)
+        last_week_cutoff_end = now - timedelta(days=7)
+        
+        df_this_week = df[df['flagged_dt'] >= this_week_cutoff]
+        df_last_week = df[(df['flagged_dt'] >= last_week_cutoff_start) & (df['flagged_dt'] < last_week_cutoff_end)]
+        
+        departments = ["HR", "Finance", "Engineering", "Sales", "IT"]
+        dept_results = {}
+        
+        for dept in departments:
+            # Filter all alerts for this dept
+            dept_df_all = df[df['department'].str.lower() == dept.lower()]
+            dept_df_period = df_period[df_period['department'].str.lower() == dept.lower()]
+            dept_df_this_week = df_this_week[df_this_week['department'].str.lower() == dept.lower()]
+            dept_df_last_week = df_last_week[df_last_week['department'].str.lower() == dept.lower()]
+            
+            # Health score in selected period
+            if not dept_df_period.empty:
+                avg_risk = dept_df_period['risk_score'].mean()
+                health_score = max(0, round(100 - avg_risk))
+            else:
+                health_score = 100
+                
+            # Trend comparison: this week vs last week
+            if not dept_df_this_week.empty:
+                avg_this_week = dept_df_this_week['risk_score'].mean()
+                health_this_week = max(0, round(100 - avg_this_week))
+            else:
+                health_this_week = 100
+                
+            if not dept_df_last_week.empty:
+                avg_last_week = dept_df_last_week['risk_score'].mean()
+                health_last_week = max(0, round(100 - avg_last_week))
+            else:
+                health_last_week = 100
+                
+            trend_change_points = health_this_week - health_last_week
+            if trend_change_points > 0:
+                trend_direction = "up"
+            elif trend_change_points < 0:
+                trend_direction = "down"
+            else:
+                trend_direction = "flat"
+                
+            # Active high risk count: unresolved risk_score > 80 (across all time)
+            active_high_risk = dept_df_all[
+                (dept_df_all['risk_score'] > 80) & 
+                (~dept_df_all['status'].fillna('').str.startswith('resolved'))
+            ]
+            active_high_risk_count = len(active_high_risk)
+            
+            # Top 3 reasons
+            reasons_list = []
+            for reasons_str in dept_df_period['reasons'].dropna():
+                if reasons_str:
+                    for r in reasons_str.split(','):
+                        if r.strip():
+                            reasons_list.append(r.strip())
+            from collections import Counter
+            top_3 = [{"reason": reason, "count": count} for reason, count in Counter(reasons_list).most_common(3)]
+            
+            # Sparkline data for last 14 days
+            sparkline_data = []
+            for i in range(14):
+                day = (now - timedelta(days=(13 - i))).date()
+                day_alerts = dept_df_all[dept_df_all['flagged_dt'].dt.date == day]
+                if not day_alerts.empty:
+                    sparkline_data.append(round(day_alerts['risk_score'].mean(), 1))
+                else:
+                    sparkline_data.append(0.0)
+                    
+            dept_results[dept] = {
+                "behaviour_health_score": health_score,
+                "trend_direction": trend_direction,
+                "trend_change_points": trend_change_points,
+                "active_high_risk_count": active_high_risk_count,
+                "top_3_reasons": top_3,
+                "sparkline_data": sparkline_data
+            }
+            
+        # Determine most improved and needs attention
+        most_improved = None
+        max_improvement = -9999
+        for dept in departments:
+            change = dept_results[dept]["trend_change_points"]
+            if change > max_improvement:
+                max_improvement = change
+                most_improved = dept
+                
+        needs_attention = None
+        min_improvement = 9999
+        for dept in departments:
+            change = dept_results[dept]["trend_change_points"]
+            if change < min_improvement:
+                min_improvement = change
+                needs_attention = dept
+                
+        most_improved_data = {"name": most_improved, "change": max_improvement} if max_improvement > 0 else None
+        if not most_improved_data:
+            # Fallback to highest health score
+            top_dept = max(departments, key=lambda d: dept_results[d]["behaviour_health_score"])
+            most_improved_data = {"name": top_dept, "score": dept_results[top_dept]["behaviour_health_score"]}
+            
+        needs_attention_data = {"name": needs_attention, "change": min_improvement} if min_improvement < 0 else None
+        if not needs_attention_data:
+            # Fallback to lowest health score
+            worst_dept = min(departments, key=lambda d: dept_results[d]["behaviour_health_score"])
+            needs_attention_data = {"name": worst_dept, "score": dept_results[worst_dept]["behaviour_health_score"]}
+            
+        return {
+            "departments": dept_results,
+            "most_improved_department": most_improved_data,
+            "needs_attention_department": needs_attention_data
+        }
     finally:
         conn.close()
 @app.get("/analytics/company-behavior-trend")
@@ -489,6 +664,249 @@ def simulate_event(event: EventSimulation, http_request: Request, api_key: str =
         }
     finally:
         conn.close()
+
+@app.post("/admin/register-device")
+def admin_register_device(request: RegisterDeviceRequest, api_key: str = Depends(get_api_key)):
+    from device_management import register_trusted_device
+    success = register_trusted_device(request.user_id, request.device_id, request.device_name, "IT_ADMIN")
+    if success:
+        return {"status": "success", "message": f"Device {request.device_id} registered for user {request.user_id}."}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to register device.")
+
+@app.get("/admin/devices/{user_id}")
+def admin_get_devices(user_id: str, api_key: str = Depends(get_api_key)):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # 1. Fetch registered devices
+        cursor.execute("""
+            SELECT device_id, user_id, device_name, status, added_by, added_date, notes 
+            FROM trusted_devices 
+            WHERE user_id = ?
+        """, (user_id,))
+        registered = {}
+        for row in cursor.fetchall():
+            registered[row[0]] = {
+                "device_id": row[0],
+                "user_id": row[1],
+                "device_name": row[2],
+                "status": row[3],
+                "added_by": row[4],
+                "added_date": row[5],
+                "notes": row[6]
+            }
+            
+        # 2. Fetch all unique device_ids used in activity logs
+        cursor.execute("""
+            SELECT DISTINCT device_id FROM activity_logs 
+            WHERE user_id = ?
+        """, (user_id,))
+        for row in cursor.fetchall():
+            dev_id = row[0]
+            if dev_id not in registered:
+                registered[dev_id] = {
+                    "device_id": dev_id,
+                    "user_id": user_id,
+                    "device_name": "Unregistered Device",
+                    "status": "unrecognized",
+                    "added_by": "NONE",
+                    "added_date": "NONE",
+                    "notes": "Unregistered device seen in activity logs"
+                }
+                
+        return list(registered.values())
+    finally:
+        conn.close()
+
+@app.post("/admin/update-hr-status")
+def admin_update_hr_status(request: UpdateHRStatusRequest, api_key: str = Depends(get_api_key)):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        now_str = datetime.now().isoformat()
+        cursor.execute("""
+            INSERT INTO employee_hr_status (
+                user_id, employment_status, travel_declared, travel_start_date, 
+                travel_end_date, notice_period_start_date, last_updated
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            ON CONFLICT(user_id) DO UPDATE SET
+                employment_status=excluded.employment_status,
+                travel_declared=excluded.travel_declared,
+                travel_start_date=excluded.travel_start_date,
+                travel_end_date=excluded.travel_end_date,
+                notice_period_start_date=excluded.notice_period_start_date,
+                last_updated=excluded.last_updated
+        """, (
+            request.user_id, request.employment_status, int(request.travel_declared),
+            request.travel_start_date, request.travel_end_date, 
+            request.notice_period_start_date, now_str
+        ))
+        conn.commit()
+        return {"status": "success", "message": f"HR status updated for user {request.user_id}."}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update HR status: {e}")
+    finally:
+        conn.close()
+
+@app.get("/admin/hr-status/{user_id}")
+def admin_get_hr_status(user_id: str, api_key: str = Depends(get_api_key)):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT user_id, employment_status, travel_declared, travel_start_date, 
+                   travel_end_date, notice_period_start_date, last_updated 
+            FROM employee_hr_status 
+            WHERE user_id = ?
+        """, (user_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="HR status not found for user.")
+            
+        return {
+            "user_id": row[0],
+            "employment_status": row[1],
+            "travel_declared": bool(row[2]),
+            "travel_start_date": row[3],
+            "travel_end_date": row[4],
+            "notice_period_start_date": row[5],
+            "last_updated": row[6]
+        }
+    finally:
+        conn.close()
+
+@app.patch("/alerts/{risk_event_id}/assign")
+def assign_alert(risk_event_id: int, request: AssignAlertRequest, api_key: str = Depends(get_api_key)):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT analyst_notes FROM risk_events WHERE risk_event_id = ?", (risk_event_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Alert not found")
+            
+        existing_notes = row[0] or ""
+        timestamp = datetime.now().isoformat()
+        new_note_entry = f"[{timestamp}] Assigned to {request.analyst_name}\n"
+        updated_notes = existing_notes + new_note_entry
+            
+        cursor.execute("""
+            UPDATE risk_events 
+            SET assigned_to_analyst = ?, status = 'under_review', reviewed = 1, analyst_notes = ?
+            WHERE risk_event_id = ?
+        """, (request.analyst_name, updated_notes, risk_event_id))
+        conn.commit()
+        return {"status": "success", "message": f"Alert {risk_event_id} assigned to {request.analyst_name}."}
+    finally:
+        conn.close()
+
+@app.patch("/alerts/{risk_event_id}/add-note")
+def add_alert_note(risk_event_id: int, request: AddNoteRequest, api_key: str = Depends(get_api_key)):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT analyst_notes FROM risk_events WHERE risk_event_id = ?", (risk_event_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Alert not found")
+            
+        existing_notes = row[0] or ""
+        timestamp = datetime.now().isoformat()
+        new_note_entry = f"[{timestamp}] {request.note}\n"
+        updated_notes = existing_notes + new_note_entry
+        
+        cursor.execute("""
+            UPDATE risk_events 
+            SET analyst_notes = ?
+            WHERE risk_event_id = ?
+        """, (updated_notes, risk_event_id))
+        conn.commit()
+        return {"status": "success", "message": f"Note added to Alert {risk_event_id}."}
+    finally:
+        conn.close()
+
+@app.patch("/alerts/{risk_event_id}/resolve")
+def resolve_alert(risk_event_id: int, request: ResolveAlertRequest, api_key: str = Depends(get_api_key)):
+    res_status = request.resolution_status or request.resolution
+    res_note = request.final_note or request.note
+    if not res_status or not res_note:
+        raise HTTPException(status_code=400, detail="Missing resolution status or note.")
+        
+    if res_status not in ('resolved_false_positive', 'resolved_confirmed_threat'):
+        raise HTTPException(status_code=400, detail="Invalid resolution status. Must be 'resolved_false_positive' or 'resolved_confirmed_threat'")
+        
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT analyst_notes FROM risk_events WHERE risk_event_id = ?", (risk_event_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Alert not found")
+            
+        existing_notes = row[0] or ""
+        timestamp = datetime.now().isoformat()
+        new_note_entry = f"[{timestamp}] Resolution ({res_status}): {res_note}\n"
+        updated_notes = existing_notes + new_note_entry
+        
+        cursor.execute("""
+            UPDATE risk_events 
+            SET status = ?, resolved_at = ?, analyst_notes = ?
+            WHERE risk_event_id = ?
+        """, (res_status, timestamp, updated_notes, risk_event_id))
+        conn.commit()
+        return {"status": "success", "message": f"Alert {risk_event_id} resolved as {res_status}."}
+    finally:
+        conn.close()
+
+@app.patch("/alerts/{risk_event_id}/escalate")
+def escalate_alert(risk_event_id: int, api_key: str = Depends(get_api_key)):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT analyst_notes FROM risk_events WHERE risk_event_id = ?", (risk_event_id,))
+        row = cursor.fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Alert not found")
+            
+        existing_notes = row[0] or ""
+        timestamp = datetime.now().isoformat()
+        new_note_entry = f"[{timestamp}] Escalated to department head / HR\n"
+        updated_notes = existing_notes + new_note_entry
+            
+        cursor.execute("""
+            UPDATE risk_events 
+            SET status = 'escalated', analyst_notes = ?
+            WHERE risk_event_id = ?
+        """, (updated_notes, risk_event_id))
+        conn.commit()
+        return {"status": "success", "message": f"Alert {risk_event_id} status updated to 'escalated'."}
+    finally:
+        conn.close()
+
+@app.get("/analytics/rule-accuracy")
+def get_rule_accuracy(api_key: str = Depends(get_api_key)):
+    from risk_scoring import get_false_positive_rate_for_pattern
+    reasons_to_check = [
+        "unusual_download_volume",
+        "unusual_login_time",
+        "unusual_location",
+        "new_unrecognized_device",
+        "device_pending_verification",
+        "department_mismatch",
+        "activity_during_leave_period",
+        "location_change_but_travel_declared",
+        "employee_in_notice_period",
+        "ml_model_flagged_unusual_pattern"
+    ]
+    
+    accuracy_report = {}
+    for reason in reasons_to_check:
+        metrics = get_false_positive_rate_for_pattern(reason)
+        accuracy_report[reason] = metrics
+        
+    return accuracy_report
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

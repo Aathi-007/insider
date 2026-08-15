@@ -44,29 +44,29 @@ export default function RiskTrendChart({ alerts }) {
             >
               <defs>
                 <linearGradient id="colorRisk" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#6366F1" stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor="#6366F1" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#2A3548" strokeOpacity={0.3} />
               <XAxis 
                 dataKey="time" 
-                stroke="#64748b" 
+                stroke="#8B95A8" 
                 fontSize={10}
                 tickLine={false}
               />
               <YAxis 
-                stroke="#64748b" 
+                stroke="#8B95A8" 
                 fontSize={10} 
                 tickLine={false}
                 domain={[50, 100]}
               />
               <Tooltip
                 contentStyle={{
-                  background: '#0f172a',
-                  border: '1px solid rgba(255,255,255,0.15)',
+                  background: '#141B2D',
+                  border: '1px solid #2A3548',
                   borderRadius: '8px',
-                  color: '#fff',
+                  color: '#E8EDF5',
                   fontSize: '12px'
                 }}
                 labelFormatter={(label) => `Time: ${label}`}
@@ -78,8 +78,8 @@ export default function RiskTrendChart({ alerts }) {
               <Area 
                 type="monotone" 
                 dataKey="score" 
-                stroke="#3b82f6" 
-                strokeWidth={2}
+                stroke="#6366F1" 
+                strokeWidth={3}
                 fillOpacity={1} 
                 fill="url(#colorRisk)" 
               />

@@ -12,9 +12,52 @@ DATA_DIR = os.path.join(BASE_DIR, 'data')
 MODEL_PATH = os.path.join(DATA_DIR, 'isolation_forest_model.joblib')
 ENCODER_PATH = os.path.join(DATA_DIR, 'encoders.joblib')
 
+def get_employee_hr_status(user_id):
+    """
+    Fetches the HR integration status for a user.
+    """
+    from database import get_connection
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT employment_status, travel_declared, travel_start_date, travel_end_date, notice_period_start_date
+            FROM employee_hr_status
+            WHERE user_id = ?
+        """, (user_id,))
+        row = cursor.fetchone()
+        if row:
+            return {
+                'employment_status': row[0],
+                'travel_declared': bool(row[1]),
+                'travel_start_date': row[2],
+                'travel_end_date': row[3],
+                'notice_period_start_date': row[4]
+            }
+        return {
+            'employment_status': 'active',
+            'travel_declared': False,
+            'travel_start_date': None,
+            'travel_end_date': None,
+            'notice_period_start_date': None
+        }
+    except Exception as e:
+        print(f"Error fetching employee HR status: {e}")
+        return {
+            'employment_status': 'active',
+            'travel_declared': False,
+            'travel_start_date': None,
+            'travel_end_date': None,
+            'notice_period_start_date': None
+        }
+    finally:
+        conn.close()
+
 def calculate_rule_based_score(event, baseline):
     score = 0
     reasons = []
+    
+    hr = get_employee_hr_status(event['user_id'])
     
     # Unusual download volume
     if baseline['avg_download_mb'] > 0 and event['download_mb'] > 3 * baseline['avg_download_mb']:
@@ -29,19 +72,41 @@ def calculate_rule_based_score(event, baseline):
     # Unusual location
     known_locations = str(baseline['known_locations']).split(',')
     if event['location'] not in known_locations:
-        score += 20
-        reasons.append("unusual_location")
+        # Check if travel is declared and date matches
+        is_traveling = False
+        if hr['travel_declared'] and hr['travel_start_date'] and hr['travel_end_date']:
+            try:
+                event_date = pd.to_datetime(event['timestamp']).date().isoformat()
+                if hr['travel_start_date'] <= event_date <= hr['travel_end_date']:
+                    is_traveling = True
+            except Exception as e:
+                print(f"Error parsing event timestamp for travel check: {e}")
+                
+        if is_traveling:
+            reasons.append("location_change_but_travel_declared")
+        else:
+            score += 20
+            reasons.append("unusual_location")
         
-    # New device
-    known_devices = str(baseline['known_devices']).split(',')
-    if event['device_id'] not in known_devices:
+    # Device status check
+    from device_management import check_device_status
+    status = check_device_status(event['user_id'], event['device_id'])
+    if status == 'pending':
+        score += 8
+        reasons.append("device_pending_verification")
+    elif status == 'unrecognized':
         score += 15
-        reasons.append("new_device")
+        reasons.append("new_unrecognized_device")
         
     # Department mismatch
     if event['accessed_department'] != baseline['usual_department']:
         score += 25
         reasons.append("department_mismatch")
+        
+    # Leave activity check
+    if hr['employment_status'] == 'on_leave':
+        score += 30
+        reasons.append("activity_during_leave_period")
         
     score = min(score, 100)
     return score, reasons
@@ -51,6 +116,13 @@ def calculate_final_risk_score(event, baseline, ml_anomaly_score):
     
     final_score = (0.6 * rule_score) + (0.4 * ml_anomaly_score)
     final_score = int(np.round(final_score))
+    
+    # Notice period multiplier
+    hr = get_employee_hr_status(event['user_id'])
+    if hr['employment_status'] == 'notice_period':
+        final_score = int(np.round(final_score * 1.3))
+        reasons.append("employee_in_notice_period")
+        
     final_score = min(final_score, 100)
     
     if ml_anomaly_score > 70:
@@ -76,6 +148,15 @@ def score_all_events():
         df_ml = df_logs.copy()
         df_ml['department_mismatch'] = (df_ml['accessed_department'] != df_ml['department']).astype(int)
         
+        # Safely handle unseen labels for transform
+        unseen_locs = set(df_ml['location']) - set(encoders['location'].classes_)
+        if unseen_locs:
+            encoders['location'].classes_ = np.sort(np.append(encoders['location'].classes_, list(unseen_locs)))
+            
+        unseen_devs = set(df_ml['device_id']) - set(encoders['device'].classes_)
+        if unseen_devs:
+            encoders['device'].classes_ = np.sort(np.append(encoders['device'].classes_, list(unseen_devs)))
+            
         # Transform categories using loaded encoders
         df_ml['location_encoded'] = encoders['location'].transform(df_ml['location'])
         df_ml['device_encoded'] = encoders['device'].transform(df_ml['device_id'])
@@ -181,6 +262,69 @@ def main():
             
     except Exception as e:
         print(f"Error fetching top risk events: {e}")
+    finally:
+        conn.close()
+
+def get_false_positive_rate_for_pattern(reason):
+    """
+    Checks what percentage of resolved alerts containing this reason were marked 
+    as 'resolved_false_positive' vs 'resolved_confirmed_threat'.
+    """
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # Select all resolved alerts
+        cursor.execute("""
+            SELECT reasons, status FROM risk_events
+            WHERE status IN ('resolved_false_positive', 'resolved_confirmed_threat')
+        """)
+        rows = cursor.fetchall()
+        
+        total_resolved = 0
+        fp_count = 0
+        confirmed_count = 0
+        
+        for row in rows:
+            reasons_list = [r.strip() for r in str(row[0]).split(',')]
+            if reason in reasons_list:
+                total_resolved += 1
+                if row[1] == 'resolved_false_positive':
+                    fp_count += 1
+                elif row[1] == 'resolved_confirmed_threat':
+                    confirmed_count += 1
+                    
+        if total_resolved == 0:
+            return {
+                "reason": reason,
+                "total_resolved": 0,
+                "false_positive_count": 0,
+                "confirmed_threat_count": 0,
+                "false_positive_rate": 0.0,
+                "confirmed_threat_rate": 0.0
+            }
+            
+        fp_rate = (fp_count / total_resolved) * 100
+        confirmed_rate = (confirmed_count / total_resolved) * 100
+        
+        return {
+            "reason": reason,
+            "total_resolved": total_resolved,
+            "false_positive_count": fp_count,
+            "confirmed_threat_count": confirmed_count,
+            "false_positive_rate": round(fp_rate, 2),
+            "confirmed_threat_rate": round(confirmed_rate, 2)
+        }
+    except Exception as e:
+        print(f"Error calculating false positive rate for reason {reason}: {e}")
+        return {
+            "reason": reason,
+            "total_resolved": 0,
+            "false_positive_count": 0,
+            "confirmed_threat_count": 0,
+            "false_positive_rate": 0.0,
+            "confirmed_threat_rate": 0.0
+        }
     finally:
         conn.close()
 

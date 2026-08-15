@@ -7,10 +7,11 @@ import {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
-export default function AlertsTable({ alerts, loading, error, onRowClick }) {
+export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, onRefresh }) {
   // Search and Filter States
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDept, setSelectedDept] = useState('All');
+  const [selectedStatus, setSelectedStatus] = useState('All');
 
   // Sorting States
   const [sortField, setSortField] = useState('risk_score');
@@ -97,16 +98,147 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
     }
   };
 
-  // Filter alerts by search query and department dropdown
+  const handleAssign = async (e, alertId) => {
+    e.stopPropagation();
+    try {
+      const response = await fetch(`${API_BASE}/alerts/${alertId}/assign`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': API_KEY,
+          'Authorization': `Bearer ${jwt}`
+        },
+        body: JSON.stringify({ analyst_name: 'Analyst_1' })
+      });
+      if (response.ok) {
+        if (onRefresh) onRefresh();
+      }
+    } catch (err) {
+      console.error("Assign error:", err);
+    }
+  };
+
+const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
+
+  const renderRiskCircle = (score) => {
+    const isHigh = score > 80;
+    const isMed = score >= 60 && score <= 80;
+    const color = isHigh ? '#EF4444' : isMed ? '#F59E0B' : '#10B981';
+    const radius = 16;
+    const strokeWidth = 3;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (score / 100) * circumference;
+    
+    return (
+      <div style={{ position: 'relative', width: '38px', height: '38px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <svg width="38" height="38" style={{ transform: 'rotate(-90deg)' }}>
+          <circle
+            cx="19"
+            cy="19"
+            r={radius}
+            fill="transparent"
+            stroke="rgba(255,255,255,0.03)"
+            strokeWidth={strokeWidth}
+          />
+          <circle
+            cx="19"
+            cy="19"
+            r={radius}
+            fill="transparent"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            style={{ transition: 'stroke-dashoffset 0.5s ease-in-out' }}
+          />
+        </svg>
+        <span style={{ position: 'absolute', fontSize: '10px', fontWeight: 'bold', color: '#fff' }}>
+          {score}
+        </span>
+      </div>
+    );
+  };
+
+  const renderStatusBadge = (statusStr) => {
+    const s = statusStr ? statusStr.toLowerCase() : 'new';
+    
+    let label = 'New';
+    let dotColor = '#3B82F6';
+    let bgColor = 'rgba(59, 130, 246, 0.08)';
+    let borderColor = 'rgba(59, 130, 246, 0.15)';
+    
+    if (s === 'under_review') {
+      label = 'Under Review';
+      dotColor = '#F59E0B';
+      bgColor = 'rgba(245, 158, 11, 0.08)';
+      borderColor = 'rgba(245, 158, 11, 0.15)';
+    } else if (s === 'escalated') {
+      label = 'Escalated';
+      dotColor = '#A855F7';
+      bgColor = 'rgba(168, 85, 247, 0.08)';
+      borderColor = 'rgba(168, 85, 247, 0.15)';
+    } else if (s === 'resolved_false_positive') {
+      label = 'Resolved - FP';
+      dotColor = '#8B95A8';
+      bgColor = 'rgba(139, 149, 168, 0.08)';
+      borderColor = 'rgba(139, 149, 168, 0.15)';
+    } else if (s === 'resolved_confirmed_threat') {
+      label = 'Resolved - Threat';
+      dotColor = '#EF4444';
+      bgColor = 'rgba(239, 68, 68, 0.08)';
+      borderColor = 'rgba(239, 68, 68, 0.15)';
+    }
+    
+    return (
+      <span style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '4px 10px',
+        borderRadius: '9999px',
+        background: bgColor,
+        border: `1px solid ${borderColor}`,
+        fontSize: '11px',
+        fontWeight: '600',
+        color: '#E8EDF5',
+        whiteSpace: 'nowrap',
+        letterSpacing: '0.02em'
+      }}>
+        <span style={{
+          width: '6px',
+          height: '6px',
+          borderRadius: '50%',
+          background: dotColor
+        }} />
+        {label}
+      </span>
+    );
+  };
+
+  // Filter alerts by search query, department dropdown, and status tab
   const filteredAlerts = alerts.filter(alert => {
     const matchesSearch = 
-      alert.user_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      alert.user_id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      alert.department.toLowerCase().includes(searchQuery.toLowerCase());
+      (alert.user_name && alert.user_name.toLowerCase().includes(searchQuery.toLowerCase())) || 
+      (alert.user_id && alert.user_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (alert.department && alert.department.toLowerCase().includes(searchQuery.toLowerCase()));
       
     const matchesDept = selectedDept === 'All' || alert.department === selectedDept;
     
-    return matchesSearch && matchesDept;
+    let matchesStatus = true;
+    const status = alert.status ? alert.status.toLowerCase() : 'new';
+    
+    if (selectedStatus === 'New') {
+      matchesStatus = status === 'new' || status === 'none' || !alert.status;
+    } else if (selectedStatus === 'Under Review') {
+      matchesStatus = status === 'under_review';
+    } else if (selectedStatus === 'Escalated') {
+      matchesStatus = status === 'escalated';
+    } else if (selectedStatus === 'Resolved') {
+      matchesStatus = status.startsWith('resolved');
+    }
+    
+    return matchesSearch && matchesDept && matchesStatus;
   });
 
   // Sort filtered alerts
@@ -137,6 +269,7 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
 
   // Extract unique departments for dropdown
   const departments = ['All', ...new Set(alerts.map(a => a.department))];
+  const statusTabs = ['All', 'New', 'Under Review', 'Escalated', 'Resolved'];
 
   if (loading && alerts.length === 0) {
     return (
@@ -156,43 +289,73 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
           <ShieldAlert size={18} style={{ color: 'var(--color-high)' }} />
           Threat Detection Register
         </h2>
-        <span style={{ fontSize: '12px', color: '#64748b', display: 'flex', alignState: 'center', gap: '6px' }}>
+        <span style={{ fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <RefreshCw size={12} className="spin-slow" /> Polling Real-Time Logins
         </span>
       </div>
 
       {/* Filter and Search Bar Toolbar */}
-      <div className="table-toolbar">
-        <div className="search-input-wrapper">
-          <Search size={16} />
-          <input 
-            type="text" 
-            placeholder="Search user, ID, department..." 
-            className="search-input"
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-          />
+      <div className="table-toolbar" style={{ flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
+        
+        {/* Status Filtering Tabs */}
+        <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.03)', width: '100%', paddingBottom: '10px' }}>
+          {statusTabs.map(tab => (
+            <button
+              key={tab}
+              type="button"
+              style={{
+                background: selectedStatus === tab ? 'rgba(59,130,246,0.1)' : 'transparent',
+                border: 'none',
+                color: selectedStatus === tab ? 'var(--color-info)' : '#64748b',
+                padding: '6px 12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onClick={() => {
+                setSelectedStatus(tab);
+                setCurrentPage(1);
+              }}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
-        <div className="filter-actions">
-          <Filter size={16} style={{ color: '#64748b' }} />
-          <select 
-            className="filter-select"
-            value={selectedDept}
-            onChange={(e) => {
-              setSelectedDept(e.target.value);
-              setCurrentPage(1);
-            }}
-          >
-            {departments.map((dept, idx) => (
-              <option key={idx} value={dept}>
-                {dept === 'All' ? 'All Departments' : dept}
-              </option>
-            ))}
-          </select>
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', gap: '12px', flexWrap: 'wrap' }}>
+          <div className="search-input-wrapper" style={{ flexGrow: 1, maxWidth: '400px' }}>
+            <Search size={16} />
+            <input 
+              type="text" 
+              placeholder="Search user, ID, department..." 
+              className="search-input"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+
+          <div className="filter-actions">
+            <Filter size={16} style={{ color: '#64748b' }} />
+            <select 
+              className="filter-select"
+              value={selectedDept}
+              onChange={(e) => {
+                setSelectedDept(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              {departments.map((dept, idx) => (
+                <option key={idx} value={dept}>
+                  {dept === 'All' ? 'All Departments' : dept}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -223,6 +386,8 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
                     </div>
                   </th>
                   <th>Anomaly Flags</th>
+                  <th>Status</th>
+                  <th>Assigned Action</th>
                   <th onClick={() => handleSort('flagged_at')}>
                     <div className="th-content">
                       Timestamp <ArrowUpDown size={12} />
@@ -237,6 +402,7 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
                     const isMed = alert.risk_score >= 60 && alert.risk_score <= 80;
                     const scoreClass = isHigh ? 'high' : isMed ? 'med' : 'low';
                     const isNew = isNewAlert(alert.flagged_at);
+                    const alertStatus = alert.status ? alert.status.toLowerCase() : 'new';
 
                     return (
                       <motion.tr 
@@ -245,7 +411,10 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 10 }}
                         transition={{ duration: 0.2 }}
-                        onClick={() => onRowClick(alert.user_id)}
+                        onClick={(e) => {
+                          console.log("Row clicked! Selected User ID:", alert.user_id, "Event ID:", alert.risk_event_id);
+                          onRowClick(alert.user_id);
+                        }}
                         className={isHigh ? 'risk-critical' : isMed ? 'risk-high' : ''}
                       >
                         {/* User Cell with Avatar */}
@@ -268,22 +437,12 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
                         
                         {/* Department */}
                         <td>{alert.department}</td>
-                        
-                        {/* Threat progress bar */}
+                        {/* Threat Index */}
                         <td>
-                          <div className="score-wrapper">
-                            <span className={`score-num ${scoreClass}`}>
-                              {alert.risk_score}
-                            </span>
-                            <div className="score-bar-bg">
-                              <div 
-                                className={`score-bar-fill ${scoreClass}`} 
-                                style={{ width: `${alert.risk_score}%` }}
-                              />
-                            </div>
+                          <div style={{ display: 'flex', justifyContent: 'center' }}>
+                            {renderRiskCircle(alert.risk_score)}
                           </div>
                         </td>
-                        
                         {/* Anomaly pills */}
                         <td>
                           <div className="reasons-container">
@@ -300,6 +459,29 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
                               <span className="reason-pill">Baseline Checked</span>
                             )}
                           </div>
+                        </td>
+
+                        {/* Status Badge */}
+                        <td>{renderStatusBadge(alert.status)}</td>
+
+                        {/* Assignee / Actions Button */}
+                        <td>
+                          {alertStatus === 'new' || alertStatus === 'none' || !alert.status ? (
+                            <button
+                              type="button"
+                              className="export-btn"
+                              style={{ padding: '2px 8px', fontSize: '10px', height: '24px', whiteSpace: 'nowrap' }}
+                              onClick={(e) => handleAssign(e, alert.risk_event_id)}
+                            >
+                              Assign to me
+                            </button>
+                          ) : alertStatus === 'under_review' ? (
+                            <span style={{ fontSize: '11px', color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                              👤 {alert.assigned_to_analyst || 'Analyst_1'}
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: '11px', color: '#475569' }}>-</span>
+                          )}
                         </td>
                         
                         {/* Flagged Time */}
@@ -322,6 +504,7 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
             <div className="pagination-controls">
               <button 
                 className="pagination-btn"
+                type="button"
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
               >
@@ -329,6 +512,7 @@ export default function AlertsTable({ alerts, loading, error, onRowClick }) {
               </button>
               <button 
                 className="pagination-btn"
+                type="button"
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
               >
