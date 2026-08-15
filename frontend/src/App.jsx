@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck } from 'lucide-react';
+import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut } from 'lucide-react';
 import { HashRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 
 import SummaryCards from './components/SummaryCards';
@@ -19,6 +19,7 @@ import AdminPanel from './components/AdminPanel';
 import CrossDeptThreatMatrix from './components/CrossDeptThreatMatrix';
 import SocAgentActivity from './components/SocAgentActivity';
 import RuleTuningAdvisor from './components/RuleTuningAdvisor';
+import NetworkGraphPanel from './components/NetworkGraphPanel';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
@@ -87,8 +88,217 @@ const styleContent = `
   }
 `;
 
+function LoginView({ setJwt }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleLoginSubmit = async (e) => {
+    if (e) e.preventDefault();
+    if (!username.trim() || !password.trim()) {
+      setError("Please fill in all credentials fields.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username.trim(), password: password.trim() })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.detail || "Authentication failed. Invalid username or password.");
+      }
+      localStorage.setItem('ueba_jwt', data.access_token);
+      setJwt(data.access_token);
+    } catch (err) {
+      console.error(err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = (user, pass) => {
+    setUsername(user);
+    setPassword(pass);
+    setLoading(true);
+    setError(null);
+    fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: user, password: pass })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error("Demo login failed.");
+        return res.json();
+      })
+      .then(data => {
+        localStorage.setItem('ueba_jwt', data.access_token);
+        setJwt(data.access_token);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  };
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      width: '100vw',
+      background: 'radial-gradient(circle at center, #1E293B 0%, #0F172A 100%)',
+      padding: '20px',
+      boxSizing: 'border-box'
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '440px',
+        background: 'rgba(15, 23, 42, 0.65)',
+        backdropFilter: 'blur(16px)',
+        borderRadius: '12px',
+        border: '1px solid rgba(255, 255, 255, 0.05)',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
+        padding: '40px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px'
+      }}>
+        
+        {/* Logo and title */}
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+          <div style={{
+            padding: '12px',
+            borderRadius: '50%',
+            background: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid rgba(239, 68, 68, 0.15)',
+            color: '#EF4444',
+            width: 'fit-content'
+          }}>
+            <ShieldAlert size={36} />
+          </div>
+          <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: 0 }}>
+            UEBA Insider Threat Console
+          </h2>
+          <span style={{ fontSize: '11px', color: '#64748B', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            SOC Operations Terminal Gate
+          </span>
+        </div>
+
+        {/* Error notification */}
+        {error && (
+          <div style={{
+            padding: '10px 14px',
+            background: 'rgba(239, 68, 68, 0.08)',
+            border: '1px solid rgba(239, 68, 68, 0.15)',
+            borderRadius: '6px',
+            color: '#F87171',
+            fontSize: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <AlertCircle size={16} />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {/* Input Form */}
+        <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8' }}>Username</label>
+            <input 
+              type="text" 
+              placeholder="Enter your console username..." 
+              className="search-input"
+              style={{ width: '100%', padding: '10px' }}
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8' }}>Password</label>
+            <input 
+              type="password" 
+              placeholder="Enter your console password..." 
+              className="search-input"
+              style={{ width: '100%', padding: '10px' }}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            className="export-btn"
+            style={{
+              width: '100%',
+              justifyContent: 'center',
+              background: '#6366F1',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '12px',
+              fontSize: '13px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              marginTop: '8px',
+              transition: 'all 0.2s'
+            }}
+            disabled={loading}
+          >
+            {loading ? 'Authenticating Terminal...' : 'Access Console Terminal'}
+          </button>
+        </form>
+
+        {/* Quick Demo Logins Section */}
+        <div style={{
+          marginTop: '8px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+          paddingTop: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px'
+        }}>
+          <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase' }}>
+            Quick Demo Presets Logins
+          </span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <button
+              onClick={() => handleDemoLogin('analyst', 'analyst123')}
+              className="export-btn"
+              style={{ padding: '8px', justifyContent: 'center', fontSize: '11px' }}
+              disabled={loading}
+            >
+              🔐 Log in as Analyst
+            </button>
+            <button
+              onClick={() => handleDemoLogin('admin', 'admin123')}
+              className="export-btn"
+              style={{ padding: '8px', justifyContent: 'center', fontSize: '11px', borderColor: 'rgba(99,102,241,0.2)', color: '#818CF8' }}
+              disabled={loading}
+            >
+              🛡️ Log in as Admin
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
-  const [jwt, setJwt] = useState('bypass-login');
+  const [jwt, setJwt] = useState(localStorage.getItem('ueba_jwt') || '');
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -97,37 +307,59 @@ export default function App() {
   // State for live clock in header
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const getLoggedInUser = () => {
+    if (!jwt) return null;
+    try {
+      const base64Url = jwt.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
+    }
+  };
+  
+  const currentUser = getLoggedInUser();
+
   // Polling Alerts Data in App.jsx to synchronize all charts and grids
   const fetchAlerts = async () => {
     if (!jwt) return;
     try {
-      const response = await fetch(`${API_BASE}/alerts`, {
+      const response = await fetch(`${API_BASE}/alerts?page=1&limit=1000`, {
         headers: { 
           'X-API-Key': API_KEY,
           'Authorization': `Bearer ${jwt}`
         }
       });
+      if (response.status === 401) {
+        setJwt('');
+        localStorage.removeItem('ueba_jwt');
+        throw new Error("Session expired. Please log in again.");
+      }
       if (!response.ok) {
         throw new Error(`Server returned status ${response.status}`);
       }
       const data = await response.json();
-      setAlerts(data);
+      setAlerts(data.alerts || data);
       setLoading(false);
       setError(null);
     } catch (err) {
       console.error("Error polling alerts in App:", err);
-      setError("Cannot connect to server - is the backend running?");
+      setError(err.message || "Cannot connect to server - is the backend running?");
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAlerts();
-    const interval = setInterval(fetchAlerts, 3000);
-
-    return () => {
-      clearInterval(interval);
-    };
+    if (jwt) {
+      fetchAlerts();
+      const interval = setInterval(fetchAlerts, 4000);
+      return () => {
+        clearInterval(interval);
+      };
+    }
   }, [jwt]);
 
   // Update live clock every second
@@ -258,6 +490,15 @@ export default function App() {
     </div>
   );
 
+  if (!jwt) {
+    return (
+      <Router>
+        <style>{styleContent}</style>
+        <LoginView setJwt={setJwt} />
+      </Router>
+    );
+  }
+
   return (
     <Router>
       <style>{styleContent}</style>
@@ -296,10 +537,17 @@ export default function App() {
               <span>Dept Heatmap</span>
             </NavLink>
             
-            <NavLink to="/admin" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-              <Settings size={16} />
-              <span>Admin Panel</span>
+            <NavLink to="/network" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+              <Network size={16} />
+              <span>Network Graph</span>
             </NavLink>
+
+            {currentUser && currentUser.role === 'admin' && (
+              <NavLink to="/admin" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+                <Settings size={16} />
+                <span>Admin Panel</span>
+              </NavLink>
+            )}
           </nav>
         </aside>
 
@@ -332,6 +580,39 @@ export default function App() {
                 <div className="live-dot"></div>
                 <span>Live Feed</span>
               </div>
+
+              {currentUser && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '10px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontSize: '11px' }}>
+                    <span style={{ color: '#fff', fontWeight: 'bold' }}>{currentUser.sub}</span>
+                    <span style={{ color: '#8B95A8', textTransform: 'uppercase', fontSize: '9px', fontWeight: 'bold' }}>{currentUser.role}</span>
+                  </div>
+                  <button 
+                    onClick={() => {
+                      setJwt('');
+                      localStorage.removeItem('ueba_jwt');
+                    }}
+                    style={{
+                      background: 'rgba(239, 68, 68, 0.1)',
+                      border: '1px solid rgba(239, 68, 68, 0.2)',
+                      borderRadius: '4px',
+                      color: '#F87171',
+                      padding: '5px 10px',
+                      fontSize: '11px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontWeight: 'bold',
+                      transition: 'all 0.2s'
+                    }}
+                    title="Log out from console"
+                  >
+                    <LogOut size={12} />
+                    Logout
+                  </button>
+                </div>
+              )}
 
               <button 
                 className="export-btn" 
@@ -428,7 +709,14 @@ export default function App() {
                 </div>
               </div>
             } />
-            <Route path="/admin" element={<AdminPanel jwt={jwt} />} />
+            <Route path="/admin" element={
+              currentUser && currentUser.role === 'admin' ? (
+                <AdminPanel jwt={jwt} />
+              ) : (
+                <Navigate to="/dashboard" replace />
+              )
+            } />
+            <Route path="/network" element={<NetworkGraphPanel jwt={jwt} />} />
           </Routes>
         </main>
       </div>

@@ -29,16 +29,18 @@ def main():
 
     print_section("2. Testing GET /alerts")
     try:
-        res = requests.get(f"{BASE_URL}/alerts", headers=HEADERS)
-        if res.status_code == 200:
-            alerts = res.json()
-            print(f"Status Code: 200")
-            print(f"Returned {len(alerts)} alerts. Showing first 3 for brevity:")
-            print(json.dumps(alerts[:3], indent=2))
-        else:
-            print_response(res)
+      res = requests.get(f"{BASE_URL}/alerts", headers=HEADERS)
+      if res.status_code == 200:
+          data = res.json()
+          alerts = data.get("alerts", data) if isinstance(data, dict) else data
+          print(f"Status Code: 200")
+          print(f"Total Count: {data.get('total_count') if isinstance(data, dict) else len(data)}")
+          print(f"Returned {len(alerts)} alerts. Showing first 3 for brevity:")
+          print(json.dumps(alerts[:3], indent=2))
+      else:
+          print_response(res)
     except Exception as e:
-        print(f"Error: {e}")
+      print(f"Error: {e}")
 
     print_section("3. Testing GET /alerts/summary")
     try:

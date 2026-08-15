@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Laptop, Shield, User, Calendar, MapPin, CheckCircle, AlertTriangle, Sliders, Activity } from 'lucide-react';
+import { Laptop, Shield, User, Calendar, MapPin, CheckCircle, AlertTriangle, Sliders, Activity, RefreshCw } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
@@ -12,6 +12,44 @@ export default function AdminPanel({ jwt }) {
   const [devLoading, setDevLoading] = useState(false);
   const [devMessage, setDevMessage] = useState(null);
   const [devError, setDevError] = useState(null);
+
+  // Reset Demo Data States
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState(null);
+  const [resetError, setResetError] = useState(null);
+
+  const handleResetData = async () => {
+    if (!window.confirm("Are you sure you want to trigger a global system reset? This will clear all review notes/history and re-run baseline analytics calculations.")) {
+      return;
+    }
+    
+    setResetLoading(true);
+    setResetMessage(null);
+    setResetError(null);
+    
+    try {
+      const response = await fetch(`${API_BASE}/admin/reset-demo-data`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': API_KEY,
+          'Authorization': `Bearer ${jwt}`
+        }
+      });
+      
+      const resData = await response.json();
+      if (!response.ok) {
+        throw new Error(resData.detail || "Reset data call rejected by server.");
+      }
+      
+      setResetMessage("Console telemetry reset successfully! Reloading ML pipeline and baselines established.");
+    } catch (err) {
+      console.error(err);
+      setResetError(err.message);
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   // HR Status Form State
   const [hrUserId, setHrUserId] = useState('');
@@ -484,6 +522,65 @@ export default function AdminPanel({ jwt }) {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 5. Danger Zone / Reset Demo Data (Full Width) */}
+      <div className="col-12" style={{ marginTop: '12px' }}>
+        <div className="dashboard-card" style={{ border: '1px solid rgba(239, 68, 68, 0.15)', background: 'rgba(239, 68, 68, 0.02)' }}>
+          <div className="dashboard-card-header">
+            <h2 style={{ color: '#EF4444', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <AlertTriangle size={18} />
+              Danger Zone - System Demo Reset Control
+            </h2>
+          </div>
+          <p style={{ fontSize: '12px', color: '#8B95A8', marginBottom: '16px', lineHeight: '1.5' }}>
+            Clears all historical alerts/risk events review status, resets HR employee files to defaults, wipes shift change and unrecognized devices registry logs, and re-calculates all ML isolation forest baseline profiles. Useful for resetting system telemetry to default clean state between active client presentation runs.
+          </p>
+          
+          {resetMessage && (
+            <div style={{ padding: '10px 14px', background: 'var(--color-low-bg)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '6px', fontSize: '12px', color: 'var(--color-low)', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <CheckCircle size={14} /> {resetMessage}
+            </div>
+          )}
+
+          {resetError && (
+            <div style={{ padding: '10px 14px', background: 'var(--color-high-bg)', border: '1px solid rgba(244,63,94,0.2)', borderRadius: '6px', fontSize: '12px', color: 'var(--color-high)', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <AlertTriangle size={14} /> {resetError}
+            </div>
+          )}
+
+          <button 
+            type="button"
+            onClick={handleResetData}
+            disabled={resetLoading}
+            style={{
+              background: '#EF4444',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '6px',
+              padding: '12px 24px',
+              fontSize: '13px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s'
+            }}
+          >
+            {resetLoading ? (
+              <>
+                <RefreshCw size={14} className="spin-slow" />
+                Resetting Telemetry Database & Recalculating Baselines...
+              </>
+            ) : (
+              <>
+                <RefreshCw size={14} />
+                Trigger Global System Demo Reset
+              </>
+            )}
+          </button>
         </div>
       </div>
 

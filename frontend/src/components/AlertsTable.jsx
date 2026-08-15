@@ -20,6 +20,47 @@ export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, o
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [localAlerts, setLocalAlerts] = useState([]);
+  const [localTotalCount, setLocalTotalCount] = useState(0);
+  const [localTotalPages, setLocalTotalPages] = useState(1);
+  const [localLoading, setLocalLoading] = useState(false);
+
+  // Fetch local alerts from backend using pagination and filters
+  useEffect(() => {
+    const fetchLocalAlerts = async () => {
+      if (!jwt) return;
+      setLocalLoading(true);
+      try {
+        const queryParams = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: itemsPerPage.toString()
+        });
+        if (searchQuery.trim()) queryParams.append("search", searchQuery.trim());
+        if (selectedDept && selectedDept !== "All") queryParams.append("department", selectedDept);
+        if (selectedStatus && selectedStatus !== "All") queryParams.append("status", selectedStatus);
+
+        const response = await fetch(`${API_BASE}/alerts?${queryParams.toString()}`, {
+          headers: {
+            'Authorization': `Bearer ${jwt}`
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setLocalAlerts(data.alerts || []);
+          setLocalTotalCount(data.total_count || 0);
+          setLocalTotalPages(data.total_pages || 1);
+        }
+      } catch (err) {
+        console.error("Error fetching local paginated alerts:", err);
+      } finally {
+        setLocalLoading(false);
+      }
+    };
+
+    fetchLocalAlerts();
+    const pollInterval = setInterval(fetchLocalAlerts, 4000);
+    return () => clearInterval(pollInterval);
+  }, [jwt, currentPage, searchQuery, selectedDept, selectedStatus]);
 
   // Local state for checking "current time" to compute "NEW" badges dynamically
   const [now, setNow] = useState(new Date());
@@ -216,56 +257,24 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
     );
   };
 
-  // Filter alerts by search query, department dropdown, and status tab
-  const filteredAlerts = alerts.filter(alert => {
-    const matchesSearch = 
-      (alert.user_name && alert.user_name.toLowerCase().includes(searchQuery.toLowerCase())) || 
-      (alert.user_id && alert.user_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (alert.department && alert.department.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-    const matchesDept = selectedDept === 'All' || alert.department === selectedDept;
-    
-    let matchesStatus = true;
-    const status = alert.status ? alert.status.toLowerCase() : 'new';
-    
-    if (selectedStatus === 'New') {
-      matchesStatus = status === 'new' || status === 'none' || !alert.status;
-    } else if (selectedStatus === 'Under Review') {
-      matchesStatus = status === 'under_review';
-    } else if (selectedStatus === 'Escalated') {
-      matchesStatus = status === 'escalated';
-    } else if (selectedStatus === 'Resolved') {
-      matchesStatus = status.startsWith('resolved');
-    }
-    
-    return matchesSearch && matchesDept && matchesStatus;
-  });
-
-  // Sort filtered alerts
-  const sortedAlerts = [...filteredAlerts].sort((a, b) => {
+  // Sort localAlerts fetched from backend
+  const sortedAlerts = [...localAlerts].sort((a, b) => {
     let comparison = 0;
     if (sortField === 'risk_score') {
       comparison = a.risk_score - b.risk_score;
     } else if (sortField === 'flagged_at') {
       comparison = new Date(a.flagged_at) - new Date(b.flagged_at);
     } else if (sortField === 'user_name') {
-      comparison = a.user_name.localeCompare(b.user_name);
+      comparison = (a.user_name || '').localeCompare(b.user_name || '');
     }
     return sortDirection === 'asc' ? comparison : -comparison;
   });
 
   // Pagination bounds
-  const totalItems = sortedAlerts.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+  const totalItems = localTotalCount;
+  const totalPages = localTotalPages;
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedAlerts = sortedAlerts.slice(startIndex, startIndex + itemsPerPage);
-
-  // Auto-reset page if query filters reduce matches below index bounds
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [filteredAlerts.length, totalPages, currentPage]);
+  const paginatedAlerts = sortedAlerts; // Backend already filtered & paged it!
 
   // Extract unique departments for dropdown
   const departments = ['All', ...new Set(alerts.map(a => a.department))];

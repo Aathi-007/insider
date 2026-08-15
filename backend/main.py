@@ -5,13 +5,16 @@ import numpy as np
 from datetime import datetime
 from collections import deque
 import time
+import logging
 from fastapi import FastAPI, HTTPException, Security, Depends, Request
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from typing import List
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from pydantic import BaseModel, model_validator, field_validator
+from typing import List, Optional
 import joblib
 from sklearn.preprocessing import MinMaxScaler
 import uvicorn
@@ -21,6 +24,22 @@ from risk_scoring import calculate_rule_based_score, calculate_final_risk_score
 from auth import verify_password, create_access_token, verify_token
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Configure logging
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+os.makedirs(LOG_DIR, exist_ok=True)
+LOG_FILE = os.path.join(LOG_DIR, 'app.log')
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger("ueba_app")
+
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 MODEL_PATH = os.path.join(DATA_DIR, 'isolation_forest_model.joblib')
 ENCODER_PATH = os.path.join(DATA_DIR, 'encoders.joblib')
@@ -30,7 +49,7 @@ try:
     model = joblib.load(MODEL_PATH)
     encoders = joblib.load(ENCODER_PATH)
 except Exception as e:
-    print(f"Warning: Could not load model or encoders. {e}")
+    logger.warning(f"Warning: Could not load model or encoders. {e}")
     model = None
     encoders = None
 
@@ -50,7 +69,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Store the last 1000 requests to track real-time traffic
+# Exception handlers
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    error_messages = []
+    for error in exc.errors():
+        loc = " -> ".join(str(x) for x in error.get("loc", []))
+        msg = error.get("msg", "Invalid value")
+        error_messages.append(f"{loc}: {msg}")
+    
+    error_detail = "; ".join(error_messages)
+    logger.error(f"Validation error on {request.method} {request.url.path}: {error_detail}")
+    return JSONResponse(
+        status_code=400,
+        content={"detail": error_detail}
+    )
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    logger.error(f"HTTP error on {request.method} {request.url.path}: {exc.status_code} - {exc.detail}")
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail}
+    )
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled exception on {request.method} {request.url.path}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "An internal server error occurred."}
+    )
+
+# Store the last 2000 requests to track real-time traffic
 api_traffic_log = deque(maxlen=2000)
 
 # Pre-seed with some dummy background noise for the last 15 minutes
@@ -74,27 +125,69 @@ for i in range(15 * 60): # 15 minutes of seconds
 async def track_api_traffic(request: Request, call_next):
     # Initialize state
     request.state.is_abnormal = False
+    logger.info(f"Incoming request: {request.method} {request.url.path}")
     
-    response = await call_next(request)
-    
-    is_abnormal = getattr(request.state, "is_abnormal", False) or response.status_code >= 400
-    
-    if request.method in ("GET", "POST"):
-        api_traffic_log.append({
-            "timestamp": time.time(),
-            "method": request.method,
-            "is_abnormal": is_abnormal
-        })
-    return response
+    try:
+        response = await call_next(request)
+        logger.info(f"Response: {request.method} {request.url.path} - Status: {response.status_code}")
+        
+        is_abnormal = getattr(request.state, "is_abnormal", False) or response.status_code >= 400
+        
+        if request.method in ("GET", "POST"):
+            api_traffic_log.append({
+                "timestamp": time.time(),
+                "method": request.method,
+                "is_abnormal": is_abnormal
+            })
+        return response
+    except Exception as e:
+        logger.error(f"Error processing request {request.method} {request.url.path}: {e}", exc_info=True)
+        raise e
 
 API_KEY = os.environ.get("UEBA_API_KEY", "dev-local-key")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
-security = HTTPBearer()
+security_bearer = HTTPBearer(auto_error=False)
 
 async def get_api_key(api_key: str = Security(api_key_header)):
     if api_key == API_KEY:
         return api_key
     raise HTTPException(status_code=401, detail="Invalid or missing API Key")
+
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security_bearer)) -> dict:
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Missing or invalid authentication token")
+    token = credentials.credentials
+    payload = verify_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    return payload
+
+def check_user_exists(user_id: str):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM users WHERE user_id = ?", (user_id,))
+        if not cursor.fetchone():
+            raise HTTPException(status_code=400, detail=f"User ID {user_id} does not exist in the system.")
+    finally:
+        conn.close()
+
+def get_paginated_results(query_base: str, count_query: str, params: tuple, page: int, limit: int, conn):
+    cursor = conn.cursor()
+    cursor.execute(count_query, params)
+    total_count = cursor.fetchone()[0]
+    
+    total_pages = (total_count + limit - 1) // limit if limit > 0 else 1
+    if total_pages == 0:
+        total_pages = 1
+        
+    offset = (page - 1) * limit
+    
+    paginated_query = f"{query_base} LIMIT ? OFFSET ?"
+    paginated_params = params + (limit, offset)
+    
+    df = pd.read_sql_query(paginated_query, conn, params=paginated_params)
+    return df, total_count, total_pages
 
 
 class EventSimulation(BaseModel):
@@ -127,9 +220,41 @@ class UpdateHRStatusRequest(BaseModel):
     user_id: str
     employment_status: str  # 'active', 'notice_period', 'on_leave'
     travel_declared: bool
-    travel_start_date: str = None
-    travel_end_date: str = None
-    notice_period_start_date: str = None
+    travel_start_date: Optional[str] = None
+    travel_end_date: Optional[str] = None
+    notice_period_start_date: Optional[str] = None
+
+    @field_validator('travel_start_date', 'travel_end_date', 'notice_period_start_date')
+    @classmethod
+    def check_date_format(cls, v):
+        if not v or v.strip() == "":
+            return None
+        try:
+            datetime.strptime(v, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Date must be in YYYY-MM-DD format")
+        return v
+
+    @field_validator('employment_status')
+    @classmethod
+    def check_employment_status(cls, v):
+        allowed = ('active', 'notice_period', 'on_leave')
+        if v not in allowed:
+            raise ValueError(f"employment_status must be one of {allowed}")
+        return v
+
+    @model_validator(mode='after')
+    def validate_travel_dates(self):
+        if self.travel_declared:
+            if not self.travel_start_date or not self.travel_end_date:
+                raise ValueError("Both travel_start_date and travel_end_date must be provided when travel_declared is True")
+        
+        if self.travel_start_date and self.travel_end_date:
+            start = datetime.strptime(self.travel_start_date, "%Y-%m-%d")
+            end = datetime.strptime(self.travel_end_date, "%Y-%m-%d")
+            if end <= start:
+                raise ValueError("travel_end_date must be after travel_start_date")
+        return self
 
 class AssignAlertRequest(BaseModel):
     analyst_name: str
@@ -138,13 +263,35 @@ class AddNoteRequest(BaseModel):
     note: str
 
 class ResolveAlertRequest(BaseModel):
-    resolution_status: str = None  # 'resolved_false_positive' or 'resolved_confirmed_threat'
-    final_note: str = None
-    resolution: str = None
-    note: str = None
+    resolution_status: Optional[str] = None  # 'resolved_false_positive' or 'resolved_confirmed_threat'
+    final_note: Optional[str] = None
+    resolution: Optional[str] = None
+    note: Optional[str] = None
 
 @app.post("/login")
+@app.post("/auth/login")
 def login(request: LoginRequest):
+    username = request.username.strip().lower()
+    # Check hardcoded demo users first
+    if username == "admin" and request.password == "admin123":
+        token = create_access_token(data={
+            "sub": "admin",
+            "user_id": "admin_demo",
+            "role": "admin",
+            "department": "IT"
+        })
+        return {"access_token": token, "token_type": "bearer"}
+        
+    elif username == "analyst" and request.password == "analyst123":
+        token = create_access_token(data={
+            "sub": "analyst",
+            "user_id": "analyst_demo",
+            "role": "analyst",
+            "department": "Security"
+        })
+        return {"access_token": token, "token_type": "bearer"}
+        
+    # Fallback to database
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -156,12 +303,12 @@ def login(request: LoginRequest):
         if not user:
             raise HTTPException(status_code=401, detail="Invalid username or password")
         
-        user_id, username, password_hash, role, department = user
+        user_id, username_db, password_hash, role, department = user
         if not verify_password(request.password, password_hash):
             raise HTTPException(status_code=401, detail="Invalid username or password")
             
         token = create_access_token(data={
-            "sub": username, 
+            "sub": username_db, 
             "user_id": user_id, 
             "role": role, 
             "department": department
@@ -172,6 +319,7 @@ def login(request: LoginRequest):
 
 @app.post("/access-request")
 def access_request(request: AccessRequest, http_request: Request, api_key: str = Depends(get_api_key)):
+    check_user_exists(request.user_id)
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -259,18 +407,56 @@ def health_check():
     return {"status": "ok"}
 
 @app.get("/alerts")
-def get_alerts(api_key: str = Depends(get_api_key)):
+def get_alerts(
+    page: int = 1, 
+    limit: int = 20, 
+    search: Optional[str] = None, 
+    department: Optional[str] = None, 
+    status: Optional[str] = None
+):
     conn = get_connection()
     try:
-        query = """
-        SELECT r.risk_event_id, r.user_id, a.user_name, a.department, r.risk_score, r.reasons, r.flagged_at, r.reviewed,
-               r.status, r.assigned_to_analyst, r.analyst_notes, r.resolved_at
+        # Build dynamic where filters
+        where_clauses = ["r.risk_score > 60"]
+        params = []
+        
+        if department and department != "All":
+            where_clauses.append("a.department = ?")
+            params.append(department)
+            
+        if status and status != "All":
+            s = status.lower()
+            if s == "new":
+                where_clauses.append("(r.status = 'new' OR r.status = 'none' OR r.status IS NULL)")
+            elif s == "under_review":
+                where_clauses.append("r.status = 'under_review'")
+            elif s == "escalated":
+                where_clauses.append("r.status = 'escalated'")
+            elif s == "resolved":
+                where_clauses.append("r.status LIKE 'resolved%'")
+                
+        if search and search.strip():
+            where_clauses.append("(a.user_name LIKE ? OR r.user_id LIKE ? OR a.department LIKE ?)")
+            search_param = f"%{search.strip()}%"
+            params.extend([search_param, search_param, search_param])
+            
+        where_str = " AND ".join(where_clauses)
+        
+        query_base = f"""
         FROM risk_events r
         JOIN activity_logs a ON r.event_id = a.event_id
-        WHERE r.risk_score > 60
+        WHERE {where_str}
+        """
+        
+        count_query = f"SELECT COUNT(*) {query_base}"
+        select_query = f"""
+        SELECT r.risk_event_id, r.user_id, a.user_name, a.department, r.risk_score, r.reasons, r.flagged_at, r.reviewed,
+               r.status, r.assigned_to_analyst, r.analyst_notes, r.resolved_at
+        {query_base}
         ORDER BY r.risk_score DESC
         """
-        df = pd.read_sql_query(query, conn)
+        
+        df, total_count, total_pages = get_paginated_results(select_query, count_query, tuple(params), page, limit, conn)
         
         alerts = []
         for _, row in df.iterrows():
@@ -288,12 +474,19 @@ def get_alerts(api_key: str = Depends(get_api_key)):
                 "analyst_notes": row['analyst_notes'],
                 "resolved_at": row['resolved_at']
             })
-        return alerts
+            
+        return {
+            "alerts": alerts,
+            "total_count": total_count,
+            "total_pages": total_pages,
+            "page": page,
+            "limit": limit
+        }
     finally:
         conn.close()
 
 @app.get("/alerts/summary")
-def get_alerts_summary(api_key: str = Depends(get_api_key)):
+def get_alerts_summary():
     conn = get_connection()
     try:
         df = pd.read_sql_query("SELECT risk_score FROM risk_events", conn)
@@ -311,7 +504,7 @@ def get_alerts_summary(api_key: str = Depends(get_api_key)):
         conn.close()
 
 @app.get("/analytics/daily-risk")
-def get_daily_risk(api_key: str = Depends(get_api_key)):
+def get_daily_risk():
     conn = get_connection()
     try:
         # Get the average risk score per user per day for the last 30 days
@@ -328,7 +521,7 @@ def get_daily_risk(api_key: str = Depends(get_api_key)):
         conn.close()
 
 @app.get("/analytics/department-behaviour")
-def get_department_behaviour(range: str = "week", api_key: str = Depends(get_api_key)):
+def get_department_behaviour(range: str = "week"):
     from datetime import timedelta
     conn = get_connection()
     try:
@@ -472,7 +665,7 @@ def get_department_behaviour(range: str = "week", api_key: str = Depends(get_api
     finally:
         conn.close()
 @app.get("/analytics/company-behavior-trend")
-def get_company_behavior_trend(api_key: str = Depends(get_api_key)):
+def get_company_behavior_trend():
     from datetime import timedelta
     now = datetime.now()
     
@@ -518,7 +711,7 @@ def get_company_behavior_trend(api_key: str = Depends(get_api_key)):
     return res
 
 @app.get("/users")
-def get_users(api_key: str = Depends(get_api_key)):
+def get_users():
     conn = get_connection()
     try:
         query = """
@@ -534,7 +727,7 @@ def get_users(api_key: str = Depends(get_api_key)):
         conn.close()
 
 @app.get("/user/{user_id}")
-def get_user_data(user_id: str, api_key: str = Depends(get_api_key)):
+def get_user_data(user_id: str):
     conn = get_connection()
     try:
         df_base = pd.read_sql_query("SELECT * FROM user_baselines WHERE user_id = ?", conn, params=(user_id,))
@@ -562,7 +755,7 @@ def get_user_data(user_id: str, api_key: str = Depends(get_api_key)):
         conn.close()
 
 @app.patch("/alerts/{risk_event_id}/review")
-def review_alert(risk_event_id: int, api_key: str = Depends(get_api_key)):
+def review_alert(risk_event_id: int, current_user: dict = Depends(get_current_user)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -576,6 +769,7 @@ def review_alert(risk_event_id: int, api_key: str = Depends(get_api_key)):
 
 @app.post("/simulate-event")
 def simulate_event(event: EventSimulation, http_request: Request, api_key: str = Depends(get_api_key)):
+    check_user_exists(event.user_id)
     if model is None or encoders is None:
         raise HTTPException(status_code=500, detail="Model or encoders not loaded properly.")
         
@@ -666,16 +860,19 @@ def simulate_event(event: EventSimulation, http_request: Request, api_key: str =
         conn.close()
 
 @app.post("/admin/register-device")
-def admin_register_device(request: RegisterDeviceRequest, api_key: str = Depends(get_api_key)):
+def admin_register_device(request: RegisterDeviceRequest, current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin permissions required.")
+    check_user_exists(request.user_id)
     from device_management import register_trusted_device
-    success = register_trusted_device(request.user_id, request.device_id, request.device_name, "IT_ADMIN")
+    success = register_trusted_device(request.user_id, request.device_id, request.device_name, current_user.get("sub", "IT_ADMIN"))
     if success:
         return {"status": "success", "message": f"Device {request.device_id} registered for user {request.user_id}."}
     else:
         raise HTTPException(status_code=500, detail="Failed to register device.")
 
 @app.get("/admin/devices/{user_id}")
-def admin_get_devices(user_id: str, api_key: str = Depends(get_api_key)):
+def admin_get_devices(user_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -721,7 +918,10 @@ def admin_get_devices(user_id: str, api_key: str = Depends(get_api_key)):
         conn.close()
 
 @app.post("/admin/update-hr-status")
-def admin_update_hr_status(request: UpdateHRStatusRequest, api_key: str = Depends(get_api_key)):
+def admin_update_hr_status(request: UpdateHRStatusRequest, current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin permissions required.")
+    check_user_exists(request.user_id)
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -751,7 +951,7 @@ def admin_update_hr_status(request: UpdateHRStatusRequest, api_key: str = Depend
         conn.close()
 
 @app.get("/admin/hr-status/{user_id}")
-def admin_get_hr_status(user_id: str, api_key: str = Depends(get_api_key)):
+def admin_get_hr_status(user_id: str, current_user: dict = Depends(get_current_user)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -778,7 +978,7 @@ def admin_get_hr_status(user_id: str, api_key: str = Depends(get_api_key)):
         conn.close()
 
 @app.patch("/alerts/{risk_event_id}/assign")
-def assign_alert(risk_event_id: int, request: AssignAlertRequest, api_key: str = Depends(get_api_key)):
+def assign_alert(risk_event_id: int, request: AssignAlertRequest, current_user: dict = Depends(get_current_user)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -803,7 +1003,7 @@ def assign_alert(risk_event_id: int, request: AssignAlertRequest, api_key: str =
         conn.close()
 
 @app.patch("/alerts/{risk_event_id}/add-note")
-def add_alert_note(risk_event_id: int, request: AddNoteRequest, api_key: str = Depends(get_api_key)):
+def add_alert_note(risk_event_id: int, request: AddNoteRequest, current_user: dict = Depends(get_current_user)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -828,7 +1028,7 @@ def add_alert_note(risk_event_id: int, request: AddNoteRequest, api_key: str = D
         conn.close()
 
 @app.patch("/alerts/{risk_event_id}/resolve")
-def resolve_alert(risk_event_id: int, request: ResolveAlertRequest, api_key: str = Depends(get_api_key)):
+def resolve_alert(risk_event_id: int, request: ResolveAlertRequest, current_user: dict = Depends(get_current_user)):
     res_status = request.resolution_status or request.resolution
     res_note = request.final_note or request.note
     if not res_status or not res_note:
@@ -861,7 +1061,7 @@ def resolve_alert(risk_event_id: int, request: ResolveAlertRequest, api_key: str
         conn.close()
 
 @app.patch("/alerts/{risk_event_id}/escalate")
-def escalate_alert(risk_event_id: int, api_key: str = Depends(get_api_key)):
+def escalate_alert(risk_event_id: int, current_user: dict = Depends(get_current_user)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -886,7 +1086,7 @@ def escalate_alert(risk_event_id: int, api_key: str = Depends(get_api_key)):
         conn.close()
 
 @app.get("/analytics/rule-accuracy")
-def get_rule_accuracy(api_key: str = Depends(get_api_key)):
+def get_rule_accuracy():
     from risk_scoring import get_false_positive_rate_for_pattern
     reasons_to_check = [
         "unusual_download_volume",
@@ -907,6 +1107,136 @@ def get_rule_accuracy(api_key: str = Depends(get_api_key)):
         accuracy_report[reason] = metrics
         
     return accuracy_report
+
+@app.get("/audit-logs")
+def get_audit_logs(page: int = 1, limit: int = 20):
+    conn = get_connection()
+    try:
+        query_base = "FROM activity_logs"
+        count_query = "SELECT COUNT(*) FROM activity_logs"
+        select_query = "SELECT * FROM activity_logs ORDER BY timestamp DESC"
+        
+        df, total_count, total_pages = get_paginated_results(select_query, count_query, (), page, limit, conn)
+        logs = df.to_dict(orient="records")
+        
+        return {
+            "logs": logs,
+            "total_count": total_count,
+            "total_pages": total_pages,
+            "page": page,
+            "limit": limit
+        }
+    finally:
+        conn.close()
+
+@app.get("/network/communications")
+def get_network_communications():
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT comm_id, source_server, destination_server, timestamp, data_transferred_mb, is_anomaly 
+            FROM server_communications 
+            ORDER BY timestamp DESC 
+            LIMIT 150
+        """)
+        rows = cursor.fetchall()
+        comms = []
+        for r in rows:
+            comms.append({
+                "comm_id": r[0],
+                "source_server": r[1],
+                "destination_server": r[2],
+                "timestamp": r[3],
+                "data_transferred_mb": r[4],
+                "is_anomaly": bool(r[5])
+            })
+        return comms
+    finally:
+        conn.close()
+
+@app.get("/network/anomalies")
+def get_network_anomalies():
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT comm_id, source_server, destination_server, timestamp, data_transferred_mb, is_anomaly 
+            FROM server_communications 
+            WHERE is_anomaly = 1
+            ORDER BY timestamp DESC
+        """)
+        rows = cursor.fetchall()
+        anoms = []
+        for r in rows:
+            anoms.append({
+                "comm_id": r[0],
+                "source_server": r[1],
+                "destination_server": r[2],
+                "timestamp": r[3],
+                "data_transferred_mb": r[4],
+                "is_anomaly": True,
+                "risk_score": 25,
+                "reason": "unusual_server_communication"
+            })
+        return anoms
+    finally:
+        conn.close()
+
+@app.get("/network/baselines")
+def get_network_baselines():
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT source_server, destination_server 
+            FROM server_communications 
+            WHERE is_anomaly = 0 
+            GROUP BY source_server, destination_server
+        """)
+        baselines = {}
+        for row in cursor.fetchall():
+            src, dest = row
+            if src not in baselines:
+                baselines[src] = []
+            baselines[src].append(dest)
+        return baselines
+    finally:
+        conn.close()
+
+@app.post("/admin/reset-demo-data")
+def reset_demo_data(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin permissions required.")
+        
+    conn = get_connection()
+    try:
+        from database import load_csv_to_db, seed_employee_hr_status, generate_server_communications
+        from baseline import recalculate_all_baselines
+        from risk_scoring import score_all_events
+        
+        # 1. Reset database and reload CSV
+        load_csv_to_db(conn)
+        
+        # 2. Reset HR statuses
+        seed_employee_hr_status(conn)
+        
+        # 3. Recalculate baselines
+        recalculate_all_baselines()
+        
+        # 4. Score all events (runs detection pipeline)
+        score_all_events()
+        
+        # 5. Regenerate server communications
+        generate_server_communications(conn)
+        
+        logger.info(f"Demo data reset triggered by {current_user.get('sub')}")
+        return {"status": "success", "message": "Demo data reset successfully. Detection pipeline re-run completed."}
+    except Exception as e:
+        logger.error(f"Reset demo data failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Failed to reset demo data: {e}")
+    finally:
+        conn.close()
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

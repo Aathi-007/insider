@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { Clock, Download, Search, Shield, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Clock, Download, Search, Shield, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function AuditLogPage({ alerts, onRefresh }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // Parser logic to extract audit events from alerts notes history
   const parseAuditLogs = (alertsList) => {
@@ -66,6 +68,17 @@ export default function AuditLogPage({ alerts, onRefresh }) {
       log.details.toLowerCase().includes(q)
     );
   });
+
+  const totalItems = filteredLogs.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedLogs = filteredLogs.slice(startIndex, startIndex + itemsPerPage);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [filteredLogs.length, totalPages, currentPage]);
 
   const handleExportCSV = () => {
     if (filteredLogs.length === 0) return;
@@ -190,7 +203,7 @@ export default function AuditLogPage({ alerts, onRefresh }) {
               </tr>
             </thead>
             <tbody>
-              {filteredLogs.map((log, index) => (
+              {paginatedLogs.map((log, index) => (
                 <tr key={index}>
                   <td className="timestamp-text" style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>
                     {new Date(log.timestamp).toLocaleString()}
@@ -209,6 +222,41 @@ export default function AuditLogPage({ alerts, onRefresh }) {
             </tbody>
           </table>
         )}
+      </div>
+
+      {/* Pagination Controls */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: '16px',
+        paddingTop: '16px',
+        borderTop: '1px solid rgba(255,255,255,0.03)'
+      }}>
+        <div style={{ fontSize: '12px', color: '#8B95A8' }}>
+          Showing <strong>{startIndex + 1}</strong> to <strong>{Math.min(startIndex + itemsPerPage, totalItems)}</strong> of <strong>{totalItems}</strong> entries
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button 
+            className="export-btn"
+            style={{ padding: '6px 12px' }}
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            <ChevronLeft size={14} /> Previous
+          </button>
+          <span style={{ fontSize: '12px', color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', padding: '0 8px' }}>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button 
+            className="export-btn"
+            style={{ padding: '6px 12px' }}
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next <ChevronRight size={14} />
+          </button>
+        </div>
       </div>
     </div>
   );

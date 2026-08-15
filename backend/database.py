@@ -160,8 +160,103 @@ def create_tables(conn):
         FOREIGN KEY (event_id) REFERENCES activity_logs(event_id)
     )
     ''')
+
+    # Table: server_communications
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS server_communications (
+        comm_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        source_server TEXT NOT NULL,
+        destination_server TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        data_transferred_mb REAL,
+        is_anomaly BOOLEAN DEFAULT 0
+    )
+    ''')
+    
+    # Create index on source_server and timestamp for fast lookups
+    cursor.execute('''
+    CREATE INDEX IF NOT EXISTS idx_server_comm
+    ON server_communications (source_server, timestamp)
+    ''')
     
     conn.commit()
+
+def generate_server_communications(conn):
+    """
+    Generates synthetic server-to-server communication logs.
+    """
+    import random
+    from datetime import datetime, timedelta
+    
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM server_communications")
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name='server_communications'")
+    conn.commit()
+    
+    # 1. Internal servers across departments (12 servers)
+    servers = [
+        "SERVER_HR_01", "SERVER_HR_PORTAL", 
+        "SERVER_FINANCE_DB", "SERVER_PAYROLL", 
+        "SERVER_ENG_BUILD", "SERVER_ENG_CODE", "SERVER_ENG_TEST", 
+        "SERVER_IT_ACTIVE_DIRECTORY", "SERVER_IT_MONITOR", 
+        "SERVER_SALES_CRM", "SERVER_SALES_PORTAL", "SERVER_HQ_NAS"
+    ]
+    
+    # 2. Map of usual partners (2-4 per server)
+    usual_partners = {
+        "SERVER_HR_01": ["SERVER_HR_PORTAL", "SERVER_IT_ACTIVE_DIRECTORY", "SERVER_HQ_NAS"],
+        "SERVER_HR_PORTAL": ["SERVER_HR_01", "SERVER_IT_ACTIVE_DIRECTORY"],
+        "SERVER_FINANCE_DB": ["SERVER_PAYROLL", "SERVER_IT_ACTIVE_DIRECTORY", "SERVER_HQ_NAS"],
+        "SERVER_PAYROLL": ["SERVER_FINANCE_DB", "SERVER_IT_ACTIVE_DIRECTORY"],
+        "SERVER_ENG_BUILD": ["SERVER_ENG_CODE", "SERVER_ENG_TEST", "SERVER_IT_MONITOR"],
+        "SERVER_ENG_CODE": ["SERVER_ENG_BUILD", "SERVER_IT_MONITOR"],
+        "SERVER_ENG_TEST": ["SERVER_ENG_BUILD", "SERVER_IT_MONITOR"],
+        "SERVER_IT_ACTIVE_DIRECTORY": ["SERVER_HR_01", "SERVER_FINANCE_DB", "SERVER_SALES_CRM"],
+        "SERVER_IT_MONITOR": ["SERVER_ENG_BUILD", "SERVER_ENG_CODE", "SERVER_ENG_TEST", "SERVER_HQ_NAS"],
+        "SERVER_SALES_CRM": ["SERVER_SALES_PORTAL", "SERVER_IT_ACTIVE_DIRECTORY", "SERVER_HQ_NAS"],
+        "SERVER_SALES_PORTAL": ["SERVER_SALES_CRM", "SERVER_IT_ACTIVE_DIRECTORY"],
+        "SERVER_HQ_NAS": ["SERVER_HR_01", "SERVER_FINANCE_DB", "SERVER_SALES_CRM", "SERVER_IT_MONITOR"]
+    }
+    
+    # 3. Simulate 75 days of normal communications (approx 5-10 records per day)
+    start_date = datetime.now() - timedelta(days=75)
+    comm_records = []
+    
+    for day in range(76):
+        current_day = start_date + timedelta(days=day)
+        num_records = random.randint(5, 10)
+        for _ in range(num_records):
+            source = random.choice(servers)
+            dest = random.choice(usual_partners[source])
+            time_offset = timedelta(
+                hours=random.randint(0, 23),
+                minutes=random.randint(0, 59),
+                seconds=random.randint(0, 59)
+            )
+            timestamp = (current_day + time_offset).isoformat()
+            data_mb = round(random.uniform(5.0, 500.0), 2)
+            comm_records.append((source, dest, timestamp, data_mb, 0))
+            
+    # 4. Inject 4 specific anomalies in the last 2-3 days
+    recent_day = datetime.now() - timedelta(days=2)
+    
+    anomalies = [
+        ("SERVER_HR_01", "SERVER_ENG_CODE", (recent_day + timedelta(hours=10)).isoformat(), 950.0, 1),
+        ("SERVER_FINANCE_DB", "SERVER_SALES_PORTAL", (recent_day + timedelta(hours=14)).isoformat(), 1420.0, 1),
+        ("SERVER_ENG_BUILD", "SERVER_PAYROLL", (recent_day + timedelta(hours=16, days=1)).isoformat(), 720.0, 1),
+        ("SERVER_SALES_CRM", "SERVER_ENG_TEST", (recent_day + timedelta(hours=19, days=1)).isoformat(), 110.0, 1)
+    ]
+    
+    comm_records.extend(anomalies)
+    
+    # Insert all records
+    cursor.executemany("""
+        INSERT INTO server_communications (source_server, destination_server, timestamp, data_transferred_mb, is_anomaly)
+        VALUES (?, ?, ?, ?, ?)
+    """, comm_records)
+    conn.commit()
+    print(f"Generated {len(comm_records)} server communication logs (including {len(anomalies)} anomalies).")
+
 
 def load_csv_to_db(conn):
     """
@@ -258,13 +353,17 @@ def main():
         # Seed employee HR status
         seed_employee_hr_status(conn)
         
+        # Seed server communications
+        print("Generating synthetic server communication logs...")
+        generate_server_communications(conn)
+        
         # Print summary
         print("\n" + "="*40)
         print("DATABASE SUMMARY")
         print("="*40)
         
         cursor = conn.cursor()
-        tables = ['users', 'resources', 'access_violations', 'activity_logs', 'user_baselines', 'risk_events', 'trusted_devices', 'employee_hr_status']
+        tables = ['users', 'resources', 'access_violations', 'activity_logs', 'user_baselines', 'risk_events', 'trusted_devices', 'employee_hr_status', 'server_communications']
         
         for table in tables:
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name=?", (table,))
