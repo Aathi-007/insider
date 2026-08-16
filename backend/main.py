@@ -272,26 +272,7 @@ class ResolveAlertRequest(BaseModel):
 @app.post("/auth/login")
 def login(request: LoginRequest):
     username = request.username.strip().lower()
-    # Check hardcoded demo users first
-    if username == "admin" and request.password == "admin123":
-        token = create_access_token(data={
-            "sub": "admin",
-            "user_id": "admin_demo",
-            "role": "admin",
-            "department": "IT"
-        })
-        return {"access_token": token, "token_type": "bearer"}
-        
-    elif username == "analyst" and request.password == "analyst123":
-        token = create_access_token(data={
-            "sub": "analyst",
-            "user_id": "analyst_demo",
-            "role": "analyst",
-            "department": "Security"
-        })
-        return {"access_token": token, "token_type": "bearer"}
-        
-    # Fallback to database
+    
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -408,6 +389,7 @@ def health_check():
 
 @app.get("/alerts")
 def get_alerts(
+    api_key: str = Depends(get_api_key),
     page: int = 1, 
     limit: int = 20, 
     search: Optional[str] = None, 
@@ -486,7 +468,7 @@ def get_alerts(
         conn.close()
 
 @app.get("/alerts/summary")
-def get_alerts_summary():
+def get_alerts_summary(api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         df = pd.read_sql_query("SELECT risk_score FROM risk_events", conn)
@@ -504,7 +486,7 @@ def get_alerts_summary():
         conn.close()
 
 @app.get("/analytics/daily-risk")
-def get_daily_risk():
+def get_daily_risk(api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         # Get the average risk score per user per day for the last 30 days
@@ -521,7 +503,7 @@ def get_daily_risk():
         conn.close()
 
 @app.get("/analytics/department-behaviour")
-def get_department_behaviour(range: str = "week"):
+def get_department_behaviour(range: str = "week", api_key: str = Depends(get_api_key)):
     from datetime import timedelta
     conn = get_connection()
     try:
@@ -665,7 +647,7 @@ def get_department_behaviour(range: str = "week"):
     finally:
         conn.close()
 @app.get("/analytics/company-behavior-trend")
-def get_company_behavior_trend():
+def get_company_behavior_trend(api_key: str = Depends(get_api_key)):
     from datetime import timedelta
     now = datetime.now()
     
@@ -711,7 +693,7 @@ def get_company_behavior_trend():
     return res
 
 @app.get("/users")
-def get_users():
+def get_users(api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         query = """
@@ -727,7 +709,7 @@ def get_users():
         conn.close()
 
 @app.get("/user/{user_id}")
-def get_user_data(user_id: str):
+def get_user_data(user_id: str, api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         df_base = pd.read_sql_query("SELECT * FROM user_baselines WHERE user_id = ?", conn, params=(user_id,))
@@ -1086,7 +1068,7 @@ def escalate_alert(risk_event_id: int, current_user: dict = Depends(get_current_
         conn.close()
 
 @app.get("/analytics/rule-accuracy")
-def get_rule_accuracy():
+def get_rule_accuracy(api_key: str = Depends(get_api_key)):
     from risk_scoring import get_false_positive_rate_for_pattern
     reasons_to_check = [
         "unusual_download_volume",
@@ -1109,7 +1091,7 @@ def get_rule_accuracy():
     return accuracy_report
 
 @app.get("/audit-logs")
-def get_audit_logs(page: int = 1, limit: int = 20):
+def get_audit_logs(page: int = 1, limit: int = 20, api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         query_base = "FROM activity_logs"
@@ -1130,7 +1112,7 @@ def get_audit_logs(page: int = 1, limit: int = 20):
         conn.close()
 
 @app.get("/network/communications")
-def get_network_communications():
+def get_network_communications(api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -1156,7 +1138,7 @@ def get_network_communications():
         conn.close()
 
 @app.get("/network/anomalies")
-def get_network_anomalies():
+def get_network_anomalies(api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
@@ -1184,7 +1166,7 @@ def get_network_anomalies():
         conn.close()
 
 @app.get("/network/baselines")
-def get_network_baselines():
+def get_network_baselines(api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         cursor = conn.cursor()

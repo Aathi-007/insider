@@ -20,9 +20,34 @@ def seed_users():
         cursor = conn.cursor()
         
         # Clear existing users for idempotency during dev
-        cursor.execute("DELETE FROM users")
-        
         inserted_users = []
+        
+        # Insert admin demo account
+        admin_pw = get_password_hash("admin123")
+        cursor.execute('''
+            INSERT INTO users (user_id, username, password_hash, department, role)
+            VALUES (?, ?, ?, ?, ?)
+        ''', ("admin_demo", "admin", admin_pw, "IT", "admin"))
+        inserted_users.append({
+            "user_id": "admin_demo",
+            "username": "admin",
+            "department": "IT",
+            "password": "admin123"
+        })
+        
+        # Insert analyst demo account
+        analyst_pw = get_password_hash("analyst123")
+        cursor.execute('''
+            INSERT INTO users (user_id, username, password_hash, department, role)
+            VALUES (?, ?, ?, ?, ?)
+        ''', ("analyst_demo", "analyst", analyst_pw, "Security", "analyst"))
+        inserted_users.append({
+            "user_id": "analyst_demo",
+            "username": "analyst",
+            "department": "Security",
+            "password": "analyst123"
+        })
+
         default_password = "password123"
         hashed_pw = get_password_hash(default_password)
         
