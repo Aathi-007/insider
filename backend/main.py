@@ -502,6 +502,7 @@ def get_daily_risk(api_key: str = Depends(get_api_key)):
         GROUP BY r.user_id, date(r.flagged_at)
         """
         df = pd.read_sql_query(query, conn)
+        df = df.replace({float('nan'): None})
         return df.to_dict(orient="records")
     finally:
         conn.close()
@@ -597,7 +598,8 @@ def get_department_behaviour(range_param: str = Query("week", alias="range"), ap
             
             # Sparkline data for last 14 days
             sparkline_data = []
-            for i in range(14):
+            import builtins
+            for i in builtins.range(14):
                 day = (now - timedelta(days=(13 - i))).date()
                 day_alerts = dept_df_all[dept_df_all['flagged_dt'].dt.date == day]
                 if not day_alerts.empty:
@@ -708,6 +710,7 @@ def get_users(api_key: str = Depends(get_api_key)):
         ORDER BY max_risk DESC, u.username ASC
         """
         df = pd.read_sql_query(query, conn)
+        df = df.replace({float('nan'): None})
         return df.to_dict(orient="records")
     finally:
         conn.close()
@@ -717,14 +720,17 @@ def get_user_data(user_id: str, api_key: str = Depends(get_api_key)):
     conn = get_connection()
     try:
         df_base = pd.read_sql_query("SELECT * FROM user_baselines WHERE user_id = ?", conn, params=(user_id,))
+        df_base = df_base.replace({float('nan'): None})
         if df_base.empty:
             raise HTTPException(status_code=404, detail=f"User {user_id} not found in baselines.")
         baseline = df_base.iloc[0].to_dict()
         
         df_activity = pd.read_sql_query("SELECT * FROM activity_logs WHERE user_id = ? ORDER BY timestamp DESC LIMIT 100", conn, params=(user_id,))
+        df_activity = df_activity.replace({float('nan'): None})
         activity_history = df_activity.to_dict(orient='records')
         
         df_risk = pd.read_sql_query("SELECT * FROM risk_events WHERE user_id = ? ORDER BY risk_score DESC", conn, params=(user_id,))
+        df_risk = df_risk.replace({float('nan'): None})
         risk_history = []
         for _, row in df_risk.iterrows():
             r_dict = row.to_dict()
@@ -782,6 +788,19 @@ def simulate_event(event: EventSimulation, http_request: Request, api_key: str =
         
         df_all['department_mismatch'] = (df_all['accessed_department'] != df_all['department']).astype(int)
         
+        # Add missing feature engineering for ml model
+        df_all['timestamp_dt'] = pd.to_datetime(df_all['timestamp'], format='mixed')
+        df_all = df_all.sort_values(by=['user_id', 'timestamp_dt'])
+        
+        df_all['combo_hash'] = df_all['user_id'] + '_' + df_all['location'] + '_' + df_all['device_id']
+        df_all['new_location_device_combo'] = (~df_all.duplicated(subset=['combo_hash'], keep='first')).astype(int)
+        df_all = df_all.drop(columns=['combo_hash'])
+        
+        df_all = df_all.set_index('timestamp_dt')
+        df_all['rolling_30d_download_mb'] = df_all.groupby('user_id')['download_mb'].transform(lambda x: x.rolling('30D').sum())
+        df_all = df_all.reset_index(drop=False)
+        df_all['rolling_30d_download_mb'] = df_all['rolling_30d_download_mb'].fillna(df_all['download_mb'])
+        
         # Safely handle unseen labels for transform across all historical data
         unseen_locs = set(df_all['location']) - set(encoders['location'].classes_)
         if unseen_locs:
@@ -794,7 +813,7 @@ def simulate_event(event: EventSimulation, http_request: Request, api_key: str =
         df_all['location_encoded'] = encoders['location'].transform(df_all['location'])
         df_all['device_encoded'] = encoders['device'].transform(df_all['device_id'])
         
-        feature_cols = ['download_mb', 'login_hour', 'location_encoded', 'device_encoded', 'department_mismatch', 'files_accessed']
+        feature_cols = ['download_mb', 'login_hour', 'location_encoded', 'device_encoded', 'department_mismatch', 'files_accessed', 'rolling_30d_download_mb', 'new_location_device_combo']
         
         scores_all = model.decision_function(df_all[feature_cols])
         scaler = MinMaxScaler(feature_range=(0, 100))

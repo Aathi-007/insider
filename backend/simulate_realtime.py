@@ -82,40 +82,40 @@ def get_demo_events():
         },
         
         # --- ANOMALOUS EVENTS ---
-        # 1. Massive download anomaly for U001 (Average is ~16MB)
+        # 1. Massive download anomaly for U005 (On leave!)
         {
-            "user_id": "U001",
+            "user_id": "U005",
             "timestamp": now,
             "login_hour": 11,
             "location": "East Jill",
             "ip_address": "192.168.1.10",
             "device_id": "0822e8f3",
-            "download_mb": 4500.0,
-            "files_accessed": 50,
+            "download_mb": 99999.0,
+            "files_accessed": 99999,
             "accessed_department": "HR"
         },
-        # 2. Login time and location anomaly for U011 (Usually 9-16, East Nathaniel)
+        # 2. Login time and location anomaly for U005 (On leave)
         {
-            "user_id": "U011",
+            "user_id": "U005",
             "timestamp": now,
             "login_hour": 3,
             "location": "Unknown Foreign City",
             "ip_address": "203.0.113.5",
             "device_id": "00257ad1",
-            "download_mb": 10.0,
-            "files_accessed": 2,
+            "download_mb": 99999.0,
+            "files_accessed": 99999,
             "accessed_department": "Engineering"
         },
-        # 3. Department mismatch and new device for U001 (Usually HR, device 0822e8f3)
+        # 3. Department mismatch and new device for U005
         {
-            "user_id": "U001",
+            "user_id": "U005",
             "timestamp": now,
             "login_hour": 13,
             "location": "East Jill",
             "ip_address": "192.168.1.10",
             "device_id": "rogue_device_99",
-            "download_mb": 5.0,
-            "files_accessed": 100,
+            "download_mb": 99999.0,
+            "files_accessed": 99999,
             "accessed_department": "Top Secret Engineering Data"
         }
     ]
