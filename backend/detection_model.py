@@ -36,12 +36,26 @@ def engineer_features(df):
     df['location_encoded'] = location_encoder.fit_transform(df['location'])
     df['device_encoded'] = device_encoder.fit_transform(df['device_id'])
     
+    # Calculate 30-day rolling sum of download_mb per user
+    df['timestamp_dt'] = pd.to_datetime(df['timestamp'], format='mixed')
+    df = df.sort_values(by=['user_id', 'timestamp_dt'])
+    
+    # 1 if this (user_id, location, device_id) combo has never been seen before in their history
+    df['combo_hash'] = df['user_id'] + '_' + df['location'] + '_' + df['device_id']
+    df['new_location_device_combo'] = (~df.duplicated(subset=['combo_hash'], keep='first')).astype(int)
+    df = df.drop(columns=['combo_hash'])
+    
+    df = df.set_index('timestamp_dt')
+    df['rolling_30d_download_mb'] = df.groupby('user_id')['download_mb'].transform(lambda x: x.rolling('30D').sum())
+    df = df.reset_index(drop=False)
+    df['rolling_30d_download_mb'] = df['rolling_30d_download_mb'].fillna(df['download_mb'])
+    
     encoders = {
         'location': location_encoder,
         'device': device_encoder
     }
     
-    feature_cols = ['download_mb', 'login_hour', 'location_encoded', 'device_encoded', 'department_mismatch', 'files_accessed']
+    feature_cols = ['download_mb', 'login_hour', 'location_encoded', 'device_encoded', 'department_mismatch', 'files_accessed', 'rolling_30d_download_mb', 'new_location_device_combo']
     
     return df, encoders, feature_cols
 

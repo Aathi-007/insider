@@ -55,6 +55,12 @@ def generate_normal_events(users, start_date, num_days=90):
     dormant_start = 30
     dormant_end = 65
     
+    # Pick one user to be the low and slow exfiltrator
+    low_slow_user = random.choice([u for u in users if not u.get('is_dormant_candidate')])
+    low_slow_user['is_low_slow_candidate'] = True
+    low_slow_start = 40
+    low_slow_end = 80
+    
     for day in range(num_days):
         current_date = start_date + timedelta(days=day)
         is_weekend = current_date.weekday() >= 5
@@ -88,6 +94,14 @@ def generate_normal_events(users, start_date, num_days=90):
                 # Download MB: average + small variation (e.g. +/- 20%)
                 download_mb = max(0.1, random.gauss(user['avg_download'], user['avg_download'] * 0.2))
                 
+                is_anomaly = False
+                anomaly_reason = ''
+                
+                if user.get('is_low_slow_candidate') and low_slow_start <= day <= low_slow_end:
+                    download_mb += 40.0 # extra 40MB every event, adds up significantly over 30 days
+                    is_anomaly = True
+                    anomaly_reason = 'Low and slow data exfiltration'
+                
                 files_accessed = random.randint(1, 10)
                 
                 # Accessed department (90% own department)
@@ -109,8 +123,8 @@ def generate_normal_events(users, start_date, num_days=90):
                     'download_mb': round(download_mb, 2),
                     'files_accessed': files_accessed,
                     'accessed_department': accessed_department,
-                    'is_anomaly': False,
-                    'anomaly_reason': '' # Internal field for our tracking
+                    'is_anomaly': is_anomaly,
+                    'anomaly_reason': anomaly_reason
                 })
                 
     return events, dormant_user

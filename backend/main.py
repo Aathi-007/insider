@@ -6,7 +6,7 @@ from datetime import datetime
 from collections import deque
 import time
 import logging
-from fastapi import FastAPI, HTTPException, Security, Depends, Request
+from fastapi import FastAPI, HTTPException, Security, Depends, Request, Query
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
@@ -288,6 +288,9 @@ def login(request: LoginRequest):
         if not verify_password(request.password, password_hash):
             raise HTTPException(status_code=401, detail="Invalid username or password")
             
+        if role not in ['admin', 'analyst']:
+            raise HTTPException(status_code=403, detail="Access Denied: SOC clearance required.")
+            
         token = create_access_token(data={
             "sub": username_db, 
             "user_id": user_id, 
@@ -439,6 +442,7 @@ def get_alerts(
         """
         
         df, total_count, total_pages = get_paginated_results(select_query, count_query, tuple(params), page, limit, conn)
+        df = df.replace({float('nan'): None})
         
         alerts = []
         for _, row in df.iterrows():
@@ -503,7 +507,7 @@ def get_daily_risk(api_key: str = Depends(get_api_key)):
         conn.close()
 
 @app.get("/analytics/department-behaviour")
-def get_department_behaviour(range: str = "week", api_key: str = Depends(get_api_key)):
+def get_department_behaviour(range_param: str = Query("week", alias="range"), api_key: str = Depends(get_api_key)):
     from datetime import timedelta
     conn = get_connection()
     try:
@@ -520,10 +524,10 @@ def get_department_behaviour(range: str = "week", api_key: str = Depends(get_api
         now = datetime.now()
         
         # Filter for range
-        if range == "month":
+        if range_param == "month":
             cutoff = now - timedelta(days=30)
             df_period = df[df['flagged_dt'] >= cutoff]
-        elif range == "alltime":
+        elif range_param == "alltime":
             df_period = df
         else: # default: week
             cutoff = now - timedelta(days=7)

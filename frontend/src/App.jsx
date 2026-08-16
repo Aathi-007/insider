@@ -260,37 +260,6 @@ function LoginView({ setJwt }) {
           </button>
         </form>
 
-        {/* Quick Demo Logins Section */}
-        <div style={{
-          marginTop: '8px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-          paddingTop: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}>
-          <span style={{ fontSize: '10px', color: '#64748B', fontWeight: 'bold', textAlign: 'center', textTransform: 'uppercase' }}>
-            Quick Demo Presets Logins
-          </span>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <button
-              onClick={() => handleDemoLogin('analyst', 'analyst123')}
-              className="export-btn"
-              style={{ padding: '8px', justifyContent: 'center', fontSize: '11px' }}
-              disabled={loading}
-            >
-              🔐 Log in as Analyst
-            </button>
-            <button
-              onClick={() => handleDemoLogin('admin', 'admin123')}
-              className="export-btn"
-              style={{ padding: '8px', justifyContent: 'center', fontSize: '11px', borderColor: 'rgba(99,102,241,0.2)', color: '#818CF8' }}
-              disabled={loading}
-            >
-              🛡️ Log in as Admin
-            </button>
-          </div>
-        </div>
 
       </div>
     </div>
