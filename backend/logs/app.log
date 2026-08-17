@@ -24622,3 +24622,285 @@ Feature names seen at fit time, yet now missing:
 2026-08-16 20:58:20,192 [INFO] Response: POST /login - Status: 401
 2026-08-16 20:58:24,770 [INFO] Incoming request: POST /simulate-event
 2026-08-16 20:58:24,919 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-17 01:05:00,072 [INFO] Incoming request: OPTIONS /alerts
+2026-08-17 01:05:00,075 [INFO] Incoming request: OPTIONS /alerts
+2026-08-17 01:05:00,076 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-17 01:05:00,078 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-17 01:05:00,083 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-17 01:05:00,086 [INFO] Incoming request: OPTIONS /alerts
+2026-08-17 01:05:00,088 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-17 01:05:00,092 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-17 01:05:00,097 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-17 01:05:00,100 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:00,107 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-17 01:05:00,113 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-17 01:05:00,115 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-17 01:05:00,117 [INFO] Incoming request: OPTIONS /alerts
+2026-08-17 01:05:00,121 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-17 01:05:00,122 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:00,125 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-17 01:05:00,127 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:00,129 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-17 01:05:00,131 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-17 01:05:00,133 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:00,137 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:00,141 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-17 01:05:00,144 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:00,145 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:00,148 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:00,148 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:00,150 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:00,154 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:00,156 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:00,161 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:00,179 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:00,182 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:00,187 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:00,190 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:00,211 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:00,214 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:00,226 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:00,228 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:00,234 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:00,236 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:00,245 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:00,246 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:00,253 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:00,267 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:00,271 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:00,277 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:00,399 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:00,401 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:00,510 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:26,202 [INFO] Incoming request: OPTIONS /auth/login
+2026-08-17 01:05:26,203 [INFO] Response: OPTIONS /auth/login - Status: 200
+2026-08-17 01:05:26,205 [INFO] Incoming request: POST /auth/login
+2026-08-17 01:05:26,528 [INFO] Response: POST /auth/login - Status: 200
+2026-08-17 01:05:26,558 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:26,575 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:30,559 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:30,578 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:32,672 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:32,681 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:32,684 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:32,695 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:33,931 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:33,932 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:33,933 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:33,936 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:33,937 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:33,952 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:33,954 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:33,959 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:33,964 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:33,965 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:33,969 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:33,973 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:33,975 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:33,984 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:33,989 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:33,998 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:34,002 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:34,014 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:34,022 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:34,148 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:34,151 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:34,232 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:36,683 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:36,703 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:36,704 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:36,704 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:36,705 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:36,707 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:36,709 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:36,711 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:36,720 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:36,721 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:36,722 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:36,723 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:36,725 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:36,733 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:36,738 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:36,746 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:36,749 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:36,751 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:36,753 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:36,762 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:36,769 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:36,882 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:36,885 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:37,000 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:42,674 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:42,695 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:42,699 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:42,700 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:42,701 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:42,707 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:42,717 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:42,723 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:42,740 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:42,746 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:42,746 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:42,748 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:42,749 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:42,749 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:42,750 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:42,753 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:42,762 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:42,767 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:42,774 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:42,789 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:42,797 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:42,799 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:42,812 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:42,934 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:42,937 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:43,057 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:45,443 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:45,445 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:45,457 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:45,461 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:45,474 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:45,484 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:46,362 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:46,376 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:46,445 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:46,446 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:46,447 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:48,443 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:48,444 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:48,458 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:48,464 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:48,479 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:48,486 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:50,370 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:50,391 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:50,457 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:50,459 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:50,460 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:51,443 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:51,444 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:51,458 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:51,461 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:51,474 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:51,483 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:52,446 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:05:52,597 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:05:54,361 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:54,384 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:54,442 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:54,443 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:54,445 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:54,446 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:54,448 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:05:54,464 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:54,467 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:54,481 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:54,489 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:57,439 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:05:57,443 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:57,456 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:57,463 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:05:57,483 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:05:57,487 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:05:58,367 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:58,384 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:05:58,446 [INFO] Incoming request: GET /alerts
+2026-08-17 01:05:58,447 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:05:58,448 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:06:00,443 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:06:00,444 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:00,459 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:00,469 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:06:00,476 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:00,493 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:02,363 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:02,384 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:06:02,439 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:02,441 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:06:02,442 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:06:02,444 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:06:02,555 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:06:03,447 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:06:03,448 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:03,464 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:03,469 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:03,484 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:03,490 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:06:06,376 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:06,395 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:06:06,442 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:06,443 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:06:06,444 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:06:06,445 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:06:06,447 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:06,459 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:06,461 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:06,473 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:06,481 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:06:08,558 [INFO] Incoming request: OPTIONS /user/U005
+2026-08-17 01:06:08,559 [INFO] Incoming request: OPTIONS /user/U005
+2026-08-17 01:06:08,560 [INFO] Response: OPTIONS /user/U005 - Status: 200
+2026-08-17 01:06:08,561 [INFO] Response: OPTIONS /user/U005 - Status: 200
+2026-08-17 01:06:08,563 [INFO] Incoming request: GET /user/U005
+2026-08-17 01:06:08,609 [INFO] Response: GET /user/U005 - Status: 200
+2026-08-17 01:06:08,611 [INFO] Incoming request: GET /user/U005
+2026-08-17 01:06:08,613 [INFO] Incoming request: OPTIONS /admin/hr-status/U005
+2026-08-17 01:06:08,617 [INFO] Response: OPTIONS /admin/hr-status/U005 - Status: 200
+2026-08-17 01:06:08,623 [INFO] Incoming request: GET /admin/hr-status/U005
+2026-08-17 01:06:08,649 [INFO] Response: GET /user/U005 - Status: 200
+2026-08-17 01:06:08,651 [INFO] Response: GET /admin/hr-status/U005 - Status: 200
+2026-08-17 01:06:08,660 [INFO] Incoming request: GET /admin/hr-status/U005
+2026-08-17 01:06:08,664 [INFO] Response: GET /admin/hr-status/U005 - Status: 200
+2026-08-17 01:06:08,673 [INFO] Incoming request: OPTIONS /admin/devices/U005
+2026-08-17 01:06:08,674 [INFO] Response: OPTIONS /admin/devices/U005 - Status: 200
+2026-08-17 01:06:08,677 [INFO] Incoming request: GET /admin/devices/U005
+2026-08-17 01:06:08,684 [INFO] Response: GET /admin/devices/U005 - Status: 200
+2026-08-17 01:06:08,690 [INFO] Incoming request: GET /admin/devices/U005
+2026-08-17 01:06:08,697 [INFO] Response: GET /admin/devices/U005 - Status: 200
+2026-08-17 01:06:09,451 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:06:09,453 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:09,459 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:09,461 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:09,473 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:09,476 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:06:10,363 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:10,381 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:06:10,448 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:10,448 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:06:10,449 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:06:12,452 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:06:12,453 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:12,453 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-17 01:06:12,469 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:12,475 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:12,488 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:12,495 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:06:12,654 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-17 01:06:14,363 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:14,382 [INFO] Response: GET /alerts - Status: 200
+2026-08-17 01:06:14,440 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:14,441 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:06:14,442 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:06:15,442 [INFO] Incoming request: GET /alerts/summary
+2026-08-17 01:06:15,443 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:15,459 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:15,463 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-17 01:06:15,475 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-17 01:06:15,478 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-17 01:06:17,429 [INFO] Incoming request: OPTIONS /analytics/rule-accuracy
+2026-08-17 01:06:17,430 [INFO] Incoming request: OPTIONS /analytics/rule-accuracy
+2026-08-17 01:06:17,431 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:17,431 [INFO] Response: OPTIONS /analytics/rule-accuracy - Status: 200
+2026-08-17 01:06:17,433 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:06:17,434 [INFO] Response: OPTIONS /analytics/rule-accuracy - Status: 200
+2026-08-17 01:06:17,437 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:06:17,439 [INFO] Incoming request: GET /analytics/rule-accuracy
+2026-08-17 01:06:17,441 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:17,442 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-17 01:06:17,443 [INFO] Response: GET /alerts - Status: 401
+2026-08-17 01:06:17,461 [INFO] Response: GET /analytics/rule-accuracy - Status: 200
+2026-08-17 01:06:17,471 [INFO] Incoming request: GET /analytics/rule-accuracy
+2026-08-17 01:06:17,493 [INFO] Response: GET /analytics/rule-accuracy - Status: 200
+2026-08-17 01:06:18,363 [INFO] Incoming request: GET /alerts
+2026-08-17 01:06:18,381 [INFO] Response: GET /alerts - Status: 200
