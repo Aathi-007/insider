@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, ArrowUpDown, ChevronLeft, ChevronRight, 
-  RefreshCw, AlertCircle, ShieldAlert, Filter 
+  RefreshCw, AlertCircle, ShieldAlert, Filter, ShieldCheck 
 } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -280,12 +280,27 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
   const departments = ['All', ...new Set(alerts.map(a => a.department))];
   const statusTabs = ['All', 'New', 'Under Review', 'Escalated', 'Resolved'];
 
-  if (loading && alerts.length === 0) {
+  if (localLoading && localAlerts.length === 0) {
     return (
       <div className="dashboard-card">
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading threat logs...</p>
+        <div className="dashboard-card-header">
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ShieldAlert size={18} style={{ color: 'var(--color-high)' }} />
+            Threat Detection Register
+          </h2>
+        </div>
+        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {[1, 2, 3, 4, 5].map(i => (
+            <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+              <div className="skeleton-box" style={{ width: '36px', height: '36px', borderRadius: '50%' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flexGrow: 1 }}>
+                <div className="skeleton-box" style={{ width: '40%', height: '12px' }} />
+                <div className="skeleton-box" style={{ width: '20%', height: '8px' }} />
+              </div>
+              <div className="skeleton-box" style={{ width: '80px', height: '16px' }} />
+              <div className="skeleton-box" style={{ width: '60px', height: '16px' }} />
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -369,13 +384,30 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
       </div>
 
       {error && alerts.length === 0 ? (
-        <div className="no-data">
-          <AlertCircle size={24} style={{ color: 'var(--color-high)', marginBottom: '8px' }} />
-          <p>{error} - is the backend running?</p>
+        <div className="empty-state-container" style={{ padding: '40px 24px' }}>
+          <AlertCircle size={32} style={{ color: 'var(--color-high)', marginBottom: '12px' }} />
+          <h4 style={{ color: '#fff', fontSize: '13px', fontWeight: 'bold' }}>SOC Console Connection Error</h4>
+          <p style={{ fontSize: '11px', color: '#8B95A8', marginTop: '4px' }}>{error}. Check if your backend server is active.</p>
         </div>
       ) : sortedAlerts.length === 0 ? (
-        <div className="no-data">
-          <p>No threat entries match your filter criteria.</p>
+        <div className="empty-state-container" style={{ padding: '60px 24px' }}>
+          <ShieldCheck size={36} style={{ color: '#10B981', marginBottom: '12px' }} />
+          <h4 style={{ color: '#fff', fontSize: '13px', fontWeight: 'bold' }}>Sentinel Queue Secure</h4>
+          <p style={{ fontSize: '11px', color: '#8B95A8', marginTop: '4px' }}>No alerts match this filter.</p>
+          {(selectedStatus !== 'All' || searchQuery !== '' || selectedDept !== 'All') && (
+            <button 
+              className="export-btn" 
+              style={{ marginTop: '16px', background: 'rgba(0, 217, 255, 0.08)', borderColor: '#00D9FF', color: '#00D9FF' }}
+              onClick={() => {
+                setSelectedStatus('All');
+                setSearchQuery('');
+                setSelectedDept('All');
+                setCurrentPage(1);
+              }}
+            >
+              Clear Filters
+            </button>
+          )}
         </div>
       ) : (
         <>
@@ -389,7 +421,7 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
                     </div>
                   </th>
                   <th>Department</th>
-                  <th onClick={() => handleSort('risk_score')}>
+                  <th onClick={() => handleSort('risk_score')} title="Risk Score: A weighted combination of rule-based violations and machine learning anomaly indicators.">
                     <div className="th-content">
                       Threat Index <ArrowUpDown size={12} />
                     </div>

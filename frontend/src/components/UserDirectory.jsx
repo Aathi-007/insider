@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Search, AlertTriangle, ShieldCheck, Activity } from 'lucide-react';
+import { fetchWithRetry } from '../utils/api';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
 
-export default function UserDirectory({ onUserClick }) {
+export default function UserDirectory({ onUserClick, jwt }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -12,11 +13,15 @@ export default function UserDirectory({ onUserClick }) {
 
   useEffect(() => {
     let isMounted = true;
+    if (!jwt) return;
     
     async function fetchUsers() {
       try {
-        const response = await fetch(`${API_BASE}/users`, {
-          headers: { 'X-API-Key': API_KEY }
+        const response = await fetchWithRetry(`${API_BASE}/users`, {
+          headers: { 
+            'X-API-Key': API_KEY,
+            'Authorization': `Bearer ${jwt}`
+          }
         });
         
         if (!response.ok) {
@@ -44,7 +49,7 @@ export default function UserDirectory({ onUserClick }) {
       isMounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [jwt]);
 
   const filteredUsers = users.filter(u => 
     u.username.toLowerCase().includes(searchTerm.toLowerCase()) || 

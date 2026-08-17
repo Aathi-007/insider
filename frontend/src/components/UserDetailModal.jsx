@@ -10,8 +10,63 @@ import {
   Download, Clock, Laptop, Globe, AlertTriangle, User 
 } from 'lucide-react';
 
+import { fetchWithRetry } from '../utils/api';
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
+
+const RULE_POINTS = {
+  unusual_download_volume: 25,
+  unusual_login_time: 15,
+  unusual_location: 20,
+  device_pending_verification: 8,
+  new_unrecognized_device: 15,
+  department_mismatch: 25,
+  activity_during_leave_period: 30,
+  concurrent_session_conflict: 35,
+};
+
+const getScoreMathString = (item) => {
+  const reasons = item.reasons || [];
+  const mlScore = item.ml_anomaly_score || 0;
+  
+  // Calculate rule score
+  let ruleScore = 0;
+  const ruleTerms = [];
+  
+  reasons.forEach(r => {
+    if (RULE_POINTS[r]) {
+      ruleScore += RULE_POINTS[r];
+      const displayName = r.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      ruleTerms.push(`${displayName} (+${RULE_POINTS[r]} Rule Pts)`);
+    }
+  });
+  
+  ruleScore = Math.min(ruleScore, 100);
+  
+  const hasNotice = reasons.includes('employee_in_notice_period');
+  
+  let mathStr = "";
+  if (ruleTerms.length > 0) {
+    mathStr += ruleTerms.join(" + ");
+    mathStr += ` [Rule Score: ${ruleScore} * 0.6 = +${Math.round(0.6 * ruleScore)}]`;
+  } else {
+    mathStr += "No Rule Violations (0 * 0.6 = +0)";
+  }
+  
+  mathStr += ` + ML Anomaly (Score: ${mlScore.toFixed(0)} * 0.4 = +${Math.round(0.4 * mlScore)})`;
+  
+  const baseTotal = Math.round(0.6 * ruleScore + 0.4 * mlScore);
+  
+  if (hasNotice) {
+    const noticeTotal = Math.min(100, Math.round(baseTotal * 1.3));
+    mathStr += ` * 1.3 Notice Multiplier = ${noticeTotal}/100`;
+  } else {
+    mathStr += ` = ${item.risk_score}/100`;
+  }
+  
+  return mathStr;
+};
 
 export default function UserDetailModal({ userId, onClose, jwt }) {
   const [data, setData] = useState(null);
@@ -29,7 +84,7 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
   const fetchUserData = async () => {
     try {
       // 1. Fetch Core User Forensics
-      const response = await fetch(`${API_BASE}/user/${userId}`, {
+      const response = await fetchWithRetry(`${API_BASE}/user/${userId}`, {
         headers: { 
           'X-API-Key': API_KEY,
           'Authorization': `Bearer ${jwt}`
@@ -42,7 +97,7 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
       setData(jsonData);
 
       // 2. Fetch HR Status Context
-      const hrRes = await fetch(`${API_BASE}/admin/hr-status/${userId}`, {
+      const hrRes = await fetchWithRetry(`${API_BASE}/admin/hr-status/${userId}`, {
         headers: { 
           'X-API-Key': API_KEY,
           'Authorization': `Bearer ${jwt}`
@@ -54,7 +109,7 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
       }
 
       // 3. Fetch Device Trust Status List
-      const devRes = await fetch(`${API_BASE}/admin/devices/${userId}`, {
+      const devRes = await fetchWithRetry(`${API_BASE}/admin/devices/${userId}`, {
         headers: { 
           'X-API-Key': API_KEY,
           'Authorization': `Bearer ${jwt}`
@@ -139,7 +194,7 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
   // API Action Handlers
   const handleAssign = async (alertId) => {
     try {
-      const response = await fetch(`${API_BASE}/alerts/${alertId}/assign`, {
+      const response = await fetchWithRetry(`${API_BASE}/alerts/${alertId}/assign`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +215,7 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
 
     setSubmittingNote(prev => ({ ...prev, [alertId]: true }));
     try {
-      const response = await fetch(`${API_BASE}/alerts/${alertId}/add-note`, {
+      const response = await fetchWithRetry(`${API_BASE}/alerts/${alertId}/add-note`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -189,7 +244,7 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
 
     setSubmittingResolve(prev => ({ ...prev, [alertId]: true }));
     try {
-      const response = await fetch(`${API_BASE}/alerts/${alertId}/resolve`, {
+      const response = await fetchWithRetry(`${API_BASE}/alerts/${alertId}/resolve`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -483,7 +538,7 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
               {/* Left Side: Radar Chart and HR Context Profile */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div className="radar-section">
-                  <h4>
+                  <h4 title="ML Anomaly Score: An unsupervised Isolation Forest model score indicating how unusual this user's pattern is relative to historical baseline behavior.">
                     <AlertTriangle size={14} style={{ color: 'var(--color-high)' }} />
                     Behavioral Anomalies Vector
                   </h4>
@@ -681,7 +736,9 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
                         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.02)', paddingBottom: '10px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span style={{ fontWeight: 'bold', fontSize: '13px', color: '#fff' }}>Incident #{item.risk_event_id}</span>
-                            {renderRiskCircle(item.risk_score)}
+                            <span title="Risk Score: A weighted combination of rule-based violations and machine learning anomaly indicators.">
+                              {renderRiskCircle(item.risk_score)}
+                            </span>
                             {renderStatusBadge(item.status)}
                           </div>
                           <span style={{ fontSize: '11px', color: '#64748b' }}>
@@ -697,7 +754,7 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
                         </div>
 
                         {/* Rule Match Tags */}
-                        <div className="reasons-container" style={{ margin: '4px 0' }}>
+                        <div className="reasons-container" style={{ margin: '4px 0 0 0' }}>
                           {item.reasons && item.reasons.length > 0 ? (
                             item.reasons.map((r, i) => (
                               <span key={i} className="reason-pill anomaly">{formatReason(r)}</span>
@@ -705,6 +762,26 @@ export default function UserDetailModal({ userId, onClose, jwt }) {
                           ) : (
                             <span className="reason-pill">Baseline Check</span>
                           )}
+                        </div>
+
+                        {/* Score Calculation Math Telemetry */}
+                        <div style={{
+                          background: '#060B14',
+                          border: '1px solid #1C2942',
+                          borderRadius: '4px',
+                          padding: '10px 14px',
+                          fontSize: '11px',
+                          fontFamily: "'JetBrains Mono', monospace",
+                          color: '#00D9FF',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '4px',
+                          boxShadow: 'inset 0 0 8px rgba(0,217,255,0.02)'
+                        }}>
+                          <span style={{ color: '#8B95A8', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 'bold' }}>
+                            Telemetry Score Calculation Math:
+                          </span>
+                          <span>{getScoreMathString(item)}</span>
                         </div>
 
                         {/* Assignee Operations Block */}

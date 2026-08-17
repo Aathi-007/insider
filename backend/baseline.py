@@ -465,6 +465,103 @@ def print_baseline_summary():
         conn.close()
 
 
+def detect_gradual_drift(conn):
+    """
+    Compares each user's 7-day rolling average download_mb against their 30-day baseline average.
+    If the 7-day average is more than 40% higher for 5+ consecutive days without any single day
+    triggering the normal spike threshold (> 3x baseline), it returns a list of risk events to insert.
+    """
+    import pandas as pd
+    drift_events = []
+    
+    try:
+        # Get baselines
+        df_base = pd.read_sql_query("SELECT user_id, avg_download_mb FROM user_baselines", conn)
+        if df_base.empty:
+            return []
+            
+        baselines = df_base.set_index('user_id')['avg_download_mb'].to_dict()
+        
+        for user_id, baseline_avg in baselines.items():
+            if baseline_avg <= 0:
+                continue
+                
+            # Fetch logs for this user
+            df_user = pd.read_sql_query("""
+                SELECT event_id, timestamp, download_mb FROM activity_logs 
+                WHERE user_id = ? 
+                ORDER BY timestamp ASC
+            """, conn, params=(user_id,))
+            
+            if df_user.empty or len(df_user) < 5:
+                continue
+                
+            df_user['parsed_time'] = pd.to_datetime(df_user['timestamp'], format='mixed', errors='coerce')
+            df_user = df_user.dropna(subset=['parsed_time'])
+            df_user['date'] = df_user['parsed_time'].dt.date
+            
+            # Group by date to get daily records
+            daily_groups = df_user.groupby('date')
+            unique_dates = sorted(list(daily_groups.groups.keys()))
+            
+            matching_dates = []
+            for current_date in unique_dates:
+                # 7-day window: [current_date - 6 days, current_date]
+                start_window = current_date - pd.Timedelta(days=6)
+                window_events = df_user[(df_user['date'] >= start_window) & (df_user['date'] <= current_date)]
+                
+                if window_events.empty:
+                    continue
+                    
+                rolling_7d_avg = window_events['download_mb'].mean()
+                
+                # Check if rolling average is > 1.4 * baseline_avg
+                is_above_40 = rolling_7d_avg > 1.4 * baseline_avg
+                
+                # Check if any event on current_date has download_mb > 3.0 * baseline_avg
+                day_events = daily_groups.get_group(current_date)
+                has_spike = any(day_events['download_mb'] > 3.0 * baseline_avg)
+                
+                if is_above_40 and not has_spike:
+                    matching_dates.append(current_date)
+                    
+            # Find consecutive runs of 5+ days
+            consecutive_runs = []
+            current_run = []
+            for d in matching_dates:
+                if not current_run:
+                    current_run.append(d)
+                else:
+                    if (d - current_run[-1]).days == 1:
+                        current_run.append(d)
+                    else:
+                        if len(current_run) >= 5:
+                            consecutive_runs.append(current_run)
+                        current_run = [d]
+            if len(current_run) >= 5:
+                consecutive_runs.append(current_run)
+                
+            # For each run of 5+ days, create an alert associated with the last event of the last day
+            for run in consecutive_runs:
+                last_day = run[-1]
+                last_day_events = daily_groups.get_group(last_day)
+                last_event = last_day_events.iloc[-1]
+                
+                drift_events.append((
+                    int(last_event['event_id']),
+                    user_id,
+                    45, # lower severity score
+                    "gradual_usage_increase",
+                    str(last_event['timestamp']),
+                    0 # False/reviewed
+                ))
+                
+    except Exception as e:
+        print(f"Error detecting gradual drift: {e}")
+        
+    return drift_events
+
+
 if __name__ == "__main__":
     print("Recalculating all user baselines (including shift detection)...")
     recalculate_all_baselines()

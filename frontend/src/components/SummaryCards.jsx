@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AlertTriangle, ShieldAlert, ShieldQuestion, Users, AlertCircle } from 'lucide-react';
+import { fetchWithRetry } from '../utils/api';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
@@ -44,7 +45,7 @@ function CountUp({ value }) {
   return <span>{count}</span>;
 }
 
-export default function SummaryCards({ onFetchError }) {
+export default function SummaryCards({ onFetchError, jwt }) {
   const [summary, setSummary] = useState({
     total_alerts: 0,
     high_risk_count: 0,
@@ -55,12 +56,14 @@ export default function SummaryCards({ onFetchError }) {
 
   useEffect(() => {
     let isMounted = true;
+    if (!jwt) return;
 
     async function fetchSummary() {
       try {
-        const response = await fetch(`${API_BASE}/alerts/summary`, {
+        const response = await fetchWithRetry(`${API_BASE}/alerts/summary`, {
           headers: { 
-            'X-API-Key': API_KEY
+            'X-API-Key': API_KEY,
+            'Authorization': `Bearer ${jwt}`
           }
         });
         if (!response.ok) {
@@ -95,7 +98,7 @@ export default function SummaryCards({ onFetchError }) {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [onFetchError]);
+  }, [onFetchError, jwt]);
 
   if (loading && !summary) {
     return (

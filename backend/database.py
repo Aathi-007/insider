@@ -75,7 +75,8 @@ def create_tables(conn):
         download_mb REAL,
         files_accessed INTEGER,
         accessed_department TEXT,
-        is_anomaly BOOLEAN
+        is_anomaly BOOLEAN,
+        ml_anomaly_score REAL DEFAULT 0.0
     )
     ''')
     
@@ -178,6 +179,11 @@ def create_tables(conn):
     CREATE INDEX IF NOT EXISTS idx_server_comm
     ON server_communications (source_server, timestamp)
     ''')
+    
+    # Create indexes for query optimization
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_risk_events_user_score ON risk_events (user_id, risk_score, status)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_risk_events_event ON risk_events (event_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs (user_id)')
     
     conn.commit()
 

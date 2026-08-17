@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut } from 'lucide-react';
-import { HashRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { HashRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 
+import LoginPage from './components/LoginPage';
+import { fetchWithRetry } from './utils/api';
 import SummaryCards from './components/SummaryCards';
 import TeamBehaviorOverview from './components/TeamBehaviorOverview';
 import AlertsTable from './components/AlertsTable';
@@ -28,17 +30,23 @@ const styleContent = `
   .app-layout {
     display: flex;
     min-height: 100vh;
-    background: #0B1120;
+    background: #060B14;
   }
   .sidebar {
     width: 240px;
-    background: #0F1729;
-    border-right: 1px solid #2A3548;
-    padding: 24px 16px;
+    background: #0D1526;
+    border-right: 1px solid #1C2942;
+    padding: 20px 14px;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 24px;
     flex-shrink: 0;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+  .sidebar.collapsed {
+    width: 72px;
+    padding: 20px 10px;
   }
   .sidebar-logo {
     display: flex;
@@ -48,11 +56,30 @@ const styleContent = `
     font-weight: 800;
     color: #fff;
     padding: 0 8px;
+    overflow: hidden;
+    white-space: nowrap;
   }
   .sidebar-menu {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 20px;
+  }
+  .sidebar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sidebar-group-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #475569;
+    letter-spacing: 1px;
+    padding: 0 8px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .sidebar-link {
     display: flex;
@@ -63,19 +90,62 @@ const styleContent = `
     padding: 10px 12px;
     border-radius: 6px;
     font-size: 13px;
-    font-weight: bold;
+    font-weight: 600;
     transition: all 0.2s;
+    white-space: nowrap;
+    border-left: 3px solid transparent;
   }
   .sidebar-link:hover {
     color: #fff;
     background: rgba(255, 255, 255, 0.02);
   }
   .sidebar-link.active {
-    color: #6366F1;
-    background: rgba(99, 102, 241, 0.08);
-    border-left: 3px solid #6366F1;
+    color: #00D9FF;
+    background: rgba(0, 217, 255, 0.05);
+    border-left: 3px solid #00D9FF;
     border-radius: 0 6px 6px 0;
     padding-left: 9px;
+  }
+  .sidebar-toggle-btn {
+    background: transparent;
+    border: 1px solid #1C2942;
+    color: #8B95A8;
+    border-radius: 4px;
+    padding: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    outline: none;
+  }
+  .sidebar-toggle-btn:hover {
+    color: #00D9FF;
+    border-color: #00D9FF;
+  }
+  .sidebar-user-section {
+    margin-top: auto;
+    border-top: 1px solid #1C2942;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+  }
+  .user-avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(0, 217, 255, 0.1);
+    border: 1.5px solid #00D9FF;
+    color: #00D9FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
   }
   .main-content {
     flex-grow: 1;
@@ -85,196 +155,28 @@ const styleContent = `
     flex-direction: column;
     gap: 24px;
     box-sizing: border-box;
+    position: relative;
+    z-index: 1;
   }
 `;
 
-function LoginView({ setJwt }) {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+// LoginPage is imported externally.
 
-  const handleLoginSubmit = async (e) => {
-    if (e) e.preventDefault();
-    if (!username.trim() || !password.trim()) {
-      setError("Please fill in all credentials fields.");
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`${API_BASE}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: username.trim(), password: password.trim() })
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.detail || "Authentication failed. Invalid username or password.");
-      }
-      localStorage.setItem('ueba_jwt', data.access_token);
-      setJwt(data.access_token);
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDemoLogin = (user, pass) => {
-    setUsername(user);
-    setPassword(pass);
-    setLoading(true);
-    setError(null);
-    fetch(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: user, password: pass })
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("Demo login failed.");
-        return res.json();
-      })
-      .then(data => {
-        localStorage.setItem('ueba_jwt', data.access_token);
-        setJwt(data.access_token);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
-  };
-
-  return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '100vh',
-      width: '100vw',
-      background: 'radial-gradient(circle at center, #1E293B 0%, #0F172A 100%)',
-      padding: '20px',
-      boxSizing: 'border-box'
-    }}>
-      <div style={{
-        width: '100%',
-        maxWidth: '440px',
-        background: 'rgba(15, 23, 42, 0.65)',
-        backdropFilter: 'blur(16px)',
-        borderRadius: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.05)',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)',
-        padding: '40px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '24px'
-      }}>
-        
-        {/* Logo and title */}
-        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            padding: '12px',
-            borderRadius: '50%',
-            background: 'rgba(239, 68, 68, 0.08)',
-            border: '1px solid rgba(239, 68, 68, 0.15)',
-            color: '#EF4444',
-            width: 'fit-content'
-          }}>
-            <ShieldAlert size={36} />
-          </div>
-          <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: 0 }}>
-            UEBA Insider Threat Console
-          </h2>
-          <span style={{ fontSize: '11px', color: '#64748B', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            SOC Operations Terminal Gate
-          </span>
-        </div>
-
-        {/* Error notification */}
-        {error && (
-          <div style={{
-            padding: '10px 14px',
-            background: 'rgba(239, 68, 68, 0.08)',
-            border: '1px solid rgba(239, 68, 68, 0.15)',
-            borderRadius: '6px',
-            color: '#F87171',
-            fontSize: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            <AlertCircle size={16} />
-            <span>{error}</span>
-          </div>
-        )}
-
-        {/* Input Form */}
-        <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8' }}>Username</label>
-            <input 
-              type="text" 
-              placeholder="Enter your console username..." 
-              className="search-input"
-              style={{ width: '100%', padding: '10px' }}
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8' }}>Password</label>
-            <input 
-              type="password" 
-              placeholder="Enter your console password..." 
-              className="search-input"
-              style={{ width: '100%', padding: '10px' }}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-
-          <button 
-            type="submit" 
-            className="export-btn"
-            style={{
-              width: '100%',
-              justifyContent: 'center',
-              background: '#6366F1',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '6px',
-              padding: '12px',
-              fontSize: '13px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              marginTop: '8px',
-              transition: 'all 0.2s'
-            }}
-            disabled={loading}
-          >
-            {loading ? 'Authenticating Terminal...' : 'Access Console Terminal'}
-          </button>
-        </form>
-
-
-      </div>
-    </div>
-  );
-}
-
-export default function App() {
-  const [jwt, setJwt] = useState(localStorage.getItem('ueba_jwt') || '');
+function AppInner() {
+  const [jwt, setJwt] = useState(sessionStorage.getItem('ueba_jwt') || localStorage.getItem('ueba_jwt') || '');
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [systemStatus, setSystemStatus] = useState({
+    total_users: 0,
+    active_alerts: 0,
+    last_recalculation: 'Never'
+  });
   
   // State for live clock in header
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const getLoggedInUser = () => {
     if (!jwt) return null;
@@ -296,7 +198,7 @@ export default function App() {
   const fetchAlerts = async () => {
     if (!jwt) return;
     try {
-      const response = await fetch(`${API_BASE}/alerts?page=1&limit=1000`, {
+      const response = await fetchWithRetry(`${API_BASE}/alerts?page=1&limit=1000`, {
         headers: { 
           'X-API-Key': API_KEY,
           'Authorization': `Bearer ${jwt}`
@@ -305,6 +207,7 @@ export default function App() {
       if (response.status === 401) {
         setJwt('');
         localStorage.removeItem('ueba_jwt');
+        sessionStorage.removeItem('ueba_jwt');
         throw new Error("Session expired. Please log in again.");
       }
       if (!response.ok) {
@@ -321,10 +224,31 @@ export default function App() {
     }
   };
 
+  const fetchSystemStatus = async () => {
+    if (!jwt) return;
+    try {
+      const response = await fetchWithRetry(`${API_BASE}/system/status`, {
+        headers: {
+          'Authorization': `Bearer ${jwt}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSystemStatus(data);
+      }
+    } catch (err) {
+      console.error("Error fetching system status:", err);
+    }
+  };
+
   useEffect(() => {
     if (jwt) {
       fetchAlerts();
-      const interval = setInterval(fetchAlerts, 4000);
+      fetchSystemStatus();
+      const interval = setInterval(() => {
+        fetchAlerts();
+        fetchSystemStatus();
+      }, 4000);
       return () => {
         clearInterval(interval);
       };
@@ -354,6 +278,36 @@ export default function App() {
 
   const dashboardView = (
     <div className="dashboard-grid-v2">
+      {/* Telemetry Status Bar */}
+      <div className="col-12" style={{
+        background: '#0D1526',
+        border: '1px solid #1C2942',
+        borderRadius: '8px',
+        padding: '12px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '16px',
+        fontSize: '12px',
+        color: '#8B95A8',
+        fontFamily: "'JetBrains Mono', monospace",
+        boxShadow: '0 0 10px rgba(0, 217, 255, 0.02)'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00D9FF', boxShadow: '0 0 8px #00D9FF' }} />
+          <span>System Status: <strong style={{ color: '#00D9FF' }}>OPERATIONAL</strong></span>
+        </div>
+        <div style={{ display: 'flex', gap: '32px' }}>
+          <span>Monitored Users: <strong style={{ color: '#E8EDF5' }}>{systemStatus.total_users}</strong></span>
+          <span>Active Alerts: <strong style={{ color: '#FF3B5C' }}>{systemStatus.active_alerts}</strong></span>
+          <span>Last Recalculation: <strong style={{ color: '#E8EDF5' }}>
+            {systemStatus.last_recalculation && systemStatus.last_recalculation !== 'Never'
+              ? new Date(systemStatus.last_recalculation).toLocaleString()
+              : 'Never'}
+          </strong></span>
+        </div>
+      </div>
+
       {/* Row 1: SummaryCards spans 12 columns */}
       <div className="col-12">
         <SummaryCards onFetchError={setError} jwt={jwt} />
@@ -461,236 +415,341 @@ export default function App() {
 
   if (!jwt) {
     return (
-      <Router>
+      <>
         <style>{styleContent}</style>
-        <LoginView setJwt={setJwt} />
-      </Router>
+        <LoginPage setJwt={setJwt} />
+      </>
     );
   }
 
+  const location = useLocation();
+
+  const getHeaderDetails = () => {
+    const path = location.pathname;
+    switch (path) {
+      case '/dashboard':
+        return {
+          title: 'Threat Detection Center',
+          desc: 'Real-time telemetry watch and risk score anomaly monitoring queue.',
+          action: (
+            <button className="export-btn" onClick={handleExportReport} disabled={alerts.length === 0}>
+              <Download size={14} /> Export Report
+            </button>
+          )
+        };
+      case '/resolved':
+        return {
+          title: 'Mitigated Registry',
+          desc: 'Historical ledger of resolved alerts, confirmed threats, and false positives.',
+          action: (
+            <button className="export-btn" onClick={handleExportReport} disabled={resolvedAlerts.length === 0}>
+              <Download size={14} /> Export Resolved
+            </button>
+          )
+        };
+      case '/audit':
+        return {
+          title: 'SOC Auditor Trails',
+          desc: 'Administrative records tracking analyst investigations and system status revisions.',
+          action: null
+        };
+      case '/accuracy':
+        return {
+          title: 'Rule Performance Metrics',
+          desc: 'Precision analytics, trigger rates, and True Positive statistics for threat rules.',
+          action: null
+        };
+      case '/heatmap':
+        return {
+          title: 'Divergence Heatmaps',
+          desc: 'Department risk comparison matrix and department behavioral divergence models.',
+          action: null
+        };
+      case '/network':
+        return {
+          title: 'Backbone Server Topology',
+          desc: 'Dynamic circular graph visualising departmental server communications and baseline paths.',
+          action: null
+        };
+      case '/admin':
+        return {
+          title: 'Administrative Controls',
+          desc: 'HR travel registry overrides, device trust provisionings, and demo data resets.',
+          action: null
+        };
+      default:
+        return {
+          title: 'Insider Threat Console',
+          desc: 'Real-time Entity Behavior Analytics & SOC Command.',
+          action: null
+        };
+    }
+  };
+
+  const headerDetails = getHeaderDetails();
+
   return (
-    <Router>
+    <div className="app-layout">
       <style>{styleContent}</style>
-      <div className="app-layout">
+      
+      {/* Sidebar Navigation */}
+      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        <div className="sidebar-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', padding: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
+            <ShieldAlert size={22} style={{ color: '#00D9FF' }} />
+            {!sidebarCollapsed && <span style={{ fontWeight: '800', letterSpacing: '0.5px' }}>SOC COMMAND</span>}
+          </div>
+          {!sidebarCollapsed && (
+            <button 
+              type="button" 
+              className="sidebar-toggle-btn" 
+              onClick={() => setSidebarCollapsed(true)}
+              title="Collapse sidebar"
+            >
+              <ChevronLeft size={14} />
+            </button>
+          )}
+        </div>
         
-        {/* Sidebar Navigation */}
-        <aside className="sidebar">
-          <div className="sidebar-logo">
-            <ShieldAlert size={22} style={{ color: 'var(--color-high)' }} />
-            <span>SOC Insider Threat</span>
-          </div>
+        {sidebarCollapsed && (
+          <button 
+            type="button" 
+            className="sidebar-toggle-btn" 
+            style={{ alignSelf: 'center', marginBottom: '8px' }}
+            onClick={() => setSidebarCollapsed(false)}
+            title="Expand sidebar"
+          >
+            <ChevronRight size={14} />
+          </button>
+        )}
 
-          <nav className="sidebar-menu">
-            <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+        <nav className="sidebar-menu" style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          
+          {/* Group 1: Monitoring */}
+          <div className="sidebar-group">
+            {!sidebarCollapsed && <div className="sidebar-group-title">Monitoring</div>}
+            <NavLink to="/dashboard" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="All Threats Dashboard">
               <LayoutDashboard size={16} />
-              <span>All Alerts</span>
+              {!sidebarCollapsed && <span>All Alerts</span>}
             </NavLink>
-
-            <NavLink to="/resolved" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
+            <NavLink to="/resolved" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Closed Registry">
               <ShieldCheck size={16} />
-              <span>Resolved Alerts</span>
+              {!sidebarCollapsed && <span>Resolved Alerts</span>}
             </NavLink>
-            
-            <NavLink to="/audit" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-              <ListTodo size={16} />
-              <span>Audit Log</span>
-            </NavLink>
-            
-            <NavLink to="/accuracy" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-              <BarChart2 size={16} />
-              <span>Rule Accuracy</span>
-            </NavLink>
-            
-            <NavLink to="/heatmap" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-              <Users2 size={16} />
-              <span>Dept Heatmap</span>
-            </NavLink>
-            
-            <NavLink to="/network" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-              <Network size={16} />
-              <span>Network Graph</span>
-            </NavLink>
-
-            {currentUser && currentUser.role === 'admin' && (
-              <NavLink to="/admin" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}>
-                <Settings size={16} />
-                <span>Admin Panel</span>
-              </NavLink>
-            )}
-          </nav>
-        </aside>
-
-        {/* Main Content Area */}
-        <main className="main-content">
-          <header className="dashboard-header" style={{ marginBottom: 0 }}>
-            <div className="header-titles">
-              <h1>
-                <ShieldAlert size={28} style={{ color: 'var(--color-high)' }} />
-                Insider Threat Console
-              </h1>
-              <p>Real-time User Entity Behavior Analytics & SOC Monitoring Command</p>
-            </div>
-            
-            <div className="header-actions">
-              <div className="live-clock">
-                <Clock size={14} />
-                <span>
-                  {currentTime.toLocaleDateString(undefined, { 
-                    weekday: 'short', 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
-                  {' '}
-                  {currentTime.toLocaleTimeString()}
-                </span>
-              </div>
-
-              <div className="live-indicator">
-                <div className="live-dot"></div>
-                <span>Live Feed</span>
-              </div>
-
-              {currentUser && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '10px' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontSize: '11px' }}>
-                    <span style={{ color: '#fff', fontWeight: 'bold' }}>{currentUser.sub}</span>
-                    <span style={{ color: '#8B95A8', textTransform: 'uppercase', fontSize: '9px', fontWeight: 'bold' }}>{currentUser.role}</span>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      setJwt('');
-                      localStorage.removeItem('ueba_jwt');
-                    }}
-                    style={{
-                      background: 'rgba(239, 68, 68, 0.1)',
-                      border: '1px solid rgba(239, 68, 68, 0.2)',
-                      borderRadius: '4px',
-                      color: '#F87171',
-                      padding: '5px 10px',
-                      fontSize: '11px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      fontWeight: 'bold',
-                      transition: 'all 0.2s'
-                    }}
-                    title="Log out from console"
-                  >
-                    <LogOut size={12} />
-                    Logout
-                  </button>
-                </div>
-              )}
-
-              <button 
-                className="export-btn" 
-                onClick={handleExportReport}
-                disabled={alerts.length === 0}
-                title="Download JSON threat summary"
-              >
-                <Download size={14} />
-                Export Report
-              </button>
-            </div>
-          </header>
-
-          {/* Scrolling Threat Intelligence Ticker */}
-          <div className="threat-ticker-container">
-            <div className="threat-ticker-label">
-              <div className="threat-ticker-label-dot" />
-              <span>Sentinel Live Feed</span>
-            </div>
-            <div className="threat-ticker-viewport">
-              <div className="threat-ticker-flow">
-                <div className="threat-ticker-item">
-                  📢 <strong>SYSTEM STABILITY:</strong> Active detection daemon: 12 nodes online. <strong>Model contamination:</strong> 5%.
-                </div>
-                <div className="threat-ticker-item">
-                  🚨 <strong>AUDIT THREAT WATCH:</strong> Active Backlog: {alerts.filter(a => !a.status || !a.status.startsWith('resolved')).length} threats queued.
-                </div>
-                <div className="threat-ticker-item">
-                  ⚡ <strong>NETWORK GATEWAY:</strong> 0.0.0.0 egress blocks active. Database connection pool: stable.
-                </div>
-                <div className="threat-ticker-item">
-                  🔒 <strong>SECURITY UPDATE:</strong> HR travel registries parsed. Isolation Forest encoders matching.
-                </div>
-                {/* Duplicated for seamless loop scrolling marquee */}
-                <div className="threat-ticker-item">
-                  📢 <strong>SYSTEM STABILITY:</strong> Active detection daemon: 12 nodes online. <strong>Model contamination:</strong> 5%.
-                </div>
-                <div className="threat-ticker-item">
-                  🚨 <strong>AUDIT THREAT WATCH:</strong> Active Backlog: {alerts.filter(a => !a.status || !a.status.startsWith('resolved')).length} threats queued.
-                </div>
-                <div className="threat-ticker-item">
-                  ⚡ <strong>NETWORK GATEWAY:</strong> 0.0.0.0 egress blocks active. Database connection pool: stable.
-                </div>
-                <div className="threat-ticker-item">
-                  🔒 <strong>SECURITY UPDATE:</strong> HR travel registries parsed. Isolation Forest encoders matching.
-                </div>
-              </div>
-            </div>
           </div>
 
-          {/* Global Server Connection Error Banner */}
-          {error && (
-            <div className="error-banner">
-              <AlertCircle size={20} />
-              <div className="error-banner-content">
-                <h4>SOC Console Offline</h4>
-                <p>{error}</p>
-              </div>
+          {/* Group 2: Analytics */}
+          <div className="sidebar-group">
+            {!sidebarCollapsed && <div className="sidebar-group-title">Analytics</div>}
+            <NavLink to="/audit" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Auditor Logs">
+              <ListTodo size={16} />
+              {!sidebarCollapsed && <span>Audit Log</span>}
+            </NavLink>
+            <NavLink to="/accuracy" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Detection Model Stats">
+              <BarChart2 size={16} />
+              {!sidebarCollapsed && <span>Rule Accuracy</span>}
+            </NavLink>
+            <NavLink to="/heatmap" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Risk Heatmap">
+              <Users2 size={16} />
+              {!sidebarCollapsed && <span>Dept Heatmap</span>}
+            </NavLink>
+            <NavLink to="/network" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Path Telemetry">
+              <Network size={16} />
+              {!sidebarCollapsed && <span>Network Graph</span>}
+            </NavLink>
+          </div>
+
+          {/* Group 3: Administration */}
+          {currentUser && currentUser.role === 'admin' && (
+            <div className="sidebar-group">
+              {!sidebarCollapsed && <div className="sidebar-group-title">Administration</div>}
+              <NavLink to="/admin" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Admin Panel">
+                <Settings size={16} />
+                {!sidebarCollapsed && <span>Admin Panel</span>}
+              </NavLink>
             </div>
           )}
+          
+          {/* User Session Block */}
+          {currentUser && (
+            <div className="sidebar-user-section" style={{ marginTop: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden', justifyContent: sidebarCollapsed ? 'center' : 'flex-start' }}>
+                <div className="user-avatar-circle" title={`${currentUser.sub} (${currentUser.role})`}>
+                  {currentUser.sub.slice(0, 2).toUpperCase()}
+                </div>
+                {!sidebarCollapsed && (
+                  <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                    <span style={{ color: '#E8EDF5', fontWeight: 'bold', fontSize: '12px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {currentUser.sub}
+                    </span>
+                    <span style={{ color: '#8B95A8', textTransform: 'uppercase', fontSize: '9px', fontWeight: 'bold' }}>
+                      {currentUser.role}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <button 
+                onClick={() => {
+                  setJwt('');
+                  localStorage.removeItem('ueba_jwt');
+                  sessionStorage.removeItem('ueba_jwt');
+                }}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.05)',
+                  border: '1.5px solid #FF3B5C',
+                  color: '#FF3B5C',
+                  borderRadius: '4px',
+                  padding: sidebarCollapsed ? '6px' : '8px 12px',
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  transition: 'all 0.2s',
+                  fontFamily: "'JetBrains Mono', monospace"
+                }}
+                title="Log out from console"
+              >
+                <LogOut size={12} />
+                {!sidebarCollapsed && <span>LOGOUT</span>}
+              </button>
+            </div>
+          )}
+        </nav>
+      </aside>
 
-          {/* Router Switch Views */}
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={dashboardView} />
-            <Route path="/resolved" element={resolvedView} />
-            <Route path="/audit" element={
-              <div className="dashboard-grid-v2">
-                <div className="col-9">
-                  <AuditLogPage alerts={alerts} onRefresh={fetchAlerts} />
-                </div>
-                <div className="col-3" style={{ display: 'flex', flexDirection: 'column' }}>
-                  <SocAgentActivity />
-                </div>
-              </div>
-            } />
-            <Route path="/accuracy" element={
-              <div className="dashboard-grid-v2">
-                <div className="col-8">
-                  <RuleAccuracyPanel jwt={jwt} />
-                </div>
-                <div className="col-4" style={{ display: 'flex', flexDirection: 'column' }}>
-                  <RuleTuningAdvisor jwt={jwt} />
-                </div>
-              </div>
-            } />
-            <Route path="/heatmap" element={
-              <div className="dashboard-grid-v2">
-                <div className="col-12">
-                  <DepartmentHeatmap alerts={alerts} />
-                </div>
-                <div className="col-12">
-                  <CrossDeptThreatMatrix alerts={alerts} />
-                </div>
-              </div>
-            } />
-            <Route path="/admin" element={
-              currentUser && currentUser.role === 'admin' ? (
-                <AdminPanel jwt={jwt} />
-              ) : (
-                <Navigate to="/dashboard" replace />
-              )
-            } />
-            <Route path="/network" element={<NetworkGraphPanel jwt={jwt} />} />
-          </Routes>
-        </main>
-      </div>
+      {/* Main Content Area */}
+      <main className="main-content">
+        <header className="dashboard-header" style={{ marginBottom: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', background: 'rgba(13, 21, 38, 0.4)', border: '1px solid #1C2942', padding: '16px 24px', borderRadius: '8px' }}>
+          <div className="header-titles">
+            <h1 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ShieldAlert size={20} style={{ color: '#00D9FF' }} />
+              {headerDetails.title}
+            </h1>
+            <p style={{ fontSize: '11px', color: '#8B95A8', margin: '4px 0 0 0' }}>{headerDetails.desc}</p>
+          </div>
+          
+          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="live-clock">
+              <Clock size={12} />
+              <span>
+                {currentTime.toLocaleDateString(undefined, { 
+                  weekday: 'short', 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+                {' '}
+                {currentTime.toLocaleTimeString()}
+              </span>
+            </div>
 
-      {/* 5. User Forensic Modal (Drill-Down Investigation) */}
+            <div className="live-indicator">
+              <div className="live-dot"></div>
+              <span>Feed Live</span>
+            </div>
+
+            {headerDetails.action}
+          </div>
+        </header>
+
+        {/* Scrolling Threat Intelligence Ticker */}
+        <div className="threat-ticker-container">
+          <div className="threat-ticker-label">
+            <div className="threat-ticker-label-dot" />
+            <span>Sentinel Live Feed</span>
+          </div>
+          <div className="threat-ticker-viewport">
+            <div className="threat-ticker-flow">
+              <div className="threat-ticker-item">
+                📢 <strong>SYSTEM STABILITY:</strong> Active detection daemon: 12 nodes online. <strong>Model contamination:</strong> 5%.
+              </div>
+              <div className="threat-ticker-item">
+                🚨 <strong>AUDIT THREAT WATCH:</strong> Active Backlog: {alerts.filter(a => !a.status || !a.status.startsWith('resolved')).length} threats queued.
+              </div>
+              <div className="threat-ticker-item">
+                ⚡ <strong>NETWORK GATEWAY:</strong> 0.0.0.0 egress blocks active. Database connection pool: stable.
+              </div>
+              <div className="threat-ticker-item">
+                🔒 <strong>SECURITY UPDATE:</strong> HR travel registries parsed. Isolation Forest encoders matching.
+              </div>
+              {/* Duplicated for seamless loop scrolling marquee */}
+              <div className="threat-ticker-item">
+                📢 <strong>SYSTEM STABILITY:</strong> Active detection daemon: 12 nodes online. <strong>Model contamination:</strong> 5%.
+              </div>
+              <div className="threat-ticker-item">
+                🚨 <strong>AUDIT THREAT WATCH:</strong> Active Backlog: {alerts.filter(a => !a.status || !a.status.startsWith('resolved')).length} threats queued.
+              </div>
+              <div className="threat-ticker-item">
+                ⚡ <strong>NETWORK GATEWAY:</strong> 0.0.0.0 egress blocks active. Database connection pool: stable.
+              </div>
+              <div className="threat-ticker-item">
+                🔒 <strong>SECURITY UPDATE:</strong> HR travel registries parsed. Isolation Forest encoders matching.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Global Server Connection Error Banner */}
+        {error && (
+          <div className="error-banner">
+            <AlertCircle size={20} />
+            <div className="error-banner-content">
+              <h4>SOC Console Offline</h4>
+              <p>{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Router Switch Views */}
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={dashboardView} />
+          <Route path="/resolved" element={resolvedView} />
+          <Route path="/audit" element={
+            <div className="dashboard-grid-v2">
+              <div className="col-9">
+                <AuditLogPage alerts={alerts} onRefresh={fetchAlerts} />
+              </div>
+              <div className="col-3" style={{ display: 'flex', flexDirection: 'column' }}>
+                <SocAgentActivity />
+              </div>
+            </div>
+          } />
+          <Route path="/accuracy" element={
+            <div className="dashboard-grid-v2">
+              <div className="col-8">
+                <RuleAccuracyPanel jwt={jwt} />
+              </div>
+              <div className="col-4" style={{ display: 'flex', flexDirection: 'column' }}>
+                <RuleTuningAdvisor jwt={jwt} />
+              </div>
+            </div>
+          } />
+          <Route path="/heatmap" element={
+            <div className="dashboard-grid-v2">
+              <div className="col-12">
+                <DepartmentHeatmap alerts={alerts} />
+              </div>
+              <div className="col-12">
+                <CrossDeptThreatMatrix alerts={alerts} />
+              </div>
+            </div>
+          } />
+          <Route path="/admin" element={
+            currentUser && currentUser.role === 'admin' ? (
+              <AdminPanel jwt={jwt} />
+            ) : (
+              <Navigate to="/dashboard" replace />
+            )
+          } />
+          <Route path="/network" element={<NetworkGraphPanel jwt={jwt} />} />
+        </Routes>
+      </main>
+      
+      {/* User Forensic Modal (Drill-Down Investigation) */}
       <AnimatePresence>
         {selectedUserId && (
           <UserDetailModal 
@@ -700,6 +759,14 @@ export default function App() {
           />
         )}
       </AnimatePresence>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AppInner />
     </Router>
   );
 }

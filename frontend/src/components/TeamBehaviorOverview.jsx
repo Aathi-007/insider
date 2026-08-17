@@ -6,6 +6,8 @@ import {
   ArrowUpRight, ArrowDownRight, ArrowRight 
 } from 'lucide-react';
 
+import { fetchWithRetry } from '../utils/api';
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
 
@@ -65,7 +67,7 @@ export default function TeamBehaviorOverview({ alerts, jwt }) {
       if (!jwt) return;
       try {
         const rangeParam = timeRange === 'week' ? 'week' : timeRange === 'month' ? 'month' : 'alltime';
-        const response = await fetch(`${API_BASE}/analytics/department-behaviour?range=${rangeParam}`, {
+        const response = await fetchWithRetry(`${API_BASE}/analytics/department-behaviour?range=${rangeParam}`, {
           headers: {
             'X-API-Key': API_KEY,
             'Authorization': `Bearer ${jwt}`
@@ -480,7 +482,7 @@ export default function TeamBehaviorOverview({ alerts, jwt }) {
               {/* 3.3 Card Body (Score + sparkline) */}
               <div className="scorecard-card-body">
                 <div className="scorecard-metric-block">
-                  <span className="scorecard-metric-label">Behaviour Health</span>
+                  <span className="scorecard-metric-label" title="Behaviour Health Score: A health rating from 0-100 indicating the safety and compliance level of user activities, where higher is better.">Behaviour Health</span>
                   <span className="scorecard-health-value" style={{ color: healthColor }}>
                     {metrics.healthScore}
                   </span>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Laptop, Shield, User, Calendar, MapPin, CheckCircle, AlertTriangle, Sliders, Activity, RefreshCw } from 'lucide-react';
+import { fetchWithRetry } from '../utils/api';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
@@ -28,7 +29,7 @@ export default function AdminPanel({ jwt }) {
     setResetError(null);
     
     try {
-      const response = await fetch(`${API_BASE}/admin/reset-demo-data`, {
+      const response = await fetchWithRetry(`${API_BASE}/system/reset-demo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,6 +162,74 @@ export default function AdminPanel({ jwt }) {
   return (
     <div className="admin-grid-v2">
       
+      {/* Presentation Shortcuts Quick-Fill */}
+      <div className="col-12" style={{ marginBottom: '16px' }}>
+        <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div className="dashboard-card-header" style={{ borderBottom: '1px solid rgba(255,255,255,0.02)', paddingBottom: '10px' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Sliders size={18} style={{ color: '#00D9FF' }} />
+              Quick-Fill Presentation Shortcuts (Edge Cases)
+            </h2>
+          </div>
+          <p style={{ fontSize: '11px', color: '#8B95A8', margin: 0 }}>
+            Click any button below to instantly pre-fill administrative forms with parameters representing the key insider threat scenarios:
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '6px' }}>
+            <button 
+              type="button"
+              className="export-btn"
+              style={{ background: 'rgba(0, 217, 255, 0.08)', borderColor: '#00D9FF', color: '#00D9FF', padding: '6px 12px', fontSize: '11px' }}
+              onClick={() => {
+                setDeviceUserId('U021');
+                setDeviceId('DEV_U021_PENDING');
+                setDeviceName('IT Secure Workstation');
+              }}
+            >
+              💻 Scenario 4: Auto-promote Device U021
+            </button>
+            <button 
+              type="button"
+              className="export-btn"
+              style={{ background: 'rgba(16, 185, 129, 0.08)', borderColor: '#10B981', color: '#10B981', padding: '6px 12px', fontSize: '11px' }}
+              onClick={() => {
+                setHrUserId('U023');
+                setEmpStatus('active');
+                setTravelDeclared(true);
+                setTravelStart('2026-08-10');
+                setTravelEnd('2026-08-25');
+              }}
+            >
+              ✈️ Scenario 5: Travel Exception U023
+            </button>
+            <button 
+              type="button"
+              className="export-btn"
+              style={{ background: 'rgba(245, 158, 11, 0.08)', borderColor: '#F59E0B', color: '#F59E0B', padding: '6px 12px', fontSize: '11px' }}
+              onClick={() => {
+                setHrUserId('U024');
+                setEmpStatus('notice_period');
+                setTravelDeclared(false);
+                setNoticeStart('2026-08-01');
+              }}
+            >
+              📊 Multiplier: Notice Period U024
+            </button>
+            <button 
+              type="button"
+              className="export-btn"
+              style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: '#EF4444', color: '#EF4444', padding: '6px 12px', fontSize: '11px' }}
+              onClick={() => {
+                setHrUserId('U025');
+                setEmpStatus('on_leave');
+                setTravelDeclared(false);
+              }}
+            >
+              🌴 Scenario 5: On-Leave Violation U025
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* 1. Register Trusted Device Form */}
       <div className="col-6" style={{ display: 'flex', flexDirection: 'column' }}>
         <div className="dashboard-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

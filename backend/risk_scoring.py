@@ -108,6 +108,25 @@ def calculate_rule_based_score(event, baseline):
         score += 30
         reasons.append("activity_during_leave_period")
         
+    # Concurrent session detection check
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT event_id FROM activity_logs
+            WHERE user_id = ? AND event_id != ?
+              AND (location != ? OR ip_address != ?)
+              AND abs(strftime('%s', timestamp) - strftime('%s', ?)) <= 300
+        """, (event['user_id'], event.get('event_id', -1), event['location'], event['ip_address'], event['timestamp']))
+        conflict = cursor.fetchone()
+        if conflict:
+            score += 35
+            reasons.append("concurrent_session_conflict")
+    except Exception as e:
+        print(f"Error checking concurrent session conflict: {e}")
+    finally:
+        conn.close()
+        
     score = min(score, 100)
     return score, reasons
 
@@ -167,6 +186,12 @@ def score_all_events():
         scaler = MinMaxScaler(feature_range=(0, 100))
         df_logs['ml_anomaly_score'] = scaler.fit_transform((-scores).reshape(-1, 1)).flatten()
         
+        # Update activity_logs table with the calculated ml_anomaly_score
+        update_data = [(float(row['ml_anomaly_score']), int(row['event_id'])) for _, row in df_logs.iterrows()]
+        cursor = conn.cursor()
+        cursor.executemany("UPDATE activity_logs SET ml_anomaly_score = ? WHERE event_id = ?", update_data)
+        conn.commit()
+        
         # Load baselines into dict for fast lookup
         df_base = pd.read_sql_query("SELECT * FROM user_baselines", conn)
         baselines_dict = df_base.set_index('user_id').to_dict('index')
@@ -191,6 +216,14 @@ def score_all_events():
                     event['event_id'], user_id, final_score, reasons_str, now, False
                 ))
                 
+        # Call gradual drift detection
+        try:
+            from baseline import detect_gradual_drift
+            drift_events = detect_gradual_drift(conn)
+            risk_events_to_insert.extend(drift_events)
+        except Exception as e:
+            print(f"Error executing gradual drift: {e}")
+            
         # Insert into risk_events
         cursor = conn.cursor()
         cursor.execute("DELETE FROM risk_events") # Clear previous runs for idempotency

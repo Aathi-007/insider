@@ -21,7 +21,7 @@ import uvicorn
 
 from database import get_connection
 from risk_scoring import calculate_rule_based_score, calculate_final_risk_score
-from auth import verify_password, create_access_token, verify_token
+from auth import verify_password, create_access_token, verify_token, get_password_hash
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -207,6 +207,12 @@ class AccessRequest(BaseModel):
     department: str = "Engineering"
     username: str = "test.user"
 
+class RegisterRequest(BaseModel):
+    username: str
+    password: str
+    department: str = "IT"
+    role: str = "analyst"  # 'analyst' or 'admin'
+
 class LoginRequest(BaseModel):
     username: str
     password: str
@@ -267,6 +273,38 @@ class ResolveAlertRequest(BaseModel):
     final_note: Optional[str] = None
     resolution: Optional[str] = None
     note: Optional[str] = None
+
+@app.post("/register")
+@app.post("/auth/register")
+def register(request: RegisterRequest):
+    username = request.username.strip().lower()
+    if not username or not request.password.strip():
+        raise HTTPException(status_code=400, detail="Username and password are required.")
+    
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        # Check if username exists
+        cursor.execute("SELECT 1 FROM users WHERE username = ?", (username,))
+        if cursor.fetchone():
+            raise HTTPException(status_code=400, detail="Username already exists.")
+        
+        # Generate user_id (e.g. U + count + 1)
+        cursor.execute("SELECT COUNT(*) FROM users")
+        user_count = cursor.fetchone()[0]
+        user_id = f"U{user_count + 1:03d}"
+        
+        password_hash = get_password_hash(request.password.strip())
+        
+        cursor.execute(
+            "INSERT INTO users (user_id, username, password_hash, department, role) VALUES (?, ?, ?, ?, ?)",
+            (user_id, username, password_hash, request.department, request.role)
+        )
+        conn.commit()
+        
+        return {"status": "success", "message": f"Successfully registered user {username} with ID {user_id}."}
+    finally:
+        conn.close()
 
 @app.post("/login")
 @app.post("/auth/login")
@@ -390,6 +428,54 @@ def read_root():
 def health_check():
     return {"status": "ok"}
 
+@app.get("/system/status")
+def get_system_status(current_user: dict = Depends(get_current_user)):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        
+        # 1. Total users
+        cursor.execute("SELECT COUNT(*) FROM users")
+        total_users = cursor.fetchone()[0]
+        
+        # 2. Active alerts count (risk_score > 60 and not resolved)
+        cursor.execute("""
+            SELECT COUNT(*) FROM risk_events 
+            WHERE risk_score > 60 AND (status IS NULL OR status NOT LIKE 'resolved%')
+        """)
+        active_alerts = cursor.fetchone()[0]
+        
+        # 3. Last baseline recalculation timestamp
+        cursor.execute("SELECT MAX(last_recalculated) FROM user_baselines")
+        last_recalc = cursor.fetchone()[0]
+        if not last_recalc:
+            last_recalc = "Never"
+            
+        return {
+            "total_users": total_users,
+            "active_alerts": active_alerts,
+            "last_recalculation": last_recalc
+        }
+    finally:
+        conn.close()
+
+@app.post("/system/reset-demo")
+def reset_demo_data(current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Only administrators can reset demo data.")
+    try:
+        import subprocess
+        import sys
+        script_path = os.path.join(BASE_DIR, 'seed_full_demo_data.py')
+        result = subprocess.run([sys.executable, script_path], capture_output=True, text=True)
+        if result.returncode != 0:
+            logger.error(f"Error seeding demo data: {result.stderr}")
+            raise HTTPException(status_code=500, detail=f"Failed to seed data: {result.stderr}")
+        return {"status": "success", "message": "Demo data successfully reset and seeded."}
+    except Exception as e:
+        logger.error(f"Failed to run seeding script: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/alerts")
 def get_alerts(
     api_key: str = Depends(get_api_key),
@@ -436,7 +522,7 @@ def get_alerts(
         count_query = f"SELECT COUNT(*) {query_base}"
         select_query = f"""
         SELECT r.risk_event_id, r.user_id, a.user_name, a.department, r.risk_score, r.reasons, r.flagged_at, r.reviewed,
-               r.status, r.assigned_to_analyst, r.analyst_notes, r.resolved_at
+               r.status, r.assigned_to_analyst, r.analyst_notes, r.resolved_at, a.ml_anomaly_score
         {query_base}
         ORDER BY r.risk_score DESC
         """
@@ -458,7 +544,8 @@ def get_alerts(
                 "status": row['status'],
                 "assigned_to_analyst": row['assigned_to_analyst'],
                 "analyst_notes": row['analyst_notes'],
-                "resolved_at": row['resolved_at']
+                "resolved_at": row['resolved_at'],
+                "ml_anomaly_score": row['ml_anomaly_score']
             })
             
         return {
@@ -724,12 +811,13 @@ def get_user_data(user_id: str, api_key: str = Depends(get_api_key)):
         df_activity = pd.read_sql_query("SELECT * FROM activity_logs WHERE user_id = ? ORDER BY timestamp DESC LIMIT 100", conn, params=(user_id,))
         activity_history = df_activity.to_dict(orient='records')
         
-        df_risk = pd.read_sql_query("SELECT * FROM risk_events WHERE user_id = ? ORDER BY risk_score DESC", conn, params=(user_id,))
+        df_risk = pd.read_sql_query("SELECT r.*, a.ml_anomaly_score FROM risk_events r JOIN activity_logs a ON r.event_id = a.event_id WHERE r.user_id = ? ORDER BY r.risk_score DESC", conn, params=(user_id,))
         risk_history = []
         for _, row in df_risk.iterrows():
             r_dict = row.to_dict()
             r_dict['reasons'] = str(r_dict['reasons']).split(',') if pd.notnull(r_dict['reasons']) and r_dict['reasons'] != "" else []
             r_dict['reviewed'] = bool(r_dict['reviewed'])
+            r_dict['ml_anomaly_score'] = row['ml_anomaly_score']
             risk_history.append(r_dict)
             
         return {

@@ -1,181 +1,166 @@
 import React from 'react';
-import { ShieldAlert, Users, Flame } from 'lucide-react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { Flame, PieChart as PieIcon } from 'lucide-react';
 
 export default function DepartmentHeatmap({ alerts }) {
-  // 1. Filter alerts for the last 7 days
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-  
-  const recentAlerts = alerts.filter(a => {
-    if (!a.flagged_at) return false;
-    const flaggedDate = new Date(a.flagged_at);
-    return flaggedDate >= sevenDaysAgo;
-  });
-
-  // 2. Predefined departments to render a clean standard company grid structure
-  const deptList = ['Engineering', 'Finance', 'HR', 'IT', 'Sales', 'Operations', 'Legal', 'Marketing'];
-
-  // 3. Count alerts per department
-  const counts = {};
-  deptList.forEach(d => { counts[d] = 0; });
-  
-  recentAlerts.forEach(a => {
-    const dept = a.department;
-    if (dept && deptList.includes(dept)) {
-      counts[dept] += 1;
-    } else if (dept) {
-      // Normalize department match just in case
-      const matched = deptList.find(d => d.toLowerCase() === dept.toLowerCase());
-      if (matched) {
-        counts[matched] += 1;
-      }
-    }
-  });
-
-  const getCellStyles = (count) => {
-    if (count <= 2) {
-      return {
-        bg: '#1E3A5F',
-        border: '#2A3548',
-        text: '#E8EDF5',
-        intensity: 'Low (0-2)'
-      };
-    }
-    if (count <= 5) {
-      return {
-        bg: '#F59E0B',
-        border: 'rgba(245, 158, 11, 0.4)',
-        text: '#0B1120',
-        intensity: 'Med-Low (3-5)'
-      };
-    }
-    if (count <= 9) {
-      return {
-        bg: '#F97316',
-        border: 'rgba(249, 115, 22, 0.4)',
-        text: '#0B1120',
-        intensity: 'Med-High (6-9)'
-      };
-    }
-    return {
-      bg: '#DC2626',
-      border: 'rgba(220, 38, 38, 0.4)',
-      text: '#E8EDF5',
-      intensity: 'High (10+)'
-    };
+  // Predefined department list and colors matching the brand identity
+  const DEPT_COLORS = {
+    'Engineering': '#60A5FA', // Blue
+    'Finance': '#4ADE80',     // Green
+    'HR': '#FF6EC7',          // Pink
+    'IT': '#00D9FF',          // Cyan
+    'Sales': '#FBBF24',        // Amber
+    'Operations': '#A855F7',   // Purple
+    'Legal': '#EF4444',        // Red
+    'Marketing': '#94A3B8'     // Muted
   };
 
-  const totalRecentCount = recentAlerts.length;
-  const maxDept = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+  // Count active threats per department
+  const counts = {};
+  Object.keys(DEPT_COLORS).forEach(d => { counts[d] = 0; });
+  
+  alerts.forEach(a => {
+    const dept = a.department;
+    if (dept && DEPT_COLORS[dept] !== undefined) {
+      counts[dept] += 1;
+    } else if (dept) {
+      const matched = Object.keys(DEPT_COLORS).find(d => d.toLowerCase() === dept.toLowerCase());
+      if (matched) counts[matched] += 1;
+    }
+  });
+
+  // Convert to Recharts data array and filter out departments with 0 alerts
+  const data = Object.keys(counts)
+    .map(name => ({
+      name,
+      value: counts[name],
+      color: DEPT_COLORS[name]
+    }))
+    .filter(item => item.value > 0);
+
+  const totalAlerts = data.reduce((sum, item) => sum + item.value, 0);
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const dataPoint = payload[0].payload;
+      const percentage = totalAlerts > 0 ? ((dataPoint.value / totalAlerts) * 100).toFixed(1) : 0;
+      return (
+        <div style={{
+          background: '#0D1526',
+          border: `1.5px solid ${dataPoint.color}`,
+          borderRadius: '4px',
+          padding: '10px 14px',
+          fontSize: '11px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+          fontFamily: "'JetBrains Mono', monospace"
+        }}>
+          <div style={{ color: '#fff', fontWeight: 'bold', marginBottom: '4px' }}>{dataPoint.name} Department</div>
+          <div style={{ color: dataPoint.color, display: 'flex', gap: '8px' }}>
+            <span>Threats: <strong>{dataPoint.value}</strong></span>
+            <span>Ratio: <strong>{percentage}%</strong></span>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div className="dashboard-card">
+    <div className="dashboard-card" style={{ height: '100%' }}>
       <div className="dashboard-card-header">
         <h2>
-          <Flame size={18} style={{ color: 'var(--color-high)' }} />
-          Department Alert Density Heatmap (Last 7 Days)
+          <PieIcon size={18} style={{ color: '#00D9FF' }} />
+          Department Threat Distribution Matrix
         </h2>
         <span style={{ fontSize: '11px', color: '#64748b' }}>
-          Chronological active log audit window
+          Real-time alerts segmentations
         </span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', margin: '16px 0 24px 0' }}>
-        <div style={{ background: '#0a0d16', border: '1px solid rgba(255,255,255,0.03)', borderRadius: '8px', padding: '16px' }}>
-          <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Weekly Alerts</div>
-          <div style={{ fontSize: '28px', fontWeight: '800', color: 'var(--color-high)', marginTop: '4px' }}>{totalRecentCount}</div>
-        </div>
-        <div style={{ background: '#0a0d16', border: '1px solid rgba(255,255,255,0.03)', borderRadius: '8px', padding: '16px' }}>
-          <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Highest Risk Sector</div>
-          <div style={{ fontSize: '24px', fontWeight: '800', color: counts[maxDept] > 0 ? '#fff' : '#64748b', marginTop: '6px' }}>
-            {counts[maxDept] > 0 ? `${maxDept} (${counts[maxDept]} alerts)` : 'None'}
-          </div>
-        </div>
-      </div>
-
-      {/* Grid Layout Heatmap */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', 
-        gap: '12px', 
-        padding: '8px 0' 
-      }}>
-        {deptList.map(dept => {
-          const count = counts[dept];
-          const styles = getCellStyles(count);
-          return (
-            <div 
-              key={dept} 
-              style={{
-                background: styles.bg,
-                border: `1px solid ${styles.border}`,
-                borderRadius: '8px',
-                padding: '20px 16px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                textAlign: 'center',
-                transition: 'transform 0.2s, box-shadow 0.2s',
-                cursor: 'default',
-                boxShadow: count > 10 ? '0 0 12px rgba(244,63,94,0.3)' : 'none'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                if (count > 0) e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = count > 10 ? '0 0 12px rgba(244,63,94,0.3)' : 'none';
-              }}
-            >
-              <div style={{ color: styles.text, fontSize: '14px', fontWeight: 'bold' }}>{dept}</div>
-              <div style={{ color: styles.text, fontSize: '32px', fontWeight: '900', margin: '8px 0' }}>{count}</div>
-              <div style={{ 
-                fontSize: '9px', 
-                fontWeight: '800', 
-                color: styles.text, 
-                opacity: 0.7,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>
-                {styles.intensity}
-              </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', padding: '24px', flexGrow: 1, alignItems: 'center' }}>
+        
+        {/* Pie Chart display */}
+        <div style={{ height: '240px', width: '100%', position: 'relative' }}>
+          {totalAlerts > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={65}
+                  outerRadius={90}
+                  paddingAngle={4}
+                  dataKey="value"
+                >
+                  {data.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={entry.color} 
+                      style={{ filter: `drop-shadow(0 0 4px ${entry.color}40)`, outline: 'none' }}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : (
+            <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#8B95A8', fontSize: '12px' }}>
+              No threat telemetry logged.
             </div>
-          );
-        })}
-      </div>
+          )}
+          
+          {/* Centered Total Alerts count */}
+          {totalAlerts > 0 && (
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              textAlign: 'center',
+              pointerEvents: 'none'
+            }}>
+              <span style={{ display: 'block', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', color: '#8B95A8' }}>Total Logs</span>
+              <span className="mono-text" style={{ display: 'block', fontSize: '24px', fontWeight: '800', color: '#fff', marginTop: '2px' }}>{totalAlerts}</span>
+            </div>
+          )}
+        </div>
 
-      {/* Heatmap Legend indicator */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'flex-end', 
-        alignItems: 'center', 
-        gap: '12px', 
-        marginTop: '24px', 
-        padding: '12px',
-        background: '#0B1120',
-        borderRadius: '6px',
-        fontSize: '11px',
-        color: '#8B95A8'
-      }}>
-        <span>Density Legend:</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <div style={{ width: '10px', height: '10px', background: '#1E3A5F', border: '1px solid #2A3548', borderRadius: '2px' }} />
-          <span>0-2 Alerts (Low)</span>
+        {/* Legend sidebar details */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '240px', overflowY: 'auto', paddingRight: '4px' }}>
+          {totalAlerts > 0 ? (
+            data.map(item => {
+              const percentage = ((item.value / totalAlerts) * 100).toFixed(1);
+              return (
+                <div 
+                  key={item.name} 
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 12px',
+                    background: '#060B14',
+                    border: '1px solid rgba(255,255,255,0.02)',
+                    borderRadius: '6px',
+                    fontSize: '11px'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color }} />
+                    <span style={{ color: '#E8EDF5', fontWeight: '600' }}>{item.name}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 'bold' }}>
+                    <span style={{ color: item.color }}>{item.value} Alerts</span>
+                    <span style={{ color: '#8B95A8' }}>{percentage}%</span>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <p style={{ fontSize: '11px', color: '#8B95A8', textAlign: 'center' }}>No active sector distribution metrics.</p>
+          )}
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <div style={{ width: '10px', height: '10px', background: '#F59E0B', borderRadius: '2px' }} />
-          <span>3-5 Alerts (Med-Low)</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <div style={{ width: '10px', height: '10px', background: '#F97316', borderRadius: '2px' }} />
-          <span>6-9 Alerts (Med-High)</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <div style={{ width: '10px', height: '10px', background: '#DC2626', borderRadius: '2px' }} />
-          <span>10+ Alerts (High)</span>
-        </div>
+
       </div>
     </div>
   );

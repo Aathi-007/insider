@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Network, AlertTriangle, ShieldCheck, RefreshCw, Cpu, Database, Server } from 'lucide-react';
+import { fetchWithRetry } from '../utils/api';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -19,11 +20,16 @@ export default function NetworkGraphPanel({ jwt }) {
   // Poll telemetry data
   const fetchData = async () => {
     try {
+      const headers = {
+        'X-API-Key': import.meta.env.VITE_API_KEY || 'dev-local-key',
+        'Authorization': `Bearer ${jwt}`
+      };
+
       // Fetch communications, anomalies and baselines
       const [commsRes, anomsRes, baseRes] = await Promise.all([
-        fetch(`${API_BASE}/network/communications`),
-        fetch(`${API_BASE}/network/anomalies`),
-        fetch(`${API_BASE}/network/baselines`)
+        fetchWithRetry(`${API_BASE}/network/communications`, { headers }),
+        fetchWithRetry(`${API_BASE}/network/anomalies`, { headers }),
+        fetchWithRetry(`${API_BASE}/network/baselines`, { headers })
       ]);
 
       if (!commsRes.ok || !anomsRes.ok || !baseRes.ok) {
@@ -185,6 +191,94 @@ export default function NetworkGraphPanel({ jwt }) {
   const activeNodeLogs = activeNodeId 
     ? communications.filter(c => c.source_server === activeNodeId || c.destination_server === activeNodeId)
     : [];
+
+  const renderSubGraph = (title, subnetLinks, accentColor, description, glowFilterId) => {
+    const subCx = 130;
+    const subCy = 110;
+    const subRadius = 70;
+    const subNodeCoords = {};
+    
+    servers.forEach((node, i) => {
+      const angle = (2 * Math.PI * i) / servers.length;
+      subNodeCoords[node.id] = {
+        x: subCx + subRadius * Math.cos(angle),
+        y: subCy + subRadius * Math.sin(angle)
+      };
+    });
+    
+    return (
+      <div style={{
+        background: '#0D1526',
+        border: '1px solid #1C2942',
+        borderRadius: '8px',
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        position: 'relative',
+        overflow: 'hidden'
+      }}>
+        {/* LED top line */}
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: accentColor }} />
+        
+        <div>
+          <h4 style={{ fontSize: '11px', color: '#E8EDF5', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '6px', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: accentColor, boxShadow: `0 0 6px ${accentColor}` }} />
+            {title}
+          </h4>
+          <p style={{ fontSize: '9px', color: '#8B95A8', margin: '2px 0 0 0' }}>{description}</p>
+        </div>
+        
+        <div style={{ display: 'flex', justifyContent: 'center', background: '#060B14', borderRadius: '4px', padding: '6px', border: '1px solid rgba(255,255,255,0.01)' }}>
+          <svg viewBox="0 0 260 220" width="100%" height="150px">
+            <defs>
+              <filter id={glowFilterId} x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            {/* Draw Links */}
+            <g>
+              {subnetLinks.map((link, idx) => {
+                const src = subNodeCoords[link.source];
+                const dst = subNodeCoords[link.target];
+                if (!src || !dst) return null;
+                const isAnom = link.isAnomaly;
+                return (
+                  <line 
+                    key={idx}
+                    x1={src.x} y1={src.y}
+                    x2={dst.x} y2={dst.y}
+                    stroke={isAnom ? '#FF3B5C' : accentColor}
+                    strokeWidth={isAnom ? 2 : 1}
+                    strokeOpacity={isAnom ? 0.95 : 0.2}
+                    filter={isAnom ? `url(#glow-anomaly)` : 'none'}
+                  />
+                );
+              })}
+            </g>
+            {/* Draw Nodes */}
+            <g>
+              {servers.map((node) => {
+                const coords = subNodeCoords[node.id];
+                const color = getDeptColor(node.dept);
+                return (
+                  <circle 
+                    key={node.id}
+                    cx={coords.x} cy={coords.y}
+                    r="4.5"
+                    fill="#0D1526"
+                    stroke={color}
+                    strokeWidth="1.5"
+                  />
+                );
+              })}
+            </g>
+          </svg>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="dashboard-grid-v2" style={{ gap: '24px' }}>
@@ -381,12 +475,12 @@ export default function NetworkGraphPanel({ jwt }) {
         </div>
       </div>
 
-      {/* 2. Interactive Server Inspector Panel (Right Column) */}
-      <div className="col-4" style={{ display: 'flex', flexDirection: 'column' }}>
+      {/* 2. Interactive Server Inspector Panel & Repeated Sub-Network Monitors (Right Column) */}
+      <div className="col-4" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         
         {activeNodeInfo ? (
           /* Server Drilldown view */
-          <div className="dashboard-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             <div className="dashboard-card-header" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', paddingBottom: '10px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{
@@ -462,21 +556,20 @@ export default function NetworkGraphPanel({ jwt }) {
             )}
 
             {/* Recent logs list */}
-            <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8', display: 'block', marginBottom: '8px' }}>
                 RECENT NETWORK TRANSLOGS
               </label>
               <div style={{
-                flexGrow: 1,
                 overflowY: 'auto',
-                maxHeight: '200px',
+                maxHeight: '160px',
                 background: '#060814',
                 borderRadius: '6px',
                 border: '1px solid rgba(255,255,255,0.03)',
                 padding: '8px'
               }}>
                 {activeNodeLogs.length === 0 ? (
-                  <p style={{ color: '#64748B', fontSize: '11px', textAlign: 'center', marginTop: '20px' }}>
+                  <p style={{ color: '#64748B', fontSize: '11px', textAlign: 'center', marginTop: '10px' }}>
                     No communications logged in current timeframe.
                   </p>
                 ) : (
@@ -526,7 +619,7 @@ export default function NetworkGraphPanel({ jwt }) {
           </div>
         ) : (
           /* General Summary view */
-          <div className="dashboard-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="dashboard-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div className="dashboard-card-header" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', paddingBottom: '10px' }}>
               <h3 style={{ fontSize: '14px', color: '#fff', fontWeight: 'bold' }}>Network Diagnostics</h3>
             </div>
@@ -546,14 +639,14 @@ export default function NetworkGraphPanel({ jwt }) {
             </div>
 
             {/* List of active anomalies */}
-            <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8', display: 'block', marginBottom: '8px' }}>
                 FLAGGED ANOMALIES REGISTER
               </label>
               
               <div style={{
-                flexGrow: 1,
                 overflowY: 'auto',
+                maxHeight: '160px',
                 background: '#060814',
                 borderRadius: '6px',
                 border: '1px solid rgba(255,255,255,0.03)',
@@ -563,9 +656,9 @@ export default function NetworkGraphPanel({ jwt }) {
                 gap: '8px'
               }}>
                 {anomalies.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '30px 10px', color: '#64748B' }}>
-                    <ShieldCheck size={28} style={{ color: '#10B981', marginBottom: '10px' }} />
-                    <p style={{ fontSize: '11px' }}>All server pathways baselined and secure. No anomalies detected.</p>
+                  <div style={{ textAlign: 'center', padding: '16px 10px', color: '#64748B' }}>
+                    <ShieldCheck size={24} style={{ color: '#10B981', marginBottom: '6px' }} />
+                    <p style={{ fontSize: '11px' }}>All pathways secure. No anomalies detected.</p>
                   </div>
                 ) : (
                   anomalies.map((anom) => (
@@ -608,6 +701,44 @@ export default function NetworkGraphPanel({ jwt }) {
             </p>
           </div>
         )}
+
+        {/* Repeated Sub-Network Monitor Bank (Multi-Color Panels) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8', textTransform: 'uppercase', letterSpacing: '1px', margin: '10px 0 0 0' }}>
+            🖥️ Sub-Network Telemetry Monitors
+          </h3>
+          
+          {/* Sub-Graph 1: Operational Path matrix (Emerald Green) */}
+          {renderSubGraph(
+            "Matrix Alpha: Baselined Paths",
+            communications.filter(c => !c.is_anomaly),
+            "#10B981",
+            "Active allowed communication baselines",
+            "glow-baseline"
+          )}
+
+          {/* Sub-Graph 2: Anomalous Path matrix (Crimson Red) */}
+          {renderSubGraph(
+            "Matrix Beta: Threat Densities",
+            communications.filter(c => c.is_anomaly),
+            "#FF3B5C",
+            "Novel unbaselined path violations",
+            "glow-anomaly-sub"
+          )}
+
+          {/* Sub-Graph 3: R&D Backbone matrix (Cyan Blue) */}
+          {renderSubGraph(
+            "Matrix Gamma: Core Subnets",
+            communications.filter(c => {
+              const srcDept = nodeCoords[c.source_server]?.dept;
+              const dstDept = nodeCoords[c.destination_server]?.dept;
+              return srcDept === 'Engineering' || dstDept === 'Engineering' || srcDept === 'IT' || dstDept === 'IT';
+            }),
+            "#00D9FF",
+            "Dynamic metrics for IT & Engineering subnets",
+            "glow-core-sub"
+          )}
+        </div>
       </div>
       
     </div>
