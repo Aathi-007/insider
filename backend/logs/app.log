@@ -24904,3 +24904,72 @@ Feature names seen at fit time, yet now missing:
 2026-08-17 01:06:17,493 [INFO] Response: GET /analytics/rule-accuracy - Status: 200
 2026-08-17 01:06:18,363 [INFO] Incoming request: GET /alerts
 2026-08-17 01:06:18,381 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:38:30,401 [INFO] Incoming request: OPTIONS /alerts
+2026-08-19 21:38:30,402 [INFO] Incoming request: OPTIONS /system/status
+2026-08-19 21:38:30,402 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-19 21:38:30,402 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-19 21:38:30,403 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-19 21:38:30,403 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-19 21:38:30,404 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-19 21:38:30,405 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-19 21:38:30,406 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-19 21:38:30,406 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-19 21:38:30,407 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-19 21:38:30,407 [INFO] Incoming request: GET /alerts
+2026-08-19 21:38:30,408 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-19 21:38:30,410 [INFO] Incoming request: GET /system/status
+2026-08-19 21:38:30,411 [ERROR] HTTP error on GET /system/status: 404 - Not Found
+2026-08-19 21:38:30,411 [INFO] Incoming request: GET /alerts/summary
+2026-08-19 21:38:30,413 [INFO] Response: GET /system/status - Status: 404
+2026-08-19 21:38:30,414 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-19 21:38:30,417 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-19 21:38:30,424 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-19 21:38:30,426 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-19 21:38:30,432 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-19 21:38:30,441 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-19 21:38:30,443 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:38:30,487 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-19 21:41:27,211 [INFO] Incoming request: POST /login
+2026-08-19 21:41:27,456 [INFO] Response: POST /login - Status: 200
+2026-08-19 21:41:43,511 [INFO] Incoming request: GET /alerts
+2026-08-19 21:41:43,517 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:42:19,479 [INFO] Incoming request: GET /user/U005
+2026-08-19 21:42:19,492 [INFO] Response: GET /user/U005 - Status: 200
+2026-08-19 21:43:30,367 [INFO] Incoming request: GET /alerts
+2026-08-19 21:43:30,378 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:43:37,413 [INFO] Incoming request: GET /alerts
+2026-08-19 21:43:37,418 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:43:44,446 [INFO] Incoming request: GET /alerts
+2026-08-19 21:43:44,450 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:43:51,495 [INFO] Incoming request: GET /alerts
+2026-08-19 21:43:51,499 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:43:56,561 [INFO] Incoming request: GET /alerts
+2026-08-19 21:43:56,566 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:43:58,530 [INFO] Incoming request: GET /alerts
+2026-08-19 21:43:58,534 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:44:05,564 [INFO] Incoming request: GET /alerts
+2026-08-19 21:44:05,568 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:44:08,450 [INFO] Incoming request: GET /alerts
+2026-08-19 21:44:08,460 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:44:12,597 [INFO] Incoming request: GET /alerts
+2026-08-19 21:44:12,602 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:44:19,630 [INFO] Incoming request: GET /alerts
+2026-08-19 21:44:19,633 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:44:32,940 [INFO] Incoming request: GET /analytics/daily-risk
+2026-08-19 21:44:32,950 [INFO] Response: GET /analytics/daily-risk - Status: 200
+2026-08-19 21:45:58,364 [INFO] Incoming request: GET /alerts
+2026-08-19 21:45:58,368 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:46:07,412 [INFO] Incoming request: GET /alerts
+2026-08-19 21:46:07,416 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:46:10,529 [INFO] Incoming request: GET /alerts
+2026-08-19 21:46:10,534 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:46:14,459 [INFO] Incoming request: GET /alerts
+2026-08-19 21:46:14,464 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:46:21,490 [INFO] Incoming request: GET /alerts
+2026-08-19 21:46:21,494 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:46:28,529 [INFO] Incoming request: GET /alerts
+2026-08-19 21:46:28,533 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:46:35,563 [INFO] Incoming request: GET /alerts
+2026-08-19 21:46:35,572 [INFO] Response: GET /alerts - Status: 200
+2026-08-19 21:46:42,600 [INFO] Incoming request: GET /alerts
+2026-08-19 21:46:42,610 [INFO] Response: GET /alerts - Status: 200
