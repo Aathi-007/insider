@@ -22,6 +22,13 @@ import uvicorn
 from database import get_connection
 from risk_scoring import calculate_rule_based_score, calculate_final_risk_score
 from auth import verify_password, create_access_token, verify_token, get_password_hash
+from security_utils import (
+    check_ip_rate_limit,
+    record_failed_attempt,
+    clear_failed_attempts,
+    get_progressive_delay,
+    is_account_locked
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -217,6 +224,10 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class ChangePasswordRequest(BaseModel):
+    old_password: str
+    new_password: str
+
 class RegisterDeviceRequest(BaseModel):
     user_id: str
     device_id: str
@@ -308,8 +319,20 @@ def register(request: RegisterRequest):
 
 @app.post("/login")
 @app.post("/auth/login")
-def login(request: LoginRequest):
+def login(request: LoginRequest, http_request: Request):
+    client_ip = http_request.client.host if http_request.client else "0.0.0.0"
+    
+    if not check_ip_rate_limit(client_ip):
+        raise HTTPException(status_code=429, detail="Too many requests. Please try again later.")
+        
     username = request.username.strip().lower()
+    
+    delay = get_progressive_delay(username)
+    if delay > 0:
+        time.sleep(delay)
+        
+    if is_account_locked(username):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
     
     conn = get_connection()
     try:
@@ -320,11 +343,21 @@ def login(request: LoginRequest):
         )
         user = cursor.fetchone()
         if not user:
+            record_failed_attempt(username)
             raise HTTPException(status_code=401, detail="Invalid username or password")
         
         user_id, username_db, password_hash, role, department = user
-        if not verify_password(request.password, password_hash):
+        is_valid, needs_rehash = verify_password(request.password, password_hash)
+        if not is_valid:
+            record_failed_attempt(username)
             raise HTTPException(status_code=401, detail="Invalid username or password")
+            
+        clear_failed_attempts(username)
+            
+        if needs_rehash:
+            new_hash = get_password_hash(request.password)
+            cursor.execute("UPDATE users SET password_hash = ? WHERE user_id = ?", (new_hash, user_id))
+            conn.commit()
             
         if role not in ['admin', 'analyst']:
             raise HTTPException(status_code=403, detail="Access Denied: SOC clearance required.")
@@ -336,6 +369,34 @@ def login(request: LoginRequest):
             "department": department
         })
         return {"access_token": token, "token_type": "bearer"}
+    finally:
+        conn.close()
+
+@app.post("/auth/change-password")
+def change_password(request: ChangePasswordRequest, current_user: dict = Depends(get_current_user)):
+    username = current_user.get("sub")
+    if not username:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT user_id, password_hash FROM users WHERE username = ?", (username,))
+        user = cursor.fetchone()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        user_id, password_hash = user
+        
+        is_valid, _ = verify_password(request.old_password, password_hash)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail="Incorrect old password")
+            
+        new_hash = get_password_hash(request.new_password)
+        cursor.execute("UPDATE users SET password_hash = ? WHERE user_id = ?", (new_hash, user_id))
+        conn.commit()
+        
+        return {"status": "success", "message": "Password updated successfully"}
     finally:
         conn.close()
 
