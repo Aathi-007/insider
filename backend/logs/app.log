@@ -1,0 +1,13 @@
+2026-08-21 12:37:42,894 [INFO] Incoming request: POST /login
+2026-08-21 12:37:43,168 [ERROR] HTTP error on POST /login: 401 - Invalid username or password
+2026-08-21 12:37:43,168 [INFO] Response: POST /login - Status: 401
+2026-08-21 12:38:11,483 [INFO] Incoming request: POST /login
+2026-08-21 12:38:11,708 [ERROR] HTTP error on POST /login: 401 - Invalid username or password
+2026-08-21 12:38:11,708 [INFO] Response: POST /login - Status: 401
+2026-08-21 12:38:44,376 [INFO] Incoming request: POST /login
+2026-08-21 12:38:44,595 [ERROR] HTTP error on POST /login: 401 - Invalid username or password
+2026-08-21 12:38:44,595 [INFO] Response: POST /login - Status: 401
+2026-08-21 12:39:56,916 [INFO] Incoming request: POST /login
+2026-08-21 12:39:57,140 [INFO] Response: POST /login - Status: 200
+2026-08-21 12:40:18,783 [INFO] Incoming request: POST /login
+2026-08-21 12:40:19,004 [INFO] Response: POST /login - Status: 200
