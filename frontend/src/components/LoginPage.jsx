@@ -10,11 +10,7 @@ export default function LoginPage({ setJwt }) {
   const [error, setError] = useState(null);
   const [detectedRole, setDetectedRole] = useState('employee');
 
-  // Registration States
-  const [isRegister, setIsRegister] = useState(false);
-  const [regDept, setRegDept] = useState('IT');
-  const [regRole, setRegRole] = useState('analyst');
-  const [successMsg, setSuccessMsg] = useState(null);
+
 
   // Dynamically determine role indicator based on credentials typed
   useEffect(() => {
@@ -38,7 +34,6 @@ export default function LoginPage({ setJwt }) {
     }
     setLoading(true);
     setError(null);
-    setSuccessMsg(null);
     try {
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
@@ -62,40 +57,7 @@ export default function LoginPage({ setJwt }) {
     }
   };
 
-  const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
-    if (!username.trim() || !password.trim()) {
-      setError("Username and password are required.");
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    setSuccessMsg(null);
-    try {
-      const response = await fetch(`${API_BASE}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: username.trim(),
-          password: password.trim(),
-          department: regDept,
-          role: regRole
-        })
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.detail || "Registration failed.");
-      }
-      setSuccessMsg("Registration successful! You can now log in.");
-      setIsRegister(false);
-      setPassword(''); // clear password field
-    } catch (err) {
-      console.error(err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   return (
     <div style={{
@@ -177,20 +139,7 @@ export default function LoginPage({ setJwt }) {
           Access restricted to authorized Security Analysts and System Administrators only. Unauthorized access attempts are logged.
         </div>
 
-        {/* Success notification */}
-        {successMsg && (
-          <div style={{
-            padding: '10px 14px',
-            background: 'rgba(16, 185, 129, 0.08)',
-            border: '1px solid rgba(16, 185, 129, 0.2)',
-            borderRadius: '4px',
-            color: '#10B981',
-            fontSize: '11px',
-            fontWeight: 'bold'
-          }}>
-            {successMsg}
-          </div>
-        )}
+
 
         {/* Error notification */}
         {error && (
@@ -211,7 +160,7 @@ export default function LoginPage({ setJwt }) {
         )}
 
         {/* Form */}
-        <form onSubmit={isRegister ? handleRegisterSubmit : handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
           {/* Username */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -271,78 +220,24 @@ export default function LoginPage({ setJwt }) {
             </div>
           </div>
 
-          {isRegister ? (
-            /* Registration Specific Fields */
-            <>
-              {/* Department selection */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Assigned Division</label>
-                <select
-                  value={regDept}
-                  onChange={e => setRegDept(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    background: '#060B14',
-                    border: '1px solid #2A3548',
-                    borderRadius: '4px',
-                    color: '#E8EDF5',
-                    fontSize: '13px',
-                    outline: 'none',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <option value="IT">IT Division</option>
-                  <option value="Engineering">Engineering & R&D</option>
-                  <option value="Finance">Finance Department</option>
-                  <option value="HR">Human Resources</option>
-                  <option value="Sales">Sales & Marketing</option>
-                </select>
-              </div>
-
-              {/* Role selection */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Security Clearance Role</label>
-                <select
-                  value={regRole}
-                  onChange={e => setRegRole(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    background: '#060B14',
-                    border: '1px solid #2A3548',
-                    borderRadius: '4px',
-                    color: '#E8EDF5',
-                    fontSize: '13px',
-                    outline: 'none',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <option value="analyst">SOC Security Analyst (Standard clearance)</option>
-                  <option value="admin">System Administrator (Global administrative clearance)</option>
-                </select>
-              </div>
-            </>
-          ) : (
-            /* Login Clearance Indicator */
-            <div style={{
-              fontSize: '11px',
-              color: '#8B95A8',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderTop: '1px solid #1C2942',
-              paddingTop: '12px',
-              marginTop: '4px'
-            }}>
-              <span>Detected Clearance:</span>
-              <span style={{ 
-                fontWeight: 'bold', 
-                fontFamily: "'JetBrains Mono', monospace",
-                color: detectedRole.includes('Admin') ? '#FB7A3C' : detectedRole.includes('Analyst') ? '#00D9FF' : '#8B95A8' 
-              }}>{detectedRole}</span>
-            </div>
-          )}
+          {/* Login Clearance Indicator */}
+          <div style={{
+            fontSize: '11px',
+            color: '#8B95A8',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderTop: '1px solid #1C2942',
+            paddingTop: '12px',
+            marginTop: '4px'
+          }}>
+            <span>Detected Clearance:</span>
+            <span style={{ 
+              fontWeight: 'bold', 
+              fontFamily: "'JetBrains Mono', monospace",
+              color: detectedRole.includes('Admin') ? '#FB7A3C' : detectedRole.includes('Analyst') ? '#00D9FF' : '#8B95A8' 
+            }}>{detectedRole}</span>
+          </div>
 
           {/* Submit */}
           <button 
@@ -378,34 +273,11 @@ export default function LoginPage({ setJwt }) {
             }}
             disabled={loading}
           >
-            {loading ? 'Processing...' : isRegister ? 'Register Analyst Account' : 'Authenticate Terminal Gate'}
+            {loading ? 'Processing...' : 'Authenticate Terminal Gate'}
           </button>
         </form>
 
-        {/* Toggle between Register and Login */}
-        <div style={{ textAlign: 'center', marginTop: '10px' }}>
-          <button
-            type="button"
-            onClick={() => {
-              setIsRegister(!isRegister);
-              setError(null);
-              setSuccessMsg(null);
-            }}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#8B95A8',
-              fontSize: '11px',
-              textDecoration: 'underline',
-              cursor: 'pointer',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={e => e.target.style.color = '#00D9FF'}
-            onMouseLeave={e => e.target.style.color = '#8B95A8'}
-          >
-            {isRegister ? 'Return to Terminal Login' : 'Need new credentials? Register Analyst Account'}
-          </button>
-        </div>
+
       </div>
     </div>
   );

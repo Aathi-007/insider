@@ -218,11 +218,6 @@ class AccessRequest(BaseModel):
     department: str = "Engineering"
     username: str = "test.user"
 
-class RegisterRequest(BaseModel):
-    username: str
-    password: str
-    department: str = "IT"
-    role: str = "analyst"  # 'analyst' or 'admin'
 
 class LoginRequest(BaseModel):
     username: str
@@ -293,37 +288,6 @@ class ResolveAlertRequest(BaseModel):
     resolution: Optional[str] = None
     note: Optional[str] = None
 
-@app.post("/register")
-@app.post("/auth/register")
-def register(request: RegisterRequest):
-    username = request.username.strip().lower()
-    if not username or not request.password.strip():
-        raise HTTPException(status_code=400, detail="Username and password are required.")
-    
-    conn = get_connection()
-    try:
-        cursor = conn.cursor()
-        # Check if username exists
-        cursor.execute("SELECT 1 FROM users WHERE username = ?", (username,))
-        if cursor.fetchone():
-            raise HTTPException(status_code=400, detail="Username already exists.")
-        
-        # Generate user_id (e.g. U + count + 1)
-        cursor.execute("SELECT COUNT(*) FROM users")
-        user_count = cursor.fetchone()[0]
-        user_id = f"U{user_count + 1:03d}"
-        
-        password_hash = get_password_hash(request.password.strip())
-        
-        cursor.execute(
-            "INSERT INTO users (user_id, username, password_hash, department, role) VALUES (?, ?, ?, ?, ?)",
-            (user_id, username, password_hash, request.department, request.role)
-        )
-        conn.commit()
-        
-        return {"status": "success", "message": f"Successfully registered user {username} with ID {user_id}."}
-    finally:
-        conn.close()
 
 @app.post("/login")
 @app.post("/auth/login")
