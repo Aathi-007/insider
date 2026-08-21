@@ -25084,3 +25084,2379 @@ Feature names seen at fit time, yet now missing:
 2026-08-19 21:49:31,001 [INFO] Response: GET /alerts - Status: 200
 2026-08-19 21:49:38,031 [INFO] Incoming request: GET /alerts
 2026-08-19 21:49:38,034 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:08:40,843 [INFO] Incoming request: OPTIONS /auth/login
+2026-08-21 01:08:40,846 [INFO] Response: OPTIONS /auth/login - Status: 200
+2026-08-21 01:08:40,853 [INFO] Incoming request: POST /auth/login
+2026-08-21 01:08:41,654 [INFO] Response: POST /auth/login - Status: 200
+2026-08-21 01:08:41,780 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 01:08:41,781 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 01:08:41,786 [INFO] Incoming request: GET /alerts
+2026-08-21 01:08:41,793 [INFO] Incoming request: OPTIONS /system/status
+2026-08-21 01:08:41,795 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-21 01:08:41,803 [INFO] Incoming request: GET /system/status
+2026-08-21 01:08:41,820 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:08:41,825 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:08:41,860 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 01:08:41,861 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:08:41,862 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 01:08:41,863 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 01:08:41,864 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:41,866 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 01:08:41,869 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:08:41,871 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 01:08:41,873 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:08:41,874 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:41,876 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 01:08:41,878 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:41,881 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 01:08:41,883 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:08:41,886 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:08:41,887 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 01:08:41,890 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:41,894 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:41,896 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:08:41,908 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:08:41,920 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:41,922 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:08:42,050 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:42,154 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:08:42,160 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:42,166 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:08:42,174 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:08:42,175 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:42,193 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:42,199 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:42,249 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:42,391 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:08:44,870 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:08:44,872 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:44,888 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:44,900 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:44,903 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:08:44,920 [ERROR] Error processing request GET /analytics/company-behavior-trend: deque mutated during iteration
+Traceback (most recent call last):
+  File "D:\insider\backend\main.py", line 138, in track_api_traffic
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\insider\backend\main.py", line 817, in get_company_behavior_trend
+    for log in api_traffic_log:
+               ^^^^^^^^^^^^^^^
+RuntimeError: deque mutated during iteration
+2026-08-21 01:08:45,352 [ERROR] Unhandled exception on GET /analytics/company-behavior-trend: deque mutated during iteration
+Traceback (most recent call last):
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\main.py", line 152, in track_api_traffic
+    raise e
+  File "D:\insider\backend\main.py", line 138, in track_api_traffic
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\insider\backend\main.py", line 817, in get_company_behavior_trend
+    for log in api_traffic_log:
+               ^^^^^^^^^^^^^^^
+RuntimeError: deque mutated during iteration
+2026-08-21 01:08:45,776 [INFO] Incoming request: GET /alerts
+2026-08-21 01:08:45,779 [INFO] Incoming request: GET /system/status
+2026-08-21 01:08:45,800 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:08:45,802 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:08:47,875 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:47,878 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:08:47,896 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:47,909 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:47,927 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:08:47,934 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:49,782 [INFO] Incoming request: GET /alerts
+2026-08-21 01:08:49,785 [INFO] Incoming request: GET /system/status
+2026-08-21 01:08:49,808 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:08:49,814 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:08:50,882 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:08:50,885 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:50,904 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:50,914 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:50,917 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:08:50,933 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:51,876 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:08:52,103 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:08:53,783 [INFO] Incoming request: GET /alerts
+2026-08-21 01:08:53,784 [INFO] Incoming request: GET /system/status
+2026-08-21 01:08:53,788 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:08:53,796 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:08:53,873 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:08:53,874 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:53,879 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:53,883 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:53,885 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:08:53,893 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:56,870 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:08:56,873 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:56,901 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:56,905 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:08:56,911 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:56,929 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:57,912 [INFO] Incoming request: GET /alerts
+2026-08-21 01:08:57,917 [INFO] Incoming request: GET /system/status
+2026-08-21 01:08:57,951 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:08:57,955 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:08:59,873 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:08:59,876 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:59,893 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:08:59,905 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:08:59,909 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:08:59,930 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:01,820 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:01,824 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:01,834 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:01,856 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:01,989 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:09:02,267 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:09:02,875 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:09:02,878 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:02,896 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:02,907 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:02,918 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:09:02,936 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:05,784 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:05,786 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:05,792 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:05,804 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:05,913 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:09:05,914 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:05,922 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:05,928 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:05,930 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:09:05,943 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:08,866 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:09:08,869 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:08,877 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:08,894 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:09:08,909 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:08,939 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:09,799 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:09,802 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:09,827 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:09,831 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:11,866 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:09:11,870 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:09:11,871 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:11,894 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:11,905 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:09:11,969 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:12,135 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:12,207 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:09:13,784 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:13,787 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:13,812 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:13,818 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:14,866 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:09:14,868 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:14,895 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:14,899 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:09:14,903 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:09:14,922 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:09:17,786 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:17,790 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:17,818 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:17,822 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:27,389 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:27,393 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:27,404 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:27,432 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:29,776 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:29,780 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:29,808 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:29,813 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:33,786 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:33,789 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:33,812 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:33,819 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:37,783 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:37,786 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:37,811 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:37,814 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:41,785 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:41,789 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:41,823 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:41,826 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:45,783 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:45,786 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:45,814 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:45,819 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:49,783 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:49,785 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:49,792 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:49,794 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:53,800 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:53,804 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:53,832 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:53,837 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:09:58,124 [INFO] Incoming request: GET /alerts
+2026-08-21 01:09:58,125 [INFO] Incoming request: GET /system/status
+2026-08-21 01:09:58,131 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:09:58,132 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:02,084 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:02,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:02,099 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:02,101 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:06,088 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:06,089 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:06,093 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:06,095 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:10,088 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:10,091 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:10,100 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:10,102 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:14,085 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:14,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:14,090 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:14,091 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:18,092 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:18,094 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:18,108 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:18,110 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:22,094 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:22,096 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:22,100 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:22,101 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:26,092 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:26,093 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:26,104 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:26,107 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:30,092 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:30,095 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:30,108 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:30,110 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:34,085 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:34,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:34,092 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:34,096 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:38,094 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:38,095 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:38,100 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:38,101 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:42,082 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:42,084 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:42,094 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:42,095 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:46,087 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:46,088 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:46,093 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:46,094 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:50,086 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:50,091 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:50,096 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:50,104 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:10:54,089 [INFO] Incoming request: GET /alerts
+2026-08-21 01:10:54,091 [INFO] Incoming request: GET /system/status
+2026-08-21 01:10:54,096 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:10:54,097 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:18,603 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:18,606 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:18,634 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:18,638 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:21,783 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:21,787 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:21,795 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:21,819 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:22,371 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:22,373 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:22,386 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:11:22,389 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:22,397 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:22,399 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:22,407 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:22,422 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:22,513 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:22,653 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:22,685 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:22,687 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:11:22,690 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:22,694 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:11:22,710 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:22,905 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:11:25,384 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:25,386 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:25,406 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:25,419 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:25,461 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:25,471 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:25,787 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:25,790 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:25,808 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:25,813 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:29,112 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:29,114 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:29,128 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:29,139 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:29,143 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:29,156 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:30,093 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:30,099 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:30,100 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:30,103 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:32,092 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:32,093 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:32,098 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:32,098 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:32,100 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:32,105 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:33,089 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:11:33,130 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:11:34,089 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:34,090 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:34,094 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:34,097 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:35,087 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:35,088 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:35,093 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:35,096 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:35,100 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:35,101 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:38,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:38,092 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:38,095 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:38,096 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:38,105 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:38,109 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:38,125 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:38,128 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:38,129 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:38,140 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:41,098 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:41,102 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:41,102 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:41,107 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:41,113 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:41,118 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:42,093 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:42,094 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:42,098 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:42,100 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:43,084 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:11:43,130 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:11:44,095 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:44,096 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:44,100 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:44,103 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:44,107 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:44,111 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:46,089 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:46,091 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:46,096 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:46,097 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:47,095 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:47,096 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:47,102 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:47,102 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:47,108 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:47,113 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:50,092 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:50,094 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:50,095 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:50,110 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:50,112 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:50,124 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:50,125 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:50,128 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:50,140 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:50,143 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:52,391 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:52,394 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:11:52,396 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:52,419 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:52,429 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:52,431 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:52,613 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:52,714 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:11:54,085 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:54,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:54,091 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:54,092 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:56,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:56,089 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:56,093 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:56,097 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:56,098 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:56,104 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:58,094 [INFO] Incoming request: GET /alerts
+2026-08-21 01:11:58,095 [INFO] Incoming request: GET /system/status
+2026-08-21 01:11:58,100 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:11:58,101 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:11:59,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:11:59,091 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:59,101 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:11:59,107 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:11:59,113 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:11:59,118 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:02,094 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:02,095 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:02,097 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:02,104 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:02,107 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:02,112 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:02,113 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:02,114 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:02,119 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:02,121 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:03,097 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:12:03,143 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:12:05,095 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:05,096 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:05,100 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:05,103 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:05,104 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:05,109 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:06,091 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:06,092 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:06,102 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:06,104 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:08,085 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:08,087 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:08,104 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:08,111 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:08,114 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:08,131 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:09,776 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:09,778 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:09,792 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:09,794 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:10,381 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:10,383 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:10,398 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:10,404 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:10,406 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:10,419 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:12,382 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:12:12,578 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:12:13,386 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:13,388 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:13,408 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:13,416 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:13,428 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:13,451 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:13,779 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:13,781 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:13,797 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:13,800 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:16,393 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:16,395 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:16,414 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:16,424 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:16,427 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:16,445 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:17,780 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:17,784 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:17,809 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:17,811 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:19,381 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:19,383 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:19,403 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:19,415 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:19,434 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:19,438 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:21,785 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:21,788 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:21,811 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:21,814 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:22,384 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:22,387 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:12:22,389 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:22,411 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:22,454 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:22,464 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:22,669 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:22,672 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:12:25,383 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:25,385 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:25,406 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:25,418 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:25,421 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:25,438 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:25,790 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:25,792 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:25,809 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:25,813 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:28,380 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:28,384 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:28,413 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:28,419 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:28,434 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:28,453 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:29,832 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:29,836 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:29,869 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:29,872 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:32,091 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:32,091 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:32,096 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:32,098 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:32,100 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:32,105 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:33,089 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:12:33,161 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:12:34,083 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:34,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:34,093 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:34,109 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:35,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:35,091 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:35,101 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:35,111 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:35,117 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:35,127 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:38,109 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:38,110 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:38,111 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:38,118 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:38,119 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:38,126 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:38,126 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:38,127 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:38,132 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:38,135 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:41,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:41,090 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:41,093 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:41,096 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:41,107 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:41,111 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:42,085 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:42,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:42,091 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:42,093 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:43,086 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:12:43,119 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:12:44,105 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:44,107 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:44,115 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:44,120 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:44,123 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:44,130 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:46,092 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:46,093 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:46,095 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:46,103 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:47,094 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:47,095 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:47,105 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:47,110 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:47,120 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:47,123 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:50,099 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:50,100 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:50,101 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:50,102 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:50,108 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:50,109 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:50,113 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:50,114 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:50,119 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:50,120 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:53,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:53,089 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:53,090 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:12:53,095 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:53,097 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:53,098 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:53,103 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:53,139 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:12:54,093 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:54,094 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:54,100 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:54,102 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:56,087 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:56,088 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:56,091 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:56,094 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:56,106 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:56,111 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:58,098 [INFO] Incoming request: GET /alerts
+2026-08-21 01:12:58,101 [INFO] Incoming request: GET /system/status
+2026-08-21 01:12:58,111 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:12:58,113 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:12:58,683 [INFO] Incoming request: GET /health
+2026-08-21 01:12:58,684 [INFO] Response: GET /health - Status: 200
+2026-08-21 01:12:59,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:12:59,090 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:59,094 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:12:59,105 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:12:59,111 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:12:59,121 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:00,718 [INFO] Incoming request: POST /simulate-event
+2026-08-21 01:13:00,870 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-21 01:13:02,087 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:02,088 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:02,092 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:02,097 [INFO] Incoming request: GET /alerts
+2026-08-21 01:13:02,098 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:02,104 [INFO] Incoming request: GET /system/status
+2026-08-21 01:13:02,105 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:13:02,108 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:02,111 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:02,112 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:13:03,091 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:13:03,137 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:13:05,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:05,089 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:05,094 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:05,096 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:05,098 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:05,103 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:05,901 [INFO] Incoming request: POST /simulate-event
+2026-08-21 01:13:05,974 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-21 01:13:06,090 [INFO] Incoming request: GET /alerts
+2026-08-21 01:13:06,092 [INFO] Incoming request: GET /system/status
+2026-08-21 01:13:06,110 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:13:06,111 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:13:08,091 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:08,093 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:08,104 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:08,110 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:08,112 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:08,118 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:10,090 [INFO] Incoming request: GET /alerts
+2026-08-21 01:13:10,091 [INFO] Incoming request: GET /system/status
+2026-08-21 01:13:10,093 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:13:10,097 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:13:11,003 [INFO] Incoming request: POST /simulate-event
+2026-08-21 01:13:11,053 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-21 01:13:11,082 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:11,083 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:11,089 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:11,093 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:11,093 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:11,099 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:13,083 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:13:13,132 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:13:14,087 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:14,087 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:14,088 [INFO] Incoming request: GET /alerts
+2026-08-21 01:13:14,089 [INFO] Incoming request: GET /system/status
+2026-08-21 01:13:14,096 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:14,097 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:14,103 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:14,103 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:13:14,108 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:14,109 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:13:16,085 [INFO] Incoming request: POST /simulate-event
+2026-08-21 01:13:16,157 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-21 01:13:17,092 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:17,094 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:17,100 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:17,102 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:17,104 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:17,107 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:18,086 [INFO] Incoming request: GET /alerts
+2026-08-21 01:13:18,087 [INFO] Incoming request: GET /system/status
+2026-08-21 01:13:18,095 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:13:18,097 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:13:20,085 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:20,086 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:20,092 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:20,095 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:20,096 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:20,100 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:21,196 [INFO] Incoming request: POST /simulate-event
+2026-08-21 01:13:21,251 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-21 01:13:22,090 [INFO] Incoming request: GET /alerts
+2026-08-21 01:13:22,091 [INFO] Incoming request: GET /system/status
+2026-08-21 01:13:22,095 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:13:22,100 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:13:23,081 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:23,082 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:23,083 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:13:23,087 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:23,091 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:23,092 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:23,099 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:23,148 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:13:26,095 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:26,096 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:26,097 [INFO] Incoming request: GET /alerts
+2026-08-21 01:13:26,102 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:26,105 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:26,110 [INFO] Incoming request: GET /system/status
+2026-08-21 01:13:26,111 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:13:26,112 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:26,117 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:26,119 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:13:26,276 [INFO] Incoming request: POST /simulate-event
+2026-08-21 01:13:26,344 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-21 01:13:29,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:13:29,090 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:29,093 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:29,096 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:13:29,102 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:13:29,106 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:13:30,089 [INFO] Incoming request: GET /alerts
+2026-08-21 01:13:30,091 [INFO] Incoming request: GET /system/status
+2026-08-21 01:13:30,093 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:13:30,104 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:13:31,386 [INFO] Incoming request: POST /simulate-event
+2026-08-21 01:13:31,497 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-21 01:13:36,531 [INFO] Incoming request: POST /simulate-event
+2026-08-21 01:13:36,605 [INFO] Response: POST /simulate-event - Status: 200
+2026-08-21 01:14:30,400 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:14:30,406 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:14:30,410 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:14:30,417 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:14:30,422 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:14:30,481 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:14:30,482 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:14:30,482 [INFO] Incoming request: GET /alerts
+2026-08-21 01:14:30,482 [INFO] Incoming request: GET /system/status
+2026-08-21 01:14:30,492 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:14:30,499 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:14:30,500 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:15:30,087 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:15:30,089 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:15:30,096 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:15:30,098 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:15:30,114 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:15:30,121 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:15:30,137 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:15:30,138 [INFO] Incoming request: GET /alerts
+2026-08-21 01:15:30,204 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:15:30,205 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:15:30,206 [INFO] Incoming request: GET /system/status
+2026-08-21 01:15:30,208 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:16:30,278 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:16:30,288 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:16:30,293 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:16:30,315 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:16:30,323 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:16:30,579 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:16:30,588 [INFO] Incoming request: GET /alerts
+2026-08-21 01:16:30,593 [INFO] Incoming request: GET /system/status
+2026-08-21 01:16:30,594 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:16:30,620 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:16:30,647 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:16:30,651 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:17:30,096 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:17:30,097 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:17:30,114 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:17:30,118 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:17:30,119 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:17:30,126 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:17:30,162 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:17:30,163 [INFO] Incoming request: GET /alerts
+2026-08-21 01:17:30,173 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:17:30,240 [INFO] Incoming request: GET /system/status
+2026-08-21 01:17:30,243 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:17:30,247 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:11,276 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:11,282 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:11,286 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:11,297 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:11,302 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:18:11,486 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:18:11,490 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:11,509 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:11,516 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:11,524 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:11,529 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:11,546 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:13,090 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:18:13,426 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:18:14,083 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:14,085 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:14,088 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:14,090 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:14,132 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:14,140 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:14,164 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:14,171 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:14,200 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:14,205 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:17,083 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:17,086 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:17,112 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:17,125 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:17,129 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:17,155 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:18,086 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:18,090 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:18,121 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:18,123 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:20,085 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:20,088 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:20,112 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:20,128 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:20,135 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:20,159 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:22,083 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:22,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:22,120 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:22,122 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:23,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:23,092 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:23,096 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:18:23,121 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:23,130 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:23,142 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:23,154 [ERROR] Error processing request GET /analytics/company-behavior-trend: deque mutated during iteration
+Traceback (most recent call last):
+  File "D:\insider\backend\main.py", line 138, in track_api_traffic
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\insider\backend\main.py", line 817, in get_company_behavior_trend
+    for log in api_traffic_log:
+               ^^^^^^^^^^^^^^^
+RuntimeError: deque mutated during iteration
+2026-08-21 01:18:23,365 [ERROR] Unhandled exception on GET /analytics/company-behavior-trend: deque mutated during iteration
+Traceback (most recent call last):
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\main.py", line 152, in track_api_traffic
+    raise e
+  File "D:\insider\backend\main.py", line 138, in track_api_traffic
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\insider\backend\main.py", line 817, in get_company_behavior_trend
+    for log in api_traffic_log:
+               ^^^^^^^^^^^^^^^
+RuntimeError: deque mutated during iteration
+2026-08-21 01:18:23,531 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:18:26,086 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:26,090 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:26,093 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:26,120 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:26,129 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:26,151 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:26,176 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:26,179 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:26,182 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:26,210 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:29,082 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:29,085 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:29,111 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:29,123 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:29,129 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:29,157 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:30,088 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:30,093 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:30,138 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:30,144 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:32,086 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:32,090 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:32,121 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:32,127 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:32,132 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:32,161 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:33,083 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:18:33,368 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:18:34,096 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:34,101 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:34,132 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:34,137 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:35,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:35,098 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:35,123 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:35,133 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:35,136 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:35,165 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:38,082 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:38,085 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:38,090 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:38,092 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:38,152 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:38,158 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:38,184 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:38,191 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:38,208 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:38,225 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:41,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:41,092 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:41,131 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:41,144 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:41,149 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:41,172 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:42,081 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 01:18:42,083 [INFO] Incoming request: OPTIONS /system/status
+2026-08-21 01:18:42,085 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 01:18:42,089 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-21 01:18:42,094 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:42,098 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:42,129 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:42,135 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:43,087 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 01:18:43,088 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 01:18:43,097 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:18:43,324 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:18:44,085 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 01:18:44,087 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:18:44,088 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 01:18:44,090 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:44,093 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:18:44,094 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:44,096 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:44,099 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:44,113 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:44,118 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:44,122 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:44,136 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:46,086 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:46,089 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:46,113 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:46,119 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:47,100 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:47,104 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:47,133 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:47,147 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:47,151 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:47,180 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:50,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:50,091 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:50,093 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:50,096 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:50,120 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:50,127 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:50,142 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:50,144 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:50,154 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:50,156 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:53,086 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:53,090 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:53,093 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:18:53,124 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:53,136 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:53,150 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:53,209 [ERROR] Error processing request GET /analytics/company-behavior-trend: deque mutated during iteration
+Traceback (most recent call last):
+  File "D:\insider\backend\main.py", line 138, in track_api_traffic
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\insider\backend\main.py", line 817, in get_company_behavior_trend
+    for log in api_traffic_log:
+               ^^^^^^^^^^^^^^^
+RuntimeError: deque mutated during iteration
+2026-08-21 01:18:53,467 [ERROR] Unhandled exception on GET /analytics/company-behavior-trend: deque mutated during iteration
+Traceback (most recent call last):
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\main.py", line 152, in track_api_traffic
+    raise e
+  File "D:\insider\backend\main.py", line 138, in track_api_traffic
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\insider\backend\main.py", line 817, in get_company_behavior_trend
+    for log in api_traffic_log:
+               ^^^^^^^^^^^^^^^
+RuntimeError: deque mutated during iteration
+2026-08-21 01:18:53,516 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:18:54,097 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:54,102 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:54,137 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:54,143 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:56,084 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:56,085 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:56,088 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:56,091 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:56,092 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:56,096 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:58,084 [INFO] Incoming request: GET /alerts
+2026-08-21 01:18:58,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:18:58,091 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:18:58,093 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:18:59,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:18:59,089 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:59,097 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:18:59,101 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:18:59,104 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:18:59,110 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:02,092 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:19:02,094 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:02,097 [INFO] Incoming request: GET /alerts
+2026-08-21 01:19:02,100 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:19:02,110 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:02,114 [INFO] Incoming request: GET /system/status
+2026-08-21 01:19:02,117 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:02,133 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:02,146 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:19:02,153 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:19:03,087 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:19:03,143 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:19:05,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:19:05,092 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:05,104 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:05,111 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:05,112 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:19:05,124 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:06,098 [INFO] Incoming request: GET /alerts
+2026-08-21 01:19:06,099 [INFO] Incoming request: GET /system/status
+2026-08-21 01:19:06,110 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:19:06,114 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:19:08,084 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:19:08,085 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:08,088 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:08,090 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:19:08,092 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:08,098 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:10,085 [INFO] Incoming request: GET /alerts
+2026-08-21 01:19:10,086 [INFO] Incoming request: GET /system/status
+2026-08-21 01:19:10,091 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:19:10,091 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:19:11,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:19:11,089 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:11,096 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:11,098 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:19:11,100 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:11,107 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:30,109 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:19:30,169 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:19:30,173 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:19:30,176 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:19:30,178 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:30,181 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:30,204 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:19:30,207 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:19:30,210 [INFO] Incoming request: GET /alerts
+2026-08-21 01:19:30,215 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:19:30,218 [INFO] Incoming request: GET /system/status
+2026-08-21 01:19:30,220 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:20:30,105 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:20:30,107 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:20:30,123 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:20:30,127 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:20:30,130 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:20:30,141 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:20:30,246 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:20:30,249 [INFO] Incoming request: GET /alerts
+2026-08-21 01:20:30,251 [INFO] Incoming request: GET /system/status
+2026-08-21 01:20:30,313 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:20:30,318 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:20:30,319 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:21:30,401 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:21:30,402 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:21:30,406 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:21:30,408 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:21:30,409 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:21:30,439 [INFO] Incoming request: GET /alerts
+2026-08-21 01:21:30,461 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:21:30,465 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:21:30,467 [INFO] Incoming request: GET /system/status
+2026-08-21 01:21:30,468 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:21:30,471 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:21:30,473 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:22:30,082 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:22:30,084 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:22:30,090 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:22:30,091 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:22:30,095 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:22:30,104 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:22:30,158 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:22:30,160 [INFO] Incoming request: GET /alerts
+2026-08-21 01:22:30,160 [INFO] Incoming request: GET /system/status
+2026-08-21 01:22:30,202 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:22:30,207 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:22:30,208 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:23:30,414 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:23:30,415 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:23:30,421 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:23:30,424 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:23:30,426 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:23:30,477 [INFO] Incoming request: GET /alerts
+2026-08-21 01:23:30,479 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:23:30,480 [INFO] Incoming request: GET /system/status
+2026-08-21 01:23:30,480 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:23:30,486 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:23:30,492 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:23:30,493 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:24:30,085 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:24:30,087 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:24:30,090 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:24:30,095 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:24:30,102 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:24:30,112 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:24:30,158 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:24:30,159 [INFO] Incoming request: GET /alerts
+2026-08-21 01:24:30,199 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:24:30,204 [INFO] Incoming request: GET /system/status
+2026-08-21 01:24:30,205 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:24:30,207 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:25:30,082 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:25:30,086 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:25:30,101 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:25:30,105 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:25:30,108 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:25:30,113 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:25:30,168 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:25:30,203 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:25:30,206 [INFO] Incoming request: GET /alerts
+2026-08-21 01:25:30,211 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:25:30,214 [INFO] Incoming request: GET /system/status
+2026-08-21 01:25:30,217 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:26:30,086 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:26:30,089 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:26:30,090 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:26:30,096 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:26:30,099 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:26:30,104 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:26:30,149 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:26:30,150 [INFO] Incoming request: GET /alerts
+2026-08-21 01:26:30,150 [INFO] Incoming request: GET /system/status
+2026-08-21 01:26:30,197 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:26:30,204 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:26:30,204 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:27:30,417 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:27:30,419 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:27:30,427 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:27:30,432 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:27:30,434 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:27:30,438 [INFO] Incoming request: GET /alerts
+2026-08-21 01:27:30,499 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:27:30,503 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:27:30,505 [INFO] Incoming request: GET /system/status
+2026-08-21 01:27:30,505 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:27:30,510 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:27:30,512 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:28:30,102 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:28:30,105 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:28:30,125 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:28:30,133 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:28:30,152 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:28:30,171 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:28:30,217 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:28:30,221 [INFO] Incoming request: GET /alerts
+2026-08-21 01:28:30,411 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:28:30,414 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:28:30,417 [INFO] Incoming request: GET /system/status
+2026-08-21 01:28:30,422 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:29:30,099 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 01:29:30,100 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 01:29:30,108 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:29:30,110 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:29:30,115 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:29:30,126 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:29:30,134 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:29:30,137 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:29:30,144 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:29:30,169 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:29:30,178 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:29:30,203 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:29:30,226 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 01:29:30,228 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 01:29:30,234 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 01:29:30,236 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 01:29:30,242 [INFO] Incoming request: OPTIONS /system/status
+2026-08-21 01:29:30,244 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-21 01:29:30,252 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:29:30,430 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:29:30,432 [INFO] Incoming request: GET /system/status
+2026-08-21 01:29:30,432 [INFO] Incoming request: GET /alerts
+2026-08-21 01:29:30,452 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:29:30,467 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:30:30,107 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:30:30,109 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:30:30,135 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:30:30,146 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:30:30,152 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:30:30,182 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:30:30,263 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:30:30,265 [INFO] Incoming request: GET /alerts
+2026-08-21 01:30:30,269 [INFO] Incoming request: GET /system/status
+2026-08-21 01:30:30,503 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:30:30,505 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:30:30,508 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:31:30,425 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:31:30,427 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:31:30,440 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:31:30,446 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:31:30,451 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:31:30,455 [INFO] Incoming request: GET /alerts
+2026-08-21 01:31:30,649 [INFO] Incoming request: GET /system/status
+2026-08-21 01:31:30,658 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:31:30,683 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:31:30,686 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:31:30,689 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:31:30,694 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:32:30,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:32:30,090 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:32:30,119 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:32:30,122 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:32:30,128 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:32:30,145 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:32:30,197 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:32:30,200 [INFO] Incoming request: GET /alerts
+2026-08-21 01:32:30,228 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:32:30,289 [INFO] Incoming request: GET /system/status
+2026-08-21 01:32:30,406 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:32:30,410 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:33:30,091 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:33:30,102 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:33:30,110 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:33:30,136 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:33:30,143 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:33:30,167 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:33:30,205 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:33:30,407 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:33:30,409 [INFO] Incoming request: GET /alerts
+2026-08-21 01:33:30,413 [INFO] Incoming request: GET /system/status
+2026-08-21 01:33:30,426 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:33:30,430 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:34:30,401 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:34:30,403 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:34:30,417 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:34:30,423 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:34:30,427 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:34:30,430 [INFO] Incoming request: GET /alerts
+2026-08-21 01:34:30,577 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:34:30,604 [INFO] Incoming request: GET /system/status
+2026-08-21 01:34:30,625 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:34:30,627 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:34:30,630 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:34:30,635 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:35:30,103 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:35:30,114 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:35:30,116 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:35:30,133 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:35:30,138 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:35:30,151 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:35:30,194 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:35:30,197 [INFO] Incoming request: GET /alerts
+2026-08-21 01:35:30,427 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:35:30,429 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:35:30,435 [INFO] Incoming request: GET /system/status
+2026-08-21 01:35:30,442 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:36:30,095 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:36:30,103 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:36:30,112 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:36:30,124 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:36:30,130 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:36:30,141 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:36:30,187 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:36:30,365 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:36:30,371 [INFO] Incoming request: GET /alerts
+2026-08-21 01:36:30,385 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:36:30,391 [INFO] Incoming request: GET /system/status
+2026-08-21 01:36:30,397 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:37:30,084 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:37:30,086 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:37:30,106 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:37:30,114 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:37:30,118 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:37:30,137 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:37:30,204 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:37:30,207 [INFO] Incoming request: GET /system/status
+2026-08-21 01:37:30,208 [INFO] Incoming request: GET /alerts
+2026-08-21 01:37:30,430 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:37:30,437 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:37:30,442 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:38:30,396 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:38:30,397 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:38:30,410 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:38:30,415 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:38:30,420 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:38:30,425 [INFO] Incoming request: GET /alerts
+2026-08-21 01:38:30,591 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:38:30,598 [INFO] Incoming request: GET /system/status
+2026-08-21 01:38:30,604 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:38:30,614 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:38:30,618 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:38:30,623 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:39:30,095 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:39:30,097 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:39:30,111 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:39:30,119 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:39:30,125 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:39:30,139 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:39:30,209 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:39:30,211 [INFO] Incoming request: GET /alerts
+2026-08-21 01:39:30,428 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:39:30,432 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:39:30,435 [INFO] Incoming request: GET /system/status
+2026-08-21 01:39:30,442 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:40:30,096 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 01:40:30,097 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 01:40:30,104 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:40:30,105 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:40:30,112 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:40:30,128 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:40:30,160 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:40:30,161 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:40:30,167 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:40:30,188 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:40:30,196 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:40:30,218 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:40:30,234 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 01:40:30,235 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 01:40:30,241 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 01:40:30,243 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 01:40:30,250 [INFO] Incoming request: OPTIONS /system/status
+2026-08-21 01:40:30,252 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-21 01:40:30,257 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:40:30,442 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:40:30,444 [INFO] Incoming request: GET /alerts
+2026-08-21 01:40:30,445 [INFO] Incoming request: GET /system/status
+2026-08-21 01:40:30,467 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:40:30,472 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:41:30,099 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:41:30,103 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:41:30,108 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:41:30,122 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:41:30,128 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:41:30,143 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:41:30,194 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:41:30,196 [INFO] Incoming request: GET /system/status
+2026-08-21 01:41:30,197 [INFO] Incoming request: GET /alerts
+2026-08-21 01:41:30,414 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:41:30,429 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:41:30,431 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:42:30,406 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:42:30,413 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:42:30,422 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:42:30,424 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:42:30,437 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:42:30,450 [INFO] Incoming request: GET /alerts
+2026-08-21 01:42:30,602 [INFO] Incoming request: GET /system/status
+2026-08-21 01:42:30,603 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:42:30,605 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:42:30,630 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:42:30,635 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:42:30,640 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:43:30,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:43:30,091 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:43:30,113 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:43:30,121 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:43:30,124 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:43:30,144 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:43:30,196 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:43:30,199 [INFO] Incoming request: GET /alerts
+2026-08-21 01:43:30,388 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:43:30,392 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:43:30,396 [INFO] Incoming request: GET /system/status
+2026-08-21 01:43:30,402 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:44:30,094 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:44:30,103 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:44:30,110 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:44:30,123 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:44:30,128 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:44:30,148 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:44:30,193 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:44:30,368 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:44:30,375 [INFO] Incoming request: GET /alerts
+2026-08-21 01:44:30,392 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:44:30,397 [INFO] Incoming request: GET /system/status
+2026-08-21 01:44:30,405 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:45:30,096 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:45:30,099 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:45:30,117 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:45:30,126 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:45:30,129 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:45:30,147 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:45:30,194 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:45:30,197 [INFO] Incoming request: GET /system/status
+2026-08-21 01:45:30,199 [INFO] Incoming request: GET /alerts
+2026-08-21 01:45:30,424 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:45:30,437 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:45:30,439 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:46:30,414 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:46:30,416 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:46:30,429 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:46:30,434 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:46:30,439 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:46:30,482 [INFO] Incoming request: GET /alerts
+2026-08-21 01:46:30,602 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:46:30,604 [INFO] Incoming request: GET /system/status
+2026-08-21 01:46:30,605 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:46:30,620 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:46:30,630 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:46:30,635 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:47:30,127 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:47:30,131 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:47:30,153 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:47:30,155 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:47:30,161 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:47:30,179 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:47:30,190 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:47:30,193 [INFO] Incoming request: GET /alerts
+2026-08-21 01:47:30,370 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:47:30,382 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:47:30,385 [INFO] Incoming request: GET /system/status
+2026-08-21 01:47:30,391 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:48:30,093 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:48:30,101 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:48:30,106 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:48:30,123 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:48:30,129 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:48:30,143 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:48:30,179 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:48:30,344 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:48:30,349 [INFO] Incoming request: GET /alerts
+2026-08-21 01:48:30,368 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:48:30,374 [INFO] Incoming request: GET /system/status
+2026-08-21 01:48:30,380 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:49:30,108 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:49:30,110 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:49:30,128 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:49:30,135 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:49:30,146 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:49:30,150 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:49:30,170 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:49:30,173 [INFO] Incoming request: GET /alerts
+2026-08-21 01:49:30,175 [INFO] Incoming request: GET /system/status
+2026-08-21 01:49:30,348 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:49:30,355 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:49:30,359 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:50:30,404 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:50:30,406 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:50:30,421 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:50:30,427 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:50:30,429 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:50:30,434 [INFO] Incoming request: GET /alerts
+2026-08-21 01:50:30,615 [INFO] Incoming request: GET /system/status
+2026-08-21 01:50:30,616 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:50:30,627 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:50:30,635 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:50:30,662 [ERROR] Error processing request GET /analytics/company-behavior-trend: deque mutated during iteration
+Traceback (most recent call last):
+  File "D:\insider\backend\main.py", line 138, in track_api_traffic
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\insider\backend\main.py", line 817, in get_company_behavior_trend
+    for log in api_traffic_log:
+               ^^^^^^^^^^^^^^^
+RuntimeError: deque mutated during iteration
+2026-08-21 01:50:30,677 [ERROR] Unhandled exception on GET /analytics/company-behavior-trend: deque mutated during iteration
+Traceback (most recent call last):
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 193, in __call__
+    response = await self.dispatch_func(request, call_next)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\main.py", line 152, in track_api_traffic
+    raise e
+  File "D:\insider\backend\main.py", line 138, in track_api_traffic
+    response = await call_next(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 168, in call_next
+    raise app_exc from app_exc.__cause__ or app_exc.__context__
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 96, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 154, in simple_response
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 670, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 2734, in app
+    await route.handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 1281, in handle
+    await super().handle(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\routing.py", line 280, in handle
+    await self.app(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 158, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 144, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 706, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\fastapi\routing.py", line 354, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\starlette\concurrency.py", line 34, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\to_thread.py", line 65, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        func, args, abandon_on_cancel=abandon_on_cancel, limiter=limiter
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2641, in run_sync_in_worker_thread
+    return await future
+           ^^^^^^^^^^^^
+  File "D:\insider\backend\venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 1033, in run
+    result = context.run(func, *args)
+  File "D:\insider\backend\main.py", line 817, in get_company_behavior_trend
+    for log in api_traffic_log:
+               ^^^^^^^^^^^^^^^
+RuntimeError: deque mutated during iteration
+2026-08-21 01:50:30,710 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:51:30,099 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 01:51:30,101 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:51:30,102 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 01:51:30,104 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:51:30,107 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 01:51:30,109 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:51:30,113 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:51:30,116 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:51:30,138 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:51:30,146 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:51:30,148 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:51:30,170 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 01:51:30,171 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:51:30,174 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 01:51:30,177 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 01:51:30,178 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 01:51:30,181 [INFO] Incoming request: OPTIONS /system/status
+2026-08-21 01:51:30,182 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-21 01:51:30,186 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:51:30,189 [INFO] Incoming request: GET /alerts
+2026-08-21 01:51:30,365 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:51:30,378 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:51:30,380 [INFO] Incoming request: GET /system/status
+2026-08-21 01:51:30,387 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:52:30,095 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:52:30,097 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:52:30,117 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:52:30,123 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:52:30,125 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:52:30,140 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:52:30,180 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:52:30,183 [INFO] Incoming request: GET /system/status
+2026-08-21 01:52:30,184 [INFO] Incoming request: GET /alerts
+2026-08-21 01:52:30,354 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:52:30,360 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:52:30,362 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:53:30,400 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:53:30,402 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:53:30,431 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:53:30,433 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:53:30,437 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:53:30,439 [INFO] Incoming request: GET /alerts
+2026-08-21 01:53:30,643 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:53:30,645 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:53:30,646 [INFO] Incoming request: GET /system/status
+2026-08-21 01:53:30,647 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:53:30,674 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:53:30,680 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:54:30,099 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:54:30,101 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:54:30,120 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:54:30,127 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:54:30,130 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:54:30,150 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:54:30,217 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:54:30,219 [INFO] Incoming request: GET /alerts
+2026-08-21 01:54:30,233 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:54:30,274 [INFO] Incoming request: GET /system/status
+2026-08-21 01:54:30,397 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:54:30,401 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:55:30,088 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:55:30,096 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:55:30,101 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:55:30,120 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:55:30,125 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:55:30,146 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:55:30,160 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:55:30,326 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:55:30,332 [INFO] Incoming request: GET /alerts
+2026-08-21 01:55:30,349 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:55:30,354 [INFO] Incoming request: GET /system/status
+2026-08-21 01:55:30,360 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:56:30,099 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:56:30,100 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:56:30,118 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:56:30,126 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:56:30,129 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:56:30,145 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:56:30,176 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:56:30,179 [INFO] Incoming request: GET /alerts
+2026-08-21 01:56:30,180 [INFO] Incoming request: GET /system/status
+2026-08-21 01:56:30,341 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:56:30,343 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:56:30,345 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:57:30,406 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:57:30,407 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:57:30,421 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:57:30,428 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:57:30,430 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:57:30,435 [INFO] Incoming request: GET /alerts
+2026-08-21 01:57:30,542 [INFO] Incoming request: GET /system/status
+2026-08-21 01:57:30,557 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:57:30,679 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:57:30,690 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:57:30,695 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:57:30,698 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:58:30,103 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:58:30,105 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:58:30,128 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:58:30,137 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:58:30,143 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:58:30,162 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:58:30,200 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:58:30,202 [INFO] Incoming request: GET /alerts
+2026-08-21 01:58:30,411 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:58:30,416 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:58:30,419 [INFO] Incoming request: GET /system/status
+2026-08-21 01:58:30,425 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 01:59:30,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 01:59:30,097 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 01:59:30,103 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:59:30,130 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:59:30,136 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 01:59:30,149 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 01:59:30,174 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 01:59:30,321 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 01:59:30,328 [INFO] Incoming request: GET /alerts
+2026-08-21 01:59:30,343 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 01:59:30,352 [INFO] Incoming request: GET /system/status
+2026-08-21 01:59:30,357 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:00:30,096 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:00:30,098 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:00:30,121 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:00:30,128 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:00:30,131 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:00:30,148 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:00:30,202 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:00:30,206 [INFO] Incoming request: GET /alerts
+2026-08-21 02:00:30,221 [INFO] Incoming request: GET /system/status
+2026-08-21 02:00:30,310 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:00:30,416 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:00:30,418 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:01:30,414 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:01:30,416 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:01:30,434 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:01:30,440 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:01:30,443 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 02:01:30,444 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 02:01:30,447 [INFO] Incoming request: GET /alerts
+2026-08-21 02:01:30,450 [INFO] Incoming request: GET /system/status
+2026-08-21 02:01:30,466 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:01:30,468 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:01:30,472 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:01:30,488 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:01:30,490 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:01:30,627 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:02:30,098 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 02:02:30,102 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 02:02:30,103 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 02:02:30,103 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 02:02:30,106 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:02:30,108 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:02:30,114 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:02:30,117 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:02:30,133 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:02:30,139 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:02:30,142 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:02:30,161 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:02:30,197 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 02:02:30,199 [INFO] Incoming request: OPTIONS /system/status
+2026-08-21 02:02:30,200 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:02:30,201 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 02:02:30,204 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-21 02:02:30,208 [INFO] Incoming request: GET /alerts
+2026-08-21 02:02:30,211 [INFO] Incoming request: GET /system/status
+2026-08-21 02:02:30,401 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:02:30,412 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:02:30,414 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:03:30,415 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:03:30,417 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:03:30,434 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:03:30,439 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:03:30,443 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:03:30,445 [INFO] Incoming request: GET /alerts
+2026-08-21 02:03:30,603 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:03:30,612 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:03:30,613 [INFO] Incoming request: GET /system/status
+2026-08-21 02:03:30,626 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:03:30,641 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:03:30,646 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:04:30,394 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:04:30,401 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:04:30,409 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:04:30,411 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:04:30,430 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:04:30,454 [INFO] Incoming request: GET /alerts
+2026-08-21 02:04:30,609 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:04:30,611 [INFO] Incoming request: GET /system/status
+2026-08-21 02:04:30,618 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:04:30,623 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:04:30,642 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:04:30,648 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:05:30,102 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:05:30,105 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:05:30,123 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:05:30,130 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:05:30,133 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:05:30,148 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:05:30,199 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:05:30,201 [INFO] Incoming request: GET /alerts
+2026-08-21 02:05:30,394 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:05:30,406 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:05:30,409 [INFO] Incoming request: GET /system/status
+2026-08-21 02:05:30,416 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:06:30,096 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:06:30,104 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:06:30,112 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:06:30,133 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:06:30,139 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:06:30,153 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:06:30,208 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:06:30,381 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:06:30,385 [INFO] Incoming request: GET /alerts
+2026-08-21 02:06:30,399 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:06:30,403 [INFO] Incoming request: GET /system/status
+2026-08-21 02:06:30,409 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:07:30,148 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:07:30,151 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:07:30,175 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:07:30,182 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:07:30,187 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:07:30,189 [INFO] Incoming request: GET /alerts
+2026-08-21 02:07:30,358 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:07:30,368 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:07:30,370 [INFO] Incoming request: GET /system/status
+2026-08-21 02:07:30,376 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:07:30,379 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:07:30,396 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:08:30,094 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:08:30,096 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:08:30,117 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:08:30,123 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:08:30,127 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:08:30,143 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:08:30,190 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:08:30,192 [INFO] Incoming request: GET /alerts
+2026-08-21 02:08:30,194 [INFO] Incoming request: GET /system/status
+2026-08-21 02:08:30,393 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:08:30,400 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:08:30,405 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:09:30,410 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:09:30,412 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:09:30,422 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:09:30,424 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:09:30,431 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:09:30,439 [INFO] Incoming request: GET /alerts
+2026-08-21 02:09:30,484 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:09:30,485 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:09:30,488 [INFO] Incoming request: GET /system/status
+2026-08-21 02:09:30,494 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:09:30,495 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:09:30,496 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:10:30,087 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:10:30,088 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:10:30,096 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:10:30,097 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:10:30,103 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:10:30,107 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:10:30,167 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:10:30,168 [INFO] Incoming request: GET /alerts
+2026-08-21 02:10:30,223 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:10:30,224 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:10:30,226 [INFO] Incoming request: GET /system/status
+2026-08-21 02:10:30,228 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:11:30,093 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:11:30,097 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:11:30,100 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:11:30,108 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:11:30,111 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:11:30,116 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:11:30,146 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:11:30,199 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:11:30,202 [INFO] Incoming request: GET /alerts
+2026-08-21 02:11:30,207 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:11:30,211 [INFO] Incoming request: GET /system/status
+2026-08-21 02:11:30,214 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:12:30,094 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:12:30,097 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:12:30,121 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:12:30,128 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:12:30,130 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:12:30,154 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:12:30,220 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 02:12:30,223 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 02:12:30,224 [INFO] Incoming request: OPTIONS /system/status
+2026-08-21 02:12:30,225 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 02:12:30,230 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 02:12:30,232 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-21 02:12:30,237 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:12:30,242 [INFO] Incoming request: GET /alerts
+2026-08-21 02:12:30,247 [INFO] Incoming request: GET /system/status
+2026-08-21 02:12:30,430 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:12:30,484 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:12:30,487 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:13:30,090 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 02:13:30,091 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 02:13:30,098 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 02:13:30,100 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:13:30,108 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 02:13:30,109 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:13:30,113 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:13:30,120 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:13:30,125 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:13:30,142 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:13:30,148 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:13:30,170 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:13:30,188 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:13:30,350 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:13:30,356 [INFO] Incoming request: GET /alerts
+2026-08-21 02:13:30,378 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:13:30,384 [INFO] Incoming request: GET /system/status
+2026-08-21 02:13:30,390 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:14:30,089 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:14:30,092 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:14:30,110 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:14:30,118 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:14:30,122 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:14:30,142 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:14:30,190 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:14:30,193 [INFO] Incoming request: GET /alerts
+2026-08-21 02:14:30,194 [INFO] Incoming request: GET /system/status
+2026-08-21 02:14:30,367 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:14:30,377 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:14:30,380 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:15:30,407 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:15:30,409 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:15:30,430 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:15:30,437 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:15:30,439 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:15:30,484 [INFO] Incoming request: GET /alerts
+2026-08-21 02:15:30,642 [INFO] Incoming request: GET /system/status
+2026-08-21 02:15:30,643 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:15:30,644 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:15:30,684 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:15:30,689 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:15:30,693 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:16:30,091 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:16:30,093 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:16:30,115 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:16:30,121 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:16:30,123 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:16:30,143 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:16:30,189 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:16:30,193 [INFO] Incoming request: GET /alerts
+2026-08-21 02:16:30,353 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:16:30,355 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:16:30,362 [INFO] Incoming request: GET /system/status
+2026-08-21 02:16:30,367 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:17:30,168 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:17:30,183 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:17:30,198 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:17:30,234 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:17:30,244 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:17:30,486 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:17:30,487 [INFO] Incoming request: GET /alerts
+2026-08-21 02:17:30,491 [INFO] Incoming request: GET /system/status
+2026-08-21 02:17:30,506 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:17:30,509 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:17:30,513 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:17:30,534 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:18:30,109 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:18:30,111 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:18:30,143 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:18:30,156 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:18:30,161 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:18:30,187 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:18:30,259 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:18:30,264 [INFO] Incoming request: GET /alerts
+2026-08-21 02:18:30,268 [INFO] Incoming request: GET /system/status
+2026-08-21 02:18:30,494 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:18:30,496 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:18:30,497 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:19:30,406 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:19:30,407 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:19:30,418 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:19:30,419 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:19:30,422 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:19:30,424 [INFO] Incoming request: GET /alerts
+2026-08-21 02:19:30,493 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:19:30,501 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:19:30,503 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:19:30,504 [INFO] Incoming request: GET /system/status
+2026-08-21 02:19:30,512 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:19:30,516 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:20:30,099 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:20:30,100 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:20:30,110 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:20:30,114 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:20:30,117 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:20:30,124 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:20:30,187 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:20:30,189 [INFO] Incoming request: GET /alerts
+2026-08-21 02:20:30,262 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:20:30,278 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:20:30,279 [INFO] Incoming request: GET /system/status
+2026-08-21 02:20:30,283 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 02:21:30,098 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 02:21:30,102 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 02:21:30,108 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:21:30,115 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:21:30,119 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 02:21:30,126 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 02:21:30,172 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 02:21:30,235 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 02:21:30,240 [INFO] Incoming request: GET /alerts
+2026-08-21 02:21:30,247 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 02:21:30,250 [INFO] Incoming request: GET /system/status
+2026-08-21 02:21:30,254 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 09:10:49,819 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 09:10:49,820 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 09:10:49,823 [INFO] Incoming request: OPTIONS /system/status
+2026-08-21 09:10:49,824 [INFO] Response: OPTIONS /system/status - Status: 200
+2026-08-21 09:10:49,832 [INFO] Incoming request: GET /alerts
+2026-08-21 09:10:49,834 [INFO] Incoming request: GET /system/status
+2026-08-21 09:10:49,845 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 09:10:49,848 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 09:10:52,753 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 09:10:52,754 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 09:10:52,755 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 09:10:52,757 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 09:10:52,759 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 09:10:52,761 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 09:10:52,765 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 09:10:52,857 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 09:10:55,787 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 09:10:55,792 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 09:10:55,796 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:10:55,797 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 09:10:55,798 [INFO] Incoming request: GET /system/status
+2026-08-21 09:10:55,798 [INFO] Incoming request: GET /alerts
+2026-08-21 09:10:55,799 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:10:55,799 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:10:55,801 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:55,803 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:55,804 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:55,806 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:10:55,813 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 09:10:55,814 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:10:55,912 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:55,924 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 09:10:55,928 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 09:10:55,929 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:55,931 [INFO] Response: GET /system/status - Status: 200
+2026-08-21 09:10:55,932 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 09:10:55,933 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:10:55,944 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:55,946 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:10:55,957 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:55,960 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:10:55,970 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:57,408 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 09:10:57,410 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:10:57,411 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:10:57,412 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:57,429 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 09:10:57,431 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:57,434 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:10:57,448 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:10:57,808 [INFO] Incoming request: GET /alerts
+2026-08-21 09:10:57,810 [INFO] Incoming request: GET /system/status
+2026-08-21 09:10:57,823 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 09:10:57,825 [INFO] Response: GET /system/status - Status: 200
