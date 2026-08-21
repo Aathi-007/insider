@@ -85,7 +85,7 @@ def seed_users():
         print(f"\nSuccessfully seeded {len(inserted_users)} users.")
         print("\n--- User Credentials ---")
         for u in inserted_users:
-            print(f"Username: {u['username']} | Password: {u['password']} | Dept: {u['department']}")
+            print(f"Username: {u['username']} created. | Dept: {u['department']}")
         print("------------------------\n")
         
     finally:

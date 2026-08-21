@@ -30,7 +30,8 @@ const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
 const styleContent = `
   .app-layout {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     background: #060B14;
   }
   .sidebar {
@@ -314,17 +315,7 @@ function AppInner() {
         <SummaryCards onFetchError={setError} jwt={jwt} />
       </div>
 
-      {/* Row 2: AlertsTable (full-width below) */}
-      <div className="col-12">
-        <AlertsTable 
-          alerts={alerts}
-          loading={loading}
-          error={error}
-          onRowClick={setSelectedUserId}
-          jwt={jwt}
-          onRefresh={fetchAlerts}
-        />
-      </div>
+      {/* AlertsTable (Threat Detection Register) removed as requested */}
 
       {/* Row 3: Two-column row: RiskTrendChart and DepartmentHeatmap (equal height, equal width, side by side) */}
       <div className="col-6" style={{ minHeight: '440px', display: 'flex', flexDirection: 'column' }}>
