@@ -108,8 +108,11 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "An internal server error occurred."}
     )
 
+import threading
+
 # Store the last 2000 requests to track real-time traffic
 api_traffic_log = deque(maxlen=2000)
+api_traffic_lock = threading.Lock()
 
 # Pre-seed with some dummy background noise for the last 15 minutes
 import random
@@ -141,11 +144,12 @@ async def track_api_traffic(request: Request, call_next):
         is_abnormal = getattr(request.state, "is_abnormal", False) or response.status_code >= 400
         
         if request.method in ("GET", "POST"):
-            api_traffic_log.append({
-                "timestamp": time.time(),
-                "method": request.method,
-                "is_abnormal": is_abnormal
-            })
+            with api_traffic_lock:
+                api_traffic_log.append({
+                    "timestamp": time.time(),
+                    "method": request.method,
+                    "is_abnormal": is_abnormal
+                })
         return response
     except Exception as e:
         logger.error(f"Error processing request {request.method} {request.url.path}: {e}", exc_info=True)
@@ -232,6 +236,10 @@ class RegisterDeviceRequest(BaseModel):
     user_id: str
     device_id: str
     device_name: str
+
+class RegisterAgentRequest(BaseModel):
+    hostname: str
+    assigned_user_id: str
 
 class UpdateHRStatusRequest(BaseModel):
     user_id: str
@@ -813,8 +821,10 @@ def get_company_behavior_trend(api_key: str = Depends(get_api_key)):
             "post_normal": 0,
             "post_abnormal": 0
         }
+    with api_traffic_lock:
+        logs_copy = list(api_traffic_log)
         
-    for log in api_traffic_log:
+    for log in logs_copy:
         log_time = datetime.fromtimestamp(log["timestamp"])
         time_key = log_time.strftime("%H:%M")
         if time_key in buckets:
@@ -981,6 +991,22 @@ def simulate_event(event: EventSimulation, http_request: Request, api_key: str =
             ))
             http_request.state.is_abnormal = True
             
+        # Upsert into registered_agents
+        now_str = datetime.now().isoformat()
+        cursor.execute("SELECT first_seen, assigned_user_id FROM registered_agents WHERE hostname = ?", (event.device_id,))
+        agent_row = cursor.fetchone()
+        if agent_row:
+            cursor.execute("""
+                UPDATE registered_agents 
+                SET ip_address = ?, last_seen = ?, total_events_sent = total_events_sent + 1
+                WHERE hostname = ?
+            """, (event.ip_address, now_str, event.device_id))
+        else:
+            cursor.execute("""
+                INSERT INTO registered_agents (hostname, ip_address, assigned_user_id, first_seen, last_seen, status, total_events_sent)
+                VALUES (?, ?, ?, ?, ?, 'online', 1)
+            """, (event.device_id, event.ip_address, event.user_id, now_str, now_str))
+
         conn.commit()
         
         return {
@@ -1370,6 +1396,83 @@ def reset_demo_data(current_user: dict = Depends(get_current_user)):
     except Exception as e:
         logger.error(f"Reset demo data failed: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to reset demo data: {e}")
+    finally:
+        conn.close()
+
+@app.on_event("startup")
+def on_startup():
+    conn = get_connection()
+    try:
+        from database import create_tables
+        create_tables(conn)
+        logger.info("FastAPI startup: checked and initialized database tables.")
+    except Exception as e:
+        logger.error(f"Startup table creation failed: {e}")
+    finally:
+        conn.close()
+
+@app.get("/agents/status")
+def get_agents_status(current_user: dict = Depends(get_current_user)):
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT agent_id, hostname, ip_address, assigned_user_id, first_seen, last_seen, total_events_sent FROM registered_agents")
+        rows = cursor.fetchall()
+        agents = []
+        now = datetime.now()
+        for r in rows:
+            agent_id, hostname, ip_address, assigned_user_id, first_seen, last_seen, total_events_sent = r
+            
+            # Calculate status dynamically
+            status = 'offline'
+            if last_seen:
+                try:
+                    last_seen_dt = datetime.fromisoformat(last_seen)
+                    if (now - last_seen_dt).total_seconds() <= 120:
+                        status = 'online'
+                except Exception:
+                    pass
+            
+            agents.append({
+                "agent_id": agent_id,
+                "hostname": hostname,
+                "ip_address": ip_address,
+                "assigned_user_id": assigned_user_id,
+                "first_seen": first_seen,
+                "last_seen": last_seen,
+                "status": status,
+                "total_events_sent": total_events_sent
+            })
+        return agents
+    finally:
+        conn.close()
+
+@app.post("/admin/register-agent")
+def admin_register_agent(request: RegisterAgentRequest, current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin permissions required.")
+    
+    check_user_exists(request.assigned_user_id)
+    
+    conn = get_connection()
+    try:
+        cursor = conn.cursor()
+        now_str = datetime.now().isoformat()
+        
+        cursor.execute("SELECT 1 FROM registered_agents WHERE hostname = ?", (request.hostname,))
+        if cursor.fetchone():
+            cursor.execute("""
+                UPDATE registered_agents 
+                SET assigned_user_id = ?, last_seen = ?
+                WHERE hostname = ?
+            """, (request.assigned_user_id, now_str, request.hostname))
+        else:
+            cursor.execute("""
+                INSERT INTO registered_agents (hostname, ip_address, assigned_user_id, first_seen, last_seen, status, total_events_sent)
+                VALUES (?, ?, ?, ?, ?, 'online', 0)
+            """, (request.hostname, "0.0.0.0", request.assigned_user_id, now_str, now_str))
+        conn.commit()
+        return {"status": "success", "message": f"Agent {request.hostname} mapped to user {request.assigned_user_id}."}
     finally:
         conn.close()
 

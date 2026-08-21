@@ -173,6 +173,20 @@ def create_tables(conn):
         is_anomaly BOOLEAN DEFAULT 0
     )
     ''')
+
+    # Table: registered_agents
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS registered_agents (
+        agent_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        hostname TEXT UNIQUE NOT NULL,
+        ip_address TEXT,
+        assigned_user_id TEXT,
+        first_seen TEXT,
+        last_seen TEXT,
+        status TEXT DEFAULT 'offline',
+        total_events_sent INTEGER DEFAULT 0
+    )
+    ''')
     
     # Create index on source_server and timestamp for fast lookups
     cursor.execute('''
@@ -184,6 +198,7 @@ def create_tables(conn):
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_risk_events_user_score ON risk_events (user_id, risk_score, status)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_risk_events_event ON risk_events (event_id)')
     cursor.execute('CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs (user_id)')
+    cursor.execute('CREATE INDEX IF NOT EXISTS idx_registered_agents_host ON registered_agents (hostname)')
     
     conn.commit()
 
@@ -280,6 +295,8 @@ def load_csv_to_db(conn):
     cursor.execute("DELETE FROM activity_logs")
     cursor.execute("DELETE FROM sqlite_sequence WHERE name='activity_logs'")
     cursor.execute("DELETE FROM sqlite_sequence WHERE name='risk_events'")
+    cursor.execute("DELETE FROM registered_agents")
+    cursor.execute("DELETE FROM sqlite_sequence WHERE name='registered_agents'")
     conn.commit()
 
     # Read CSV using pandas

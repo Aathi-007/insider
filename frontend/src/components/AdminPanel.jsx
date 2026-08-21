@@ -63,6 +63,13 @@ export default function AdminPanel({ jwt }) {
   const [hrMessage, setHrMessage] = useState(null);
   const [hrError, setHrError] = useState(null);
 
+  // Agent Registry Form State
+  const [agentHostname, setAgentHostname] = useState('');
+  const [agentUserId, setAgentUserId] = useState('');
+  const [agentLoading, setAgentLoading] = useState(false);
+  const [agentMessage, setAgentMessage] = useState(null);
+  const [agentError, setAgentError] = useState(null);
+
   // Handle Trusted Device Submission
   const handleRegisterDevice = async (e) => {
     e.preventDefault();
@@ -156,6 +163,46 @@ export default function AdminPanel({ jwt }) {
       setHrError(err.message);
     } finally {
       setHrLoading(false);
+    }
+  };
+
+  const handleRegisterAgent = async (e) => {
+    e.preventDefault();
+    if (!agentHostname || !agentUserId) {
+      setAgentError("Hostname and User ID are required.");
+      return;
+    }
+
+    setAgentLoading(true);
+    setAgentMessage(null);
+    setAgentError(null);
+
+    try {
+      const response = await fetchWithRetry(`${API_BASE}/admin/register-agent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwt}`
+        },
+        body: JSON.stringify({
+          hostname: agentHostname,
+          assigned_user_id: agentUserId
+        })
+      });
+
+      const resData = await response.json();
+      if (!response.ok) {
+        throw new Error(resData.detail || "Failed to register agent mapping.");
+      }
+
+      setAgentMessage(`Successfully registered agent ${agentHostname} for user ${agentUserId}.`);
+      setAgentHostname('');
+      setAgentUserId('');
+    } catch (err) {
+      console.error(err);
+      setAgentError(err.message);
+    } finally {
+      setAgentLoading(false);
     }
   };
 
@@ -594,7 +641,77 @@ export default function AdminPanel({ jwt }) {
         </div>
       </div>
 
-      {/* 5. Danger Zone / Reset Demo Data (Full Width) */}
+      {/* 5. Add New Agent Mapping */}
+      <div className="col-6" style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className="dashboard-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <div className="dashboard-card-header">
+            <h2>
+              <Laptop size={18} style={{ color: 'var(--color-info)' }} />
+              Add New Agent Registry Mapping
+            </h2>
+          </div>
+          <p style={{ fontSize: '12px', color: '#8B95A8', marginBottom: '20px' }}>
+            Maps a remote hostname to an employee User ID so incoming telemetry maps to their profile.
+          </p>
+
+          <form onSubmit={handleRegisterAgent} style={{ display: 'flex', flexDirection: 'column', gap: '16px', flexGrow: 1 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8' }}>PC Hostname</label>
+              <div style={{ position: 'relative' }}>
+                <input 
+                  type="text" 
+                  placeholder="e.g. WORKSTATION-01" 
+                  className="search-input"
+                  style={{ width: '100%', paddingLeft: '32px' }}
+                  value={agentHostname}
+                  onChange={e => setAgentHostname(e.target.value)}
+                />
+                <Laptop size={14} style={{ position: 'absolute', left: '10px', top: '12px', color: '#8B95A8' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              <label style={{ fontSize: '11px', fontWeight: 'bold', color: '#8B95A8' }}>Assign to Employee User ID</label>
+              <div style={{ position: 'relative' }}>
+                <input 
+                  type="text" 
+                  placeholder="e.g. U001" 
+                  className="search-input"
+                  style={{ width: '100%', paddingLeft: '32px' }}
+                  value={agentUserId}
+                  onChange={e => setAgentUserId(e.target.value)}
+                />
+                <User size={14} style={{ position: 'absolute', left: '10px', top: '12px', color: '#8B95A8' }} />
+              </div>
+            </div>
+
+            {agentMessage && (
+              <div style={{ padding: '8px 12px', background: 'var(--color-low-bg)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '6px', fontSize: '12px', color: 'var(--color-low)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle size={14} /> {agentMessage}
+              </div>
+            )}
+
+            {agentError && (
+              <div style={{ padding: '8px 12px', background: 'var(--color-high-bg)', border: '1px solid rgba(244,63,94,0.2)', borderRadius: '6px', fontSize: '12px', color: 'var(--color-high)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <AlertTriangle size={14} /> {agentError}
+              </div>
+            )}
+
+            <div style={{ flexGrow: 1 }} />
+
+            <button 
+              type="submit" 
+              className="export-btn" 
+              style={{ width: '100%', justifyContent: 'center', padding: '10px', background: 'var(--color-info)', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', marginTop: '12px' }}
+              disabled={agentLoading}
+            >
+              {agentLoading ? 'Mapping Agent...' : 'Map Agent Hostname'}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {/* 6. Danger Zone / Reset Demo Data (Full Width) */}
       <div className="col-12" style={{ marginTop: '12px' }}>
         <div className="dashboard-card" style={{ border: '1px solid rgba(239, 68, 68, 0.15)', background: 'rgba(239, 68, 68, 0.02)' }}>
           <div className="dashboard-card-header">
