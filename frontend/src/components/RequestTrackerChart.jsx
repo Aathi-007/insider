@@ -110,7 +110,7 @@ export default function RequestTrackerChart({ jwt }) {
         </h2>
         {hasData && (
           <div className="live-indicator" style={{ background: 'transparent', border: 'none', padding: 0 }}>
-            <div className="live-dot" style={{ backgroundColor: 'var(--color-low)' }}></div>
+            <div className="live-dot"></div>
             <span style={{ fontSize: '11px', color: '#64748b' }}>Realtime</span>
           </div>
         )}
@@ -136,7 +136,7 @@ export default function RequestTrackerChart({ jwt }) {
               margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
               barGap={4}
             >
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#2A3548" strokeOpacity={0.3} />
               <XAxis 
                 dataKey="displayDate" 
                 stroke="#64748b" 
@@ -163,7 +163,7 @@ export default function RequestTrackerChart({ jwt }) {
                 dataKey="get_normal" 
                 name="GET (Normal)" 
                 stackId="get" 
-                fill="rgba(59, 130, 246, 0.65)" 
+                fill="rgba(0, 217, 255, 0.65)" 
                 stroke="var(--color-info)"
                 strokeWidth={1}
               />
@@ -182,7 +182,7 @@ export default function RequestTrackerChart({ jwt }) {
                 dataKey="post_normal" 
                 name="POST (Normal)" 
                 stackId="post" 
-                fill="rgba(16, 185, 129, 0.65)" 
+                fill="rgba(59, 130, 246, 0.65)" 
                 stroke="var(--color-low)"
                 strokeWidth={1}
               />

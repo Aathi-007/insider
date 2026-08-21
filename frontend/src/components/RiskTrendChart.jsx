@@ -71,8 +71,8 @@ export default function RiskTrendChart() {
             >
               <defs>
                 <linearGradient id="colorNormal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#00D9FF" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#00D9FF" stopOpacity={0}/>
                 </linearGradient>
                 <linearGradient id="colorAbnormal" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3}/>
@@ -109,7 +109,7 @@ export default function RiskTrendChart() {
                 type="monotone" 
                 name="Normal Behavior"
                 dataKey="normal_events" 
-                stroke="#10b981" 
+                stroke="#00D9FF" 
                 strokeWidth={2}
                 fillOpacity={1} 
                 fill="url(#colorNormal)" 

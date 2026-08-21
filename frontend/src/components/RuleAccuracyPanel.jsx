@@ -120,8 +120,8 @@ export default function RuleAccuracyPanel({ jwt }) {
           <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data} margin={{ top: 10, right: 30, left: 30, bottom: 10 }}>
             <defs>
               <linearGradient id="radarGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#6366F1" stopOpacity={0.4}/>
-                <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.05}/>
+                <stop offset="5%" stopColor="#00D9FF" stopOpacity={0.4}/>
+                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.05}/>
               </linearGradient>
             </defs>
             <PolarGrid stroke="#2A3548" strokeOpacity={0.3} />
@@ -151,7 +151,7 @@ export default function RuleAccuracyPanel({ jwt }) {
             <Radar 
               name="False Positive Rate" 
               dataKey="fpRate" 
-              stroke="#6366F1" 
+              stroke="#00D9FF" 
               strokeWidth={2}
               fill="url(#radarGrad)" 
               fillOpacity={0.3}

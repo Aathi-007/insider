@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut, ChevronLeft, ChevronRight, Laptop } from 'lucide-react';
 import { HashRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 
 import LoginPage from './components/LoginPage';
@@ -22,6 +22,7 @@ import CrossDeptThreatMatrix from './components/CrossDeptThreatMatrix';
 import SocAgentActivity from './components/SocAgentActivity';
 import RuleTuningAdvisor from './components/RuleTuningAdvisor';
 import NetworkGraphPanel from './components/NetworkGraphPanel';
+import ConnectedAgents from './components/ConnectedAgents';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
@@ -471,6 +472,12 @@ function AppInner() {
           desc: 'Dynamic circular graph visualising departmental server communications and baseline paths.',
           action: null
         };
+      case '/agents':
+        return {
+          title: 'Connected PC Agents',
+          desc: 'Live telemetry watch and event registry of intranet endpoint collectors.',
+          action: null
+        };
       case '/admin':
         return {
           title: 'Administrative Controls',
@@ -535,6 +542,10 @@ function AppInner() {
             <NavLink to="/resolved" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="Closed Registry">
               <ShieldCheck size={16} />
               {!sidebarCollapsed && <span>Resolved Alerts</span>}
+            </NavLink>
+            <NavLink to="/agents" className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`} title="PC Telemetry Agents">
+              <Laptop size={16} />
+              {!sidebarCollapsed && <span>PC Agents</span>}
             </NavLink>
           </div>
 
@@ -746,6 +757,7 @@ function AppInner() {
             )
           } />
           <Route path="/network" element={<NetworkGraphPanel jwt={jwt} />} />
+          <Route path="/agents" element={<ConnectedAgents jwt={jwt} />} />
         </Routes>
       </main>
       

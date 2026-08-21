@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
 
 export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, onRefresh }) {
   // Search and Filter States
@@ -41,6 +42,7 @@ export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, o
 
         const response = await fetch(`${API_BASE}/alerts?${queryParams.toString()}`, {
           headers: {
+            'X-API-Key': API_KEY,
             'Authorization': `Bearer ${jwt}`
           }
         });
@@ -159,7 +161,7 @@ export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, o
     }
   };
 
-const API_KEY = import.meta.env.VITE_API_KEY || 'dev-local-key';
+
 
   const renderRiskCircle = (score) => {
     const isHigh = score > 80;
