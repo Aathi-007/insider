@@ -1,0 +1,50 @@
+2026-08-21 09:37:41,955 [INFO] Incoming request: OPTIONS /auth/login
+2026-08-21 09:37:41,958 [INFO] Response: OPTIONS /auth/login - Status: 200
+2026-08-21 09:37:41,964 [INFO] Incoming request: POST /auth/login
+2026-08-21 09:37:42,346 [INFO] Response: POST /auth/login - Status: 200
+2026-08-21 09:37:42,428 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 09:37:42,429 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 09:37:42,434 [INFO] Incoming request: GET /alerts
+2026-08-21 09:37:42,460 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 09:37:42,463 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 09:37:42,464 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 09:37:42,465 [INFO] Response: GET /alerts - Status: 200
+2026-08-21 09:37:42,467 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 09:37:42,470 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:37:42,473 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 09:37:42,474 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:37:42,475 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:37:42,476 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 09:37:42,478 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:37:42,479 [INFO] Incoming request: OPTIONS /alerts/summary
+2026-08-21 09:37:42,480 [INFO] Incoming request: OPTIONS /alerts
+2026-08-21 09:37:42,481 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:37:42,482 [INFO] Response: OPTIONS /alerts/summary - Status: 200
+2026-08-21 09:37:42,483 [INFO] Response: OPTIONS /alerts - Status: 200
+2026-08-21 09:37:42,484 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:37:42,485 [INFO] Incoming request: OPTIONS /analytics/department-behaviour
+2026-08-21 09:37:42,486 [INFO] Incoming request: OPTIONS /analytics/company-behavior-trend
+2026-08-21 09:37:42,487 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 09:37:42,488 [INFO] Response: OPTIONS /analytics/department-behaviour - Status: 200
+2026-08-21 09:37:42,490 [INFO] Response: OPTIONS /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:37:42,493 [INFO] Incoming request: GET /alerts
+2026-08-21 09:37:42,494 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-21 09:37:42,494 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:37:42,495 [INFO] Response: GET /alerts - Status: 401
+2026-08-21 09:37:42,506 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 09:37:42,518 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:37:42,524 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 09:37:42,527 [INFO] Incoming request: GET /alerts
+2026-08-21 09:37:42,528 [ERROR] HTTP error on GET /alerts: 401 - Invalid or missing API Key
+2026-08-21 09:37:42,529 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:37:42,530 [INFO] Response: GET /alerts - Status: 401
+2026-08-21 09:37:42,541 [INFO] Incoming request: GET /alerts/summary
+2026-08-21 09:37:42,542 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:37:42,544 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:37:42,552 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:37:42,557 [INFO] Incoming request: GET /analytics/company-behavior-trend
+2026-08-21 09:37:42,558 [INFO] Response: GET /alerts/summary - Status: 200
+2026-08-21 09:37:42,565 [INFO] Response: GET /analytics/company-behavior-trend - Status: 200
+2026-08-21 09:37:42,746 [INFO] Response: GET /analytics/department-behaviour - Status: 200
+2026-08-21 09:37:42,749 [INFO] Incoming request: GET /analytics/department-behaviour
+2026-08-21 09:37:42,875 [INFO] Response: GET /analytics/department-behaviour - Status: 200

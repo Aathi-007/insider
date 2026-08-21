@@ -20,7 +20,8 @@ def main():
         if response.status_code != 200:
             print(f"Error fetching alerts: {response.status_code} - {response.text}")
             sys.exit(1)
-        alerts = response.json()
+        response_data = response.json()
+        alerts = response_data.get("alerts", [])
     except Exception as e:
         print(f"Connection failed: {e}")
         sys.exit(1)
