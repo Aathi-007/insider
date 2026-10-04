@@ -408,6 +408,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .dashboard-card-header h2 {
@@ -498,7 +500,8 @@ body {
 
 .alerts-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   text-align: left;
   font-size: 14px;
 }
@@ -516,6 +519,29 @@ body {
 
 .alerts-table th:hover {
   color: #fff;
+}
+
+/* Sticky first column logic for horizontal scrolling */
+.sticky-first-column th:first-child,
+.sticky-first-column td:first-child {
+  position: sticky;
+  left: 0;
+  margin: 0;
+  z-index: 10;
+  background-color: #0D1526; /* Explicitly use var(--bg-card) value to ensure opacity */
+  background-clip: padding-box;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.15); /* Provide depth against scrolling content */
+}
+
+/* Ensure the header column looks right */
+.sticky-first-column th:first-child {
+  background-color: #0F172A; /* Slate 900 to blend with header row */
+  z-index: 11; /* Keep above scrolling data cells */
+}
+
+/* Maintain hover state background for the sticky cell */
+.alerts-table.sticky-first-column tbody tr:hover td:first-child {
+  background-color: var(--bg-card-hover);
 }
 
 .th-content {
@@ -1663,6 +1689,20 @@ input:focus, select:focus, textarea:focus {
   box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+  .threat-ticker-container {
+    height: auto !important;
+    padding: 10px 12px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+  .threat-ticker-label {
+    border-right: none !important;
+    padding-right: 0 !important;
+  }
+}
+
 .threat-ticker-label {
   display: flex;
   align-items: center;
@@ -1863,11 +1903,126 @@ input:focus, select:focus, textarea:focus {
   color: #8B95A8;
 }
 
+/* Anomaly Flags Column */
+.reasons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 250px; /* Constrain width to prevent table stretching */
+}
+
+.reason-pill {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 10px;
+  color: #E8EDF5;
+}
+
+.reason-pill.anomaly {
+  background-color: rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.3);
+  color: #ff8e42;
+}
+
 /* Lucide icon stroke-width precision styling */
 svg.lucide, .lucide {
   stroke-width: 1.5 !important;
 }
 
+.heatmap-layout-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+  padding: 24px;
+  flex-grow: 1;
+  align-items: center;
+}
 
+.heatmap-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
 
+.telemetry-status-bar {
+  background: #0D1526;
+  border: 1px solid #1C2942;
+  border-radius: 8px;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-size: 11px;
+  color: #8B95A8;
+  font-family: 'JetBrains Mono', monospace;
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.02);
+}
 
+.telemetry-status-metrics {
+  display: flex;
+  gap: 32px;
+}
+
+/* MOBILE RESPONSIVE OVERRIDES */
+@media (max-width: 768px) {
+  .dashboard-grid-v2 {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+  .dashboard-card, .summary-card {
+    padding: 12px !important;
+  }
+  .dashboard-header {
+    padding: 16px !important;
+  }
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .alerts-table-container {
+    margin: 0 -12px;
+    padding: 0 12px;
+  }
+  .alerts-table th, .alerts-table td {
+    padding: 12px 8px !important;
+    font-size: 12px !important;
+  }
+  .summary-info .summary-label {
+    font-size: 11px !important;
+  }
+  .summary-info .summary-value {
+    font-size: 20px !important;
+  }
+  .live-indicator {
+    padding: 6px 12px;
+    font-size: 10px;
+  }
+  .heatmap-layout-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 12px !important;
+    gap: 12px !important;
+  }
+  .heatmap-legend {
+    max-height: none !important;
+    width: 100%;
+    overflow-y: visible !important;
+  }
+  .telemetry-status-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+  .telemetry-status-metrics {
+    gap: 20px !important;
+    flex-wrap: wrap !important;
+  }
+}

@@ -92,26 +92,14 @@ export default function ConnectedAgents({ jwt }) {
   return (
     <div className="dashboard-grid-v2">
       {/* Telemetry diagnostics header */}
-      <div className="col-12" style={{
-        background: '#0D1526',
-        border: '1px solid #1C2942',
-        borderRadius: '8px',
-        padding: '12px 24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        fontSize: '12px',
-        color: '#8B95A8',
-        fontFamily: "'JetBrains Mono', monospace",
-        boxShadow: '0 0 10px rgba(0, 217, 255, 0.02)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="col-12 telemetry-status-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00D9FF', boxShadow: '0 0 8px #00D9FF' }} />
-          <span>Active Ingestion Daemons: <strong style={{ color: '#00D9FF' }}>{agents.filter(a => a.status === 'online').length} Online</strong></span>
+          <span>Active Ingestion<br/>Daemons: <strong style={{ color: '#00D9FF' }}>{agents.filter(a => a.status === 'online').length} Online</strong></span>
         </div>
-        <div style={{ display: 'flex', gap: '32px' }}>
-          <span>Registered Agent PC Nodes: <strong style={{ color: '#E8EDF5' }}>{agents.length}</strong></span>
-          <span>Offline Nodes: <strong style={{ color: '#8B95A8' }}>{agents.filter(a => a.status !== 'online').length}</strong></span>
+        <div className="telemetry-status-metrics">
+          <span>Registered Agent<br/>PC Nodes: <strong style={{ color: '#E8EDF5' }}>{agents.length}</strong></span>
+          <span>Offline<br/>Nodes: <strong style={{ color: '#8B95A8' }}>{agents.filter(a => a.status !== 'online').length}</strong></span>
         </div>
       </div>
 
@@ -145,7 +133,7 @@ export default function ConnectedAgents({ jwt }) {
             </div>
           ) : (
             <div className="alerts-table-container">
-              <table className="alerts-table">
+              <table className="alerts-table sticky-first-column">
                 <thead>
                   <tr>
                     <th>Hostname / PC</th>

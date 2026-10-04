@@ -1,206 +1,48 @@
 import sqlite3
 import pandas as pd
 import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import Base
 
 # Define paths relative to this script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'data', 'ueba.db')
 CSV_PATH = os.path.join(BASE_DIR, 'data', 'activity_logs.csv')
+DB_URL = f"sqlite:///{DB_PATH}"
+
+# Create SQLAlchemy engine and session factory
+os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+engine = create_engine(DB_URL, connect_args={"check_same_thread": False})
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_db():
+    """
+    Returns a SQLAlchemy session.
+    Yields the session to be used in FastAPI dependencies.
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 def get_connection():
     """
-    Returns a connection to the SQLite database.
-    Can be reused by other modules like baseline.py or risk_scoring.py.
+    Returns a raw SQLite connection.
+    Maintained for backward compatibility during the ORM transition.
     """
-    # Ensure the data directory exists
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     # Enable foreign keys for SQLite
     conn.execute("PRAGMA foreign_keys = 1")
     return conn
 
-def create_tables(conn):
+def create_tables():
     """
-    Creates the necessary tables for the UEBA project.
+    Creates all tables based on SQLAlchemy models.
     """
-    cursor = conn.cursor()
-    
-    # Table: users
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS users (
-        user_id TEXT PRIMARY KEY,
-        username TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        department TEXT,
-        role TEXT DEFAULT 'employee'
-    )
-    ''')
-
-    # Table: resources
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS resources (
-        resource_id TEXT PRIMARY KEY,
-        resource_name TEXT NOT NULL,
-        owning_department TEXT,
-        sensitivity TEXT
-    )
-    ''')
-
-    # Table: access_violations
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS access_violations (
-        violation_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT,
-        resource_id TEXT,
-        requester_department TEXT,
-        resource_department TEXT,
-        attempted_at TEXT,
-        FOREIGN KEY (user_id) REFERENCES users(user_id),
-        FOREIGN KEY (resource_id) REFERENCES resources(resource_id)
-    )
-    ''')
-
-    # Table 1: activity_logs
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS activity_logs (
-        event_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT,
-        user_name TEXT,
-        department TEXT,
-        timestamp TEXT,
-        login_hour INTEGER,
-        location TEXT,
-        ip_address TEXT,
-        device_id TEXT,
-        download_mb REAL,
-        files_accessed INTEGER,
-        accessed_department TEXT,
-        is_anomaly BOOLEAN,
-        ml_anomaly_score REAL DEFAULT 0.0
-    )
-    ''')
-    
-    # Create index on user_id and timestamp for fast lookups
-    cursor.execute('''
-    CREATE INDEX IF NOT EXISTS idx_user_time 
-    ON activity_logs (user_id, timestamp)
-    ''')
-    
-    # Table 2: user_baselines (Empty structure for now)
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS user_baselines (
-        user_id TEXT PRIMARY KEY,
-        avg_download_mb REAL,
-        std_download_mb REAL,
-        usual_login_hour_start INTEGER,
-        usual_login_hour_end INTEGER,
-        known_locations TEXT,
-        known_devices TEXT,
-        usual_department TEXT,
-        last_updated TEXT,
-        baseline_window_days INTEGER DEFAULT 30,
-        last_recalculated TEXT
-    )
-    ''')
-    
-    # Table: shift_change_log
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS shift_change_log (
-        log_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id TEXT,
-        old_hour_start INTEGER,
-        old_hour_end INTEGER,
-        new_hour_start INTEGER,
-        new_hour_end INTEGER,
-        detected_date TEXT,
-        reason TEXT
-    )
-    ''')
-    
-    # Table: trusted_devices
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS trusted_devices (
-        device_id TEXT,
-        user_id TEXT,
-        device_name TEXT,
-        status TEXT DEFAULT 'unrecognized',
-        added_by TEXT,
-        added_date TEXT,
-        notes TEXT,
-        PRIMARY KEY (device_id, user_id)
-    )
-    ''')
-    
-    # Table: employee_hr_status
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS employee_hr_status (
-        user_id TEXT PRIMARY KEY,
-        employment_status TEXT DEFAULT 'active',
-        travel_declared BOOLEAN DEFAULT 0,
-        travel_start_date TEXT,
-        travel_end_date TEXT,
-        notice_period_start_date TEXT,
-        last_updated TEXT
-    )
-    ''')
-    
-    # Table 3: risk_events (Empty structure for now)
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS risk_events (
-        risk_event_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        event_id INTEGER,
-        user_id TEXT,
-        risk_score INTEGER,
-        reasons TEXT,
-        flagged_at TEXT,
-        reviewed BOOLEAN DEFAULT 0,
-        status TEXT DEFAULT 'new',
-        assigned_to_analyst TEXT,
-        analyst_notes TEXT,
-        resolved_at TEXT,
-        FOREIGN KEY (event_id) REFERENCES activity_logs(event_id)
-    )
-    ''')
-
-    # Table: server_communications
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS server_communications (
-        comm_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        source_server TEXT NOT NULL,
-        destination_server TEXT NOT NULL,
-        timestamp TEXT NOT NULL,
-        data_transferred_mb REAL,
-        is_anomaly BOOLEAN DEFAULT 0
-    )
-    ''')
-
-    # Table: registered_agents
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS registered_agents (
-        agent_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        hostname TEXT UNIQUE NOT NULL,
-        ip_address TEXT,
-        assigned_user_id TEXT,
-        first_seen TEXT,
-        last_seen TEXT,
-        status TEXT DEFAULT 'offline',
-        total_events_sent INTEGER DEFAULT 0
-    )
-    ''')
-    
-    # Create index on source_server and timestamp for fast lookups
-    cursor.execute('''
-    CREATE INDEX IF NOT EXISTS idx_server_comm
-    ON server_communications (source_server, timestamp)
-    ''')
-    
-    # Create indexes for query optimization
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_risk_events_user_score ON risk_events (user_id, risk_score, status)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_risk_events_event ON risk_events (event_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs (user_id)')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_registered_agents_host ON registered_agents (hostname)')
-    
-    conn.commit()
+    Base.metadata.create_all(bind=engine)
 
 def generate_server_communications(conn):
     """
@@ -360,14 +202,13 @@ def seed_employee_hr_status(conn):
     print(f"Seeded employee HR status for {len(hr_records)} users.")
 
 def main():
-    print("Initializing UEBA Database...")
-    conn = get_connection()
+    print("Initializing UEBA Database with SQLAlchemy...")
+    create_tables()
+    print("Tables checked/created successfully using SQLAlchemy.")
     
+    # We still use raw connection for seeding to prevent rewriting seed logic immediately
+    conn = get_connection()
     try:
-        # Create the tables
-        create_tables(conn)
-        print("Tables checked/created successfully.")
-        
         # Load the CSV data
         print("Loading CSV data into activity_logs table...")
         rows_loaded = load_csv_to_db(conn)

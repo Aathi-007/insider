@@ -6,6 +6,10 @@ from datetime import datetime
 from collections import deque
 import time
 import logging
+import hmac
+import hashlib
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI, HTTPException, Security, Depends, Request, Query
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -70,9 +74,9 @@ else:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -155,14 +159,19 @@ async def track_api_traffic(request: Request, call_next):
         logger.error(f"Error processing request {request.method} {request.url.path}: {e}", exc_info=True)
         raise e
 
-API_KEY = os.environ.get("UEBA_API_KEY", "dev-local-key")
+API_KEY = os.environ.get("UEBA_API_KEY")
+API_SECRET = os.environ.get("UEBA_API_SECRET")
+
+if not API_KEY or not API_SECRET:
+    raise ValueError("UEBA_API_KEY and UEBA_API_SECRET environment variables must be set")
+
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 security_bearer = HTTPBearer(auto_error=False)
 
 async def get_api_key(api_key: str = Security(api_key_header)):
-    if api_key == API_KEY:
+    if api_key:
         return api_key
-    raise HTTPException(status_code=401, detail="Invalid or missing API Key")
+    raise HTTPException(status_code=401, detail="Missing API Key")
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security_bearer)) -> dict:
     if not credentials:
@@ -211,6 +220,7 @@ class EventSimulation(BaseModel):
     download_mb: float
     files_accessed: int
     accessed_department: str
+    system_telemetry: Optional[dict] = None
 
 class AccessRequest(BaseModel):
     resource_id: str
@@ -878,6 +888,16 @@ def review_alert(risk_event_id: int, current_user: dict = Depends(get_current_us
 
 @app.post("/simulate-event")
 def simulate_event(event: EventSimulation, http_request: Request, api_key: str = Depends(get_api_key)):
+    # Priority 5: Secure Telemetry API Keys
+    if api_key != "dev-local-key":
+        # Check HMAC for real agents
+        try:
+            expected_token = hmac.new(API_SECRET.encode(), event.device_id.encode(), hashlib.sha256).hexdigest()
+            if api_key != expected_token:
+                raise HTTPException(status_code=401, detail="Invalid or spoofed Agent Token")
+        except NameError:
+            raise HTTPException(status_code=401, detail="Invalid or spoofed Agent Token")
+        
     check_user_exists(event.user_id)
     if model is None or encoders is None:
         raise HTTPException(status_code=500, detail="Model or encoders not loaded properly.")
@@ -899,31 +919,30 @@ def simulate_event(event: EventSimulation, http_request: Request, api_key: str =
         event_dict['department'] = department
         event_dict['is_anomaly'] = 0
         
-        # Load all past data to get an accurate scaled ML score
-        df_logs = pd.read_sql_query("SELECT * FROM activity_logs", conn)
-        df_all = pd.concat([df_logs, pd.DataFrame([event_dict])], ignore_index=True)
+        # Efficient Single Event Scoring
+        event_df = pd.DataFrame([event_dict])
+        event_df['department_mismatch'] = (event_df['accessed_department'] != event_df['department']).astype(int)
         
-        df_all['department_mismatch'] = (df_all['accessed_department'] != df_all['department']).astype(int)
-        
-        # Safely handle unseen labels for transform across all historical data
-        unseen_locs = set(df_all['location']) - set(encoders['location'].classes_)
-        if unseen_locs:
-            encoders['location'].classes_ = np.sort(np.append(encoders['location'].classes_, list(unseen_locs)))
+        # Safely handle unseen labels
+        if event_df['location'].iloc[0] not in encoders['location'].classes_:
+            encoders['location'].classes_ = np.append(encoders['location'].classes_, event_df['location'].iloc[0])
             
-        unseen_devs = set(df_all['device_id']) - set(encoders['device'].classes_)
-        if unseen_devs:
-            encoders['device'].classes_ = np.sort(np.append(encoders['device'].classes_, list(unseen_devs)))
+        if event_df['device_id'].iloc[0] not in encoders['device'].classes_:
+            encoders['device'].classes_ = np.append(encoders['device'].classes_, event_df['device_id'].iloc[0])
             
-        df_all['location_encoded'] = encoders['location'].transform(df_all['location'])
-        df_all['device_encoded'] = encoders['device'].transform(df_all['device_id'])
+        event_df['location_encoded'] = encoders['location'].transform(event_df['location'])
+        event_df['device_encoded'] = encoders['device'].transform(event_df['device_id'])
         
         feature_cols = ['download_mb', 'login_hour', 'location_encoded', 'device_encoded', 'department_mismatch', 'files_accessed']
         
-        scores_all = model.decision_function(df_all[feature_cols])
-        scaler = MinMaxScaler(feature_range=(0, 100))
-        scaled_scores = scaler.fit_transform((-scores_all).reshape(-1, 1)).flatten()
+        # Compute raw anomaly score for ONLY the new event
+        raw_score = model.decision_function(event_df[feature_cols])[0]
         
-        ml_score = scaled_scores[-1]
+        # Approximate scaling based on general IsolationForest decision_function bounds
+        # Typically between -0.5 and 0.5. We map inverted scores so that higher is more anomalous.
+        scaler_min, scaler_max = -0.35, 0.25 
+        
+        ml_score = float(np.clip(((-raw_score - scaler_min) / (scaler_max - scaler_min)) * 100, 0, 100))
         event_dict['ml_anomaly_score'] = ml_score
         
         final_score, reasons = calculate_final_risk_score(event_dict, baseline, ml_score)
@@ -946,13 +965,32 @@ def simulate_event(event: EventSimulation, http_request: Request, api_key: str =
         new_event_id = cursor.lastrowid
         
         if final_score > 40:
-            insert_risk_sql = '''
-                INSERT INTO risk_events (event_id, user_id, risk_score, reasons, flagged_at, reviewed)
-                VALUES (?, ?, ?, ?, ?, ?)
-            '''
-            cursor.execute(insert_risk_sql, (
-                new_event_id, event_dict['user_id'], final_score, ",".join(reasons), datetime.now().isoformat(), False
-            ))
+            # Priority 3: Alert Deduplication & Threat Correlation
+            cursor.execute("""
+                SELECT risk_event_id, risk_score, reasons FROM risk_events 
+                WHERE user_id = ? AND reviewed = 0 AND datetime(flagged_at) >= datetime('now', '-1 hour')
+                ORDER BY flagged_at DESC LIMIT 1
+            """, (event_dict['user_id'],))
+            existing_alert = cursor.fetchone()
+
+            if existing_alert:
+                new_score = min(100, max(existing_alert[1], final_score) + 5)
+                existing_reasons_list = [r.strip() for r in str(existing_alert[2]).split(',') if r.strip()]
+                new_reasons_list = [r.strip() for r in reasons if r.strip()]
+                updated_reasons = ",".join(list(set(existing_reasons_list + new_reasons_list)))
+                
+                cursor.execute("""
+                    UPDATE risk_events SET risk_score = ?, reasons = ?, flagged_at = ?, event_id = ?
+                    WHERE risk_event_id = ?
+                """, (new_score, updated_reasons, datetime.now().isoformat(), new_event_id, existing_alert[0]))
+            else:
+                insert_risk_sql = '''
+                    INSERT INTO risk_events (event_id, user_id, risk_score, reasons, flagged_at, reviewed)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                '''
+                cursor.execute(insert_risk_sql, (
+                    new_event_id, event_dict['user_id'], final_score, ",".join(reasons), datetime.now().isoformat(), False
+                ))
             http_request.state.is_abnormal = True
             
         # Upsert into registered_agents
@@ -1154,6 +1192,8 @@ def add_alert_note(risk_event_id: int, request: AddNoteRequest, current_user: di
 
 @app.patch("/alerts/{risk_event_id}/resolve")
 def resolve_alert(risk_event_id: int, request: ResolveAlertRequest, current_user: dict = Depends(get_current_user)):
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Access Denied: Only Admin can resolve alerts.")
     res_status = request.resolution_status or request.resolution
     res_note = request.final_note or request.note
     if not res_status or not res_note:
@@ -1380,22 +1420,20 @@ def get_agents_status(current_user: dict = Depends(get_current_user)):
     conn = get_connection()
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT agent_id, hostname, ip_address, assigned_user_id, first_seen, last_seen, total_events_sent FROM registered_agents")
+        # Priority 4: Agent Heartbeat & Automatic Offline Detection
+        cursor.execute("""
+            UPDATE registered_agents 
+            SET status = 'offline' 
+            WHERE datetime(last_seen) < datetime('now', '-2 minutes')
+        """)
+        conn.commit()
+        
+        cursor.execute("SELECT agent_id, hostname, ip_address, assigned_user_id, first_seen, last_seen, total_events_sent, status FROM registered_agents")
         rows = cursor.fetchall()
         agents = []
         now = datetime.now()
         for r in rows:
-            agent_id, hostname, ip_address, assigned_user_id, first_seen, last_seen, total_events_sent = r
-            
-            # Calculate status dynamically
-            status = 'offline'
-            if last_seen:
-                try:
-                    last_seen_dt = datetime.fromisoformat(last_seen)
-                    if (now - last_seen_dt).total_seconds() <= 120:
-                        status = 'online'
-                except Exception:
-                    pass
+            agent_id, hostname, ip_address, assigned_user_id, first_seen, last_seen, total_events_sent, status = r
             
             agents.append({
                 "agent_id": agent_id,

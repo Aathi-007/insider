@@ -50,12 +50,19 @@ def engineer_features(df):
     df = df.reset_index(drop=False)
     df['rolling_30d_download_mb'] = df['rolling_30d_download_mb'].fillna(df['download_mb'])
     
+    # NEW ML FEATURE: After hours access (before 6am or after 8pm)
+    df['after_hours_access'] = ((df['login_hour'] < 6) | (df['login_hour'] > 20)).astype(int)
+    
     encoders = {
         'location': location_encoder,
         'device': device_encoder
     }
     
-    feature_cols = ['download_mb', 'login_hour', 'location_encoded', 'device_encoded', 'department_mismatch', 'files_accessed', 'rolling_30d_download_mb', 'new_location_device_combo']
+    feature_cols = [
+        'download_mb', 'login_hour', 'location_encoded', 'device_encoded', 
+        'department_mismatch', 'files_accessed', 'rolling_30d_download_mb', 
+        'new_location_device_combo', 'after_hours_access'
+    ]
     
     return df, encoders, feature_cols
 
@@ -71,7 +78,9 @@ def train_model(X_train):
     # on the fact that anomalies are naturally rare (isolation forest assumes anomalies 
     # are the minority, which typically works even without clean labels).
     
-    model = IsolationForest(n_estimators=100, contamination=0.05, random_state=42)
+    # Tweaked ML Parameters for deeper threat detection
+    # Increased estimators and modified contamination threshold
+    model = IsolationForest(n_estimators=300, max_samples=256, contamination=0.08, random_state=42)
     model.fit(X_train)
     return model
 

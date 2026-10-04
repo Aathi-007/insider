@@ -2,12 +2,20 @@ import requests
 import sys
 
 API_BASE = "http://localhost:8000"
-API_KEY = "dev-local-key"
 
-headers = {
-    "X-API-Key": API_KEY,
-    "Content-Type": "application/json"
-}
+def get_auth_headers():
+    res = requests.post(f"{API_BASE}/auth/login", json={"username": "analyst", "password": "analyst123"})
+    if res.status_code == 200:
+        token = res.json().get("access_token")
+        return {
+            "Authorization": f"Bearer {token}",
+            "X-API-Key": "dev-local-key",
+            "Content-Type": "application/json"
+        }
+    print(f"Login failed: {res.text}")
+    sys.exit(1)
+
+headers = get_auth_headers()
 
 def main():
     print("============================================================")

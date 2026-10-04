@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, ArrowUpDown, ChevronLeft, ChevronRight, 
-  RefreshCw, AlertCircle, ShieldAlert, Filter, ShieldCheck 
+  RefreshCw, AlertCircle, ShieldAlert, Filter, ShieldCheck, Download
 } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
@@ -161,6 +161,32 @@ export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, o
     }
   };
 
+  const exportToCSV = () => {
+    if (localAlerts.length === 0) return;
+    const headers = ['Risk Event ID', 'User Name', 'Department', 'Risk Score', 'Flagged At', 'Status', 'Reasons'];
+    const rows = localAlerts.map(alert => [
+      alert.risk_event_id,
+      alert.user_name || alert.user_id,
+      alert.department,
+      alert.risk_score,
+      alert.flagged_at,
+      alert.status,
+      (alert.reasons || []).join('; ')
+    ]);
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(e => e.map(val => `"${val}"`).join(','))
+    ].join('\\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ueba_alerts_export.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
 
   const renderRiskCircle = (score) => {
@@ -324,7 +350,7 @@ export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, o
       <div className="table-toolbar" style={{ flexDirection: 'column', gap: '16px', alignItems: 'flex-start' }}>
         
         {/* Status Filtering Tabs */}
-        <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.03)', width: '100%', paddingBottom: '10px' }}>
+        <div className="filter-tabs-container" style={{ display: 'flex', gap: '8px', borderBottom: '1px solid rgba(255,255,255,0.03)', width: '100%', paddingBottom: '10px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', whiteSpace: 'nowrap' }}>
           {statusTabs.map(tab => (
             <button
               key={tab}
@@ -381,6 +407,22 @@ export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, o
                 </option>
               ))}
             </select>
+            
+            <button 
+              type="button"
+              onClick={exportToCSV}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)',
+                color: 'var(--color-info)', padding: '6px 12px', borderRadius: '4px',
+                fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.target.style.background = 'rgba(59,130,246,0.2)'}
+              onMouseLeave={(e) => e.target.style.background = 'rgba(59,130,246,0.1)'}
+            >
+              <Download size={14} style={{ pointerEvents: 'none' }} />
+              Export CSV
+            </button>
           </div>
         </div>
       </div>
@@ -414,7 +456,7 @@ export default function AlertsTable({ alerts, loading, error, onRowClick, jwt, o
       ) : (
         <>
           <div className="alerts-table-container">
-            <table className="alerts-table">
+            <table className="alerts-table sticky-first-column">
               <thead>
                 <tr>
                   <th onClick={() => handleSort('user_name')}>

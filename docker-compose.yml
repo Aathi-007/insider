@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ueba_backend
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/data:/app/data
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ueba_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: always
+
+  # Keeping Postgres around in case you want to migrate later, 
+  # but our backend currently uses the mounted SQLite db in ./backend/data
+  postgres:
+    image: postgres:15
+    container_name: ueba_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ueba_admin
+      POSTGRES_PASSWORD: ueba_password123
+      POSTGRES_DB: ueba_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

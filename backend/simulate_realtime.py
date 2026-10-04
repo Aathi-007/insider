@@ -12,8 +12,9 @@ import json
 import os
 
 BASE_URL = "http://localhost:8000"
-API_KEY = os.environ.get("UEBA_API_KEY", "dev-local-key")
-HEADERS = {"X-API-Key": API_KEY}
+import hmac
+import hashlib
+API_SECRET = os.environ.get("API_SECRET", "super-secret-telemetry-key-9982")
 
 def get_demo_events():
     """
@@ -154,7 +155,8 @@ def run_simulation():
         print(f"[{datetime.now().strftime('%H:%M:%S')}] Sending event {i+1}/{len(events)} for user {event['user_id']}...")
         
         try:
-            res = requests.post(f"{BASE_URL}/simulate-event", json=event, headers=HEADERS)
+            headers = {"X-API-Key": "dev-local-key"}
+            res = requests.post(f"{BASE_URL}/simulate-event", json=event, headers=headers)
             if res.status_code == 200:
                 data = res.json()
                 score = data.get("final_risk_score", 0)

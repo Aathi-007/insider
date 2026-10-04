@@ -1,0 +1,8 @@
+{
+  "appId": "com.insider.ueba",
+  "appName": "Insider UEBA",
+  "webDir": "dist",
+  "server": {
+    "cleartext": true
+  }
+}

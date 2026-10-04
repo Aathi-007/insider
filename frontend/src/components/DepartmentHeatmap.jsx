@@ -19,7 +19,7 @@ export default function DepartmentHeatmap({ alerts }) {
   const counts = {};
   Object.keys(DEPT_COLORS).forEach(d => { counts[d] = 0; });
   
-  alerts.forEach(a => {
+  (alerts || []).forEach(a => {
     const dept = a.department;
     if (dept && DEPT_COLORS[dept] !== undefined) {
       counts[dept] += 1;
@@ -77,7 +77,7 @@ export default function DepartmentHeatmap({ alerts }) {
         </span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '20px', padding: '24px', flexGrow: 1, alignItems: 'center' }}>
+      <div className="heatmap-layout-grid">
         
         {/* Pie Chart display */}
         <div style={{ height: '240px', width: '100%', position: 'relative' }}>
@@ -127,7 +127,7 @@ export default function DepartmentHeatmap({ alerts }) {
         </div>
 
         {/* Legend sidebar details */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '240px', overflowY: 'auto', paddingRight: '4px' }}>
+        <div className="heatmap-legend">
           {totalAlerts > 0 ? (
             data.map(item => {
               const percentage = ((item.value / totalAlerts) * 100).toFixed(1);
@@ -142,14 +142,16 @@ export default function DepartmentHeatmap({ alerts }) {
                     background: '#060B14',
                     border: '1px solid rgba(255,255,255,0.02)',
                     borderRadius: '6px',
-                    fontSize: '11px'
+                    fontSize: '11px',
+                    width: '100%',
+                    gap: '12px'
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color }} />
-                    <span style={{ color: '#E8EDF5', fontWeight: '600' }}>{item.name}</span>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: item.color, flexShrink: 0 }} />
+                    <span style={{ color: '#E8EDF5', fontWeight: '600', whiteSpace: 'nowrap' }}>{item.name}</span>
                   </div>
-                  <div style={{ display: 'flex', gap: '12px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 'bold' }}>
+                  <div style={{ display: 'flex', gap: '12px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 'bold', whiteSpace: 'nowrap' }}>
                     <span style={{ color: item.color }}>{item.value} Alerts</span>
                     <span style={{ color: '#8B95A8' }}>{percentage}%</span>
                   </div>

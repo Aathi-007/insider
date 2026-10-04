@@ -162,7 +162,7 @@ export default function RuleAccuracyPanel({ jwt }) {
       </div>
 
       <div className="alerts-table-container" style={{ marginTop: '24px' }}>
-        <table className="alerts-table">
+        <table className="alerts-table sticky-first-column">
           <thead>
             <tr>
               <th>Rule Name</th>

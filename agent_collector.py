@@ -4,13 +4,17 @@ import time
 import socket
 import getpass
 import requests
+import psutil
 from datetime import datetime
+import hmac
+import hashlib
 
 # ==========================================
 # CONFIGURATION SECTION
 # ==========================================
 SERVER_URL = "http://localhost:8000"
-API_KEY = "dev-local-key"
+API_SECRET = "super-secret-master-key"
+API_KEY = hmac.new(API_SECRET.encode(), socket.gethostname().encode(), hashlib.sha256).hexdigest()
 USER_ID = "U011"  # Mapped to this PC's assigned employee ID (e.g. U011 for Alia Rao)
 CHECK_INTERVAL_SECONDS = 30
 # ==========================================
@@ -66,6 +70,20 @@ def get_downloads_size_mb():
         
     return round(total_size / (1024 * 1024), 2)
 
+def get_system_telemetry():
+    """
+    Collects endpoint health metrics such as CPU, RAM, and active processes.
+    """
+    try:
+        return {
+            "cpu_usage_pct": psutil.cpu_percent(interval=1),
+            "ram_usage_pct": psutil.virtual_memory().percent,
+            "open_sockets": len(psutil.net_connections()),
+            "active_processes": len(psutil.pids())
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 def main():
     print("=" * 60)
     print("UEBA INTRANET TELEMETRY COLLECTOR AGENT")
@@ -87,6 +105,7 @@ def main():
             hostname = socket.gethostname()
             ip_address = get_local_ip()
             download_mb = get_downloads_size_mb()
+            sys_telemetry = get_system_telemetry()
             
             # Format event payload expected by the backend /simulate-event
             payload = {
@@ -98,12 +117,14 @@ def main():
                 "device_id": hostname,
                 "download_mb": download_mb,
                 "files_accessed": 1,
-                "accessed_department": "IT"
+                "accessed_department": "IT",
+                "system_telemetry": sys_telemetry
             }
             
             print(f"  - Hostname: {hostname}")
             print(f"  - IP Address: {ip_address}")
             print(f"  - Download MB (last hour): {download_mb} MB")
+            print(f"  - System Health: CPU {sys_telemetry.get('cpu_usage_pct', 0)}% | RAM {sys_telemetry.get('ram_usage_pct', 0)}% | Procs {sys_telemetry.get('active_processes', 0)}")
             
             # 2. POST to Backend
             endpoint = f"{SERVER_URL.rstrip('/')}/simulate-event"

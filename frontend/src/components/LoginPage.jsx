@@ -37,7 +37,10 @@ export default function LoginPage({ setJwt }) {
     try {
       const response = await fetch(`${API_BASE}/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Bypass-Tunnel-Reminder': 'true'
+        },
         body: JSON.stringify({ username: username.trim(), password: password.trim() })
       });
       

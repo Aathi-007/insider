@@ -20,6 +20,12 @@ def check_ip_rate_limit(ip_address: str) -> bool:
     """Returns True if the IP is within limits, False if rate limited."""
     now = time.time()
     
+    # Cleanup to prevent memory leak
+    if len(ip_request_counts) > 1000:
+        expired = [ip for ip, data in list(ip_request_counts.items()) if now - data["window_start"] > RATE_LIMIT_WINDOW_SEC]
+        for ip in expired:
+            ip_request_counts.pop(ip, None)
+            
     if ip_address not in ip_request_counts:
         ip_request_counts[ip_address] = {"count": 1, "window_start": now}
         return True
@@ -85,6 +91,13 @@ def is_account_locked(username: str) -> bool:
     """Returns True if the account is currently locked."""
     username = username.lower()
     now = time.time()
+    
+    # Cleanup to prevent memory leak
+    if len(user_login_attempts) > 1000:
+        expired = [user for user, data in list(user_login_attempts.items()) if data["locked_until"] > 0 and data["locked_until"] < now and data["attempts"] == 0]
+        for user in expired:
+            user_login_attempts.pop(user, None)
+            
     if username in user_login_attempts:
         if user_login_attempts[username]["locked_until"] > now:
             return True

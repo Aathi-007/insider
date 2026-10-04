@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut, ChevronLeft, ChevronRight, Laptop } from 'lucide-react';
+import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut, ChevronLeft, ChevronRight, Laptop, Menu, X } from 'lucide-react';
 import { HashRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 
 import LoginPage from './components/LoginPage';
@@ -159,6 +159,61 @@ const styleContent = `
     box-sizing: border-box;
     position: relative;
     z-index: 1;
+    overflow-x: hidden;
+  }
+  .sidebar-overlay {
+    display: none;
+  }
+  .mobile-menu-btn {
+    display: none;
+  }
+  @media (max-width: 768px) {
+    .sidebar {
+      position: absolute;
+      top: 0;
+      left: -260px;
+      height: 100%;
+      z-index: 1000;
+      width: 260px;
+      transition: left 0.3s ease;
+    }
+    .sidebar.open {
+      left: 0;
+    }
+    .sidebar-overlay {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      backdrop-filter: blur(2px);
+    }
+    .mobile-menu-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0D1526;
+      border: 1px solid rgba(0, 217, 255, 0.4);
+      color: #00D9FF;
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 900;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .header-titles h1 {
+      padding-left: 44px;
+    }
+    .main-content {
+      padding: 16px;
+      padding-top: 20px;
+    }
   }
 `;
 
@@ -179,6 +234,7 @@ function AppInner() {
   // State for live clock in header
   const [currentTime, setCurrentTime] = useState(new Date());
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const getLoggedInUser = () => {
     if (!jwt) return null;
@@ -281,28 +337,15 @@ function AppInner() {
   const dashboardView = (
     <div className="dashboard-grid-v2">
       {/* Telemetry Status Bar */}
-      <div className="col-12" style={{
-        background: '#0D1526',
-        border: '1px solid #1C2942',
-        borderRadius: '8px',
-        padding: '12px 24px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: '16px',
-        fontSize: '12px',
-        color: '#8B95A8',
-        fontFamily: "'JetBrains Mono', monospace",
-        boxShadow: '0 0 10px rgba(0, 217, 255, 0.02)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="col-12 telemetry-status-bar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
           <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#00D9FF', boxShadow: '0 0 8px #00D9FF' }} />
-          <span>System Status: <strong style={{ color: '#00D9FF' }}>OPERATIONAL</strong></span>
+          <span>System Status:<br/><strong style={{ color: '#00D9FF' }}>OPERATIONAL</strong></span>
         </div>
-        <div style={{ display: 'flex', gap: '32px' }}>
-          <span>Monitored Users: <strong style={{ color: '#E8EDF5' }}>{systemStatus.total_users}</strong></span>
-          <span>Active Alerts: <strong style={{ color: '#FF3B5C' }}>{systemStatus.active_alerts}</strong></span>
-          <span>Last Recalculation: <strong style={{ color: '#E8EDF5' }}>
+        <div className="telemetry-status-metrics">
+          <span>Monitored<br/>Users: <strong style={{ color: '#E8EDF5' }}>{systemStatus.total_users}</strong></span>
+          <span>Active<br/>Alerts: <strong style={{ color: '#FF3B5C' }}>{systemStatus.active_alerts}</strong></span>
+          <span>Last<br/>Recalculation:<br/><strong style={{ color: '#E8EDF5' }}>
             {systemStatus.last_recalculation && systemStatus.last_recalculation !== 'Never'
               ? new Date(systemStatus.last_recalculation).toLocaleString()
               : 'Never'}
@@ -490,8 +533,12 @@ function AppInner() {
     <div className="app-layout">
       <style>{styleContent}</style>
       
+      {mobileMenuOpen && (
+        <div className="sidebar-overlay" onClick={() => setMobileMenuOpen(false)} />
+      )}
+
       {/* Sidebar Navigation */}
-      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'space-between', padding: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
             <ShieldAlert size={22} style={{ color: '#00D9FF' }} />
@@ -626,12 +673,17 @@ function AppInner() {
       {/* Main Content Area */}
       <main className="main-content">
         <header className="dashboard-header" style={{ marginBottom: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', background: 'rgba(13, 21, 38, 0.4)', border: '1px solid #1C2942', padding: '16px 24px', borderRadius: '8px' }}>
-          <div className="header-titles">
-            <h1 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <ShieldAlert size={20} style={{ color: '#00D9FF' }} />
-              {headerDetails.title}
-            </h1>
-            <p style={{ fontSize: '11px', color: '#8B95A8', margin: '4px 0 0 0' }}>{headerDetails.desc}</p>
+          <div className="header-titles" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(true)}>
+              <Menu size={20} />
+            </button>
+            <div>
+              <h1 style={{ fontSize: '20px', fontWeight: '800', color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ShieldAlert size={20} style={{ color: '#00D9FF' }} />
+                {headerDetails.title}
+              </h1>
+              <p style={{ fontSize: '11px', color: '#8B95A8', margin: '4px 0 0 0' }}>{headerDetails.desc}</p>
+            </div>
           </div>
           
           <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>

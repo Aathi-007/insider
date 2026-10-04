@@ -1,5 +1,9 @@
 export async function fetchWithRetry(url, options = {}, retries = 3, backoff = 500) {
   try {
+    options.headers = {
+      ...options.headers,
+      'Bypass-Tunnel-Reminder': 'true',
+    };
     const response = await fetch(url, options);
     // Retry on network errors or 5xx server errors
     if (!response.ok && retries > 0 && response.status >= 500) {

@@ -103,7 +103,7 @@ export default function RequestTrackerChart({ jwt }) {
 
   return (
     <div className="dashboard-card trend-card">
-      <div className="dashboard-card-header" style={{ borderBottom: 'none', padding: '0 0 16px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="dashboard-card-header" style={{ borderBottom: 'none', padding: '0 0 16px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
         <h2>
           <BarChart2 size={18} style={{ color: 'var(--color-info)' }} />
           Request Tracker (GET & POST)
@@ -152,7 +152,7 @@ export default function RequestTrackerChart({ jwt }) {
               <Tooltip content={<CustomTooltip />} />
               <Legend 
                 verticalAlign="top" 
-                height={36} 
+                height={55} 
                 iconSize={10}
                 iconType="circle"
                 wrapperStyle={{ fontSize: '10px', color: '#64748b' }}
