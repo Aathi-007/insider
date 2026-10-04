@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut, ChevronLeft, ChevronRight, Laptop, Menu, X } from 'lucide-react';
+import { ShieldAlert, Download, Clock, AlertCircle, BarChart2, ListTodo, Users2, LayoutDashboard, Settings, ShieldCheck, Network, LogOut, ChevronLeft, ChevronRight, Laptop, Menu, X, Monitor } from 'lucide-react';
 import { HashRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 
 import LoginPage from './components/LoginPage';
@@ -13,6 +13,7 @@ import RiskTrendChart from './components/RiskTrendChart';
 import RequestTrackerChart from './components/RequestTrackerChart';
 import ActivityTimeline from './components/ActivityTimeline';
 import UserDirectory from './components/UserDirectory';
+import ThemeSettingsDrawer from './components/ThemeSettingsDrawer';
 
 import RuleAccuracyPanel from './components/RuleAccuracyPanel';
 import DepartmentHeatmap from './components/DepartmentHeatmap';
@@ -32,12 +33,12 @@ const styleContent = `
     display: flex;
     height: 100vh;
     overflow: hidden;
-    background: #060B14;
+    background: var(--bg-main);
   }
   .sidebar {
     width: 240px;
-    background: #0D1526;
-    border-right: 1px solid #1C2942;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border-color);
     padding: 20px 14px;
     display: flex;
     flex-direction: column;
@@ -235,6 +236,25 @@ function AppInner() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Theme State
+  const [theme, setTheme] = useState(localStorage.getItem('ueba_theme') || 'system');
+  const [isThemeDrawerOpen, setIsThemeDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    let activeTheme = theme;
+    if (theme === 'system') {
+      activeTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+    
+    if (activeTheme === 'light') {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+    
+    localStorage.setItem('ueba_theme', theme);
+  }, [theme]);
 
   const getLoggedInUser = () => {
     if (!jwt) return null;
@@ -637,34 +657,60 @@ function AppInner() {
                   </div>
                 )}
               </div>
-              <button 
-                onClick={() => {
-                  setJwt('');
-                  localStorage.removeItem('ueba_jwt');
-                  sessionStorage.removeItem('ueba_jwt');
-                }}
-                style={{
-                  background: 'rgba(239, 68, 68, 0.05)',
-                  border: '1.5px solid #FF3B5C',
-                  color: '#FF3B5C',
-                  borderRadius: '4px',
-                  padding: sidebarCollapsed ? '6px' : '8px 12px',
-                  fontSize: '10px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  width: '100%',
-                  transition: 'all 0.2s',
-                  fontFamily: "'JetBrains Mono', monospace"
-                }}
-                title="Log out from console"
-              >
-                <LogOut size={12} />
-                {!sidebarCollapsed && <span>LOGOUT</span>}
-              </button>
+              
+              <div style={{ display: 'flex', gap: '8px', width: '100%', flexDirection: sidebarCollapsed ? 'column' : 'row' }}>
+                <button 
+                  onClick={() => setIsThemeDrawerOpen(true)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-primary)',
+                    borderRadius: '4px',
+                    padding: sidebarCollapsed ? '6px' : '8px 12px',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    flexGrow: 1,
+                    transition: 'all 0.2s',
+                  }}
+                  title="Customize Theme"
+                >
+                  <Monitor size={12} />
+                  {!sidebarCollapsed && <span>THEME</span>}
+                </button>
+                <button 
+                  onClick={() => {
+                    setJwt('');
+                    localStorage.removeItem('ueba_jwt');
+                    sessionStorage.removeItem('ueba_jwt');
+                  }}
+                  style={{
+                    background: 'rgba(239, 68, 68, 0.05)',
+                    border: '1.5px solid #FF3B5C',
+                    color: '#FF3B5C',
+                    borderRadius: '4px',
+                    padding: sidebarCollapsed ? '6px' : '8px 12px',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    flexGrow: 1,
+                    transition: 'all 0.2s',
+                    fontFamily: "'JetBrains Mono', monospace"
+                  }}
+                  title="Log out from console"
+                >
+                  <LogOut size={12} />
+                  {!sidebarCollapsed && <span>LOGOUT</span>}
+                </button>
+              </div>
             </div>
           )}
         </nav>
@@ -814,6 +860,13 @@ function AppInner() {
           />
         )}
       </AnimatePresence>
+
+      <ThemeSettingsDrawer 
+        isOpen={isThemeDrawerOpen} 
+        onClose={() => setIsThemeDrawerOpen(false)} 
+        currentTheme={theme} 
+        onThemeChange={setTheme} 
+      />
     </div>
   );
 }
