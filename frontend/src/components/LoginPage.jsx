@@ -86,6 +86,24 @@ export default function LoginPage({ setJwt }) {
         zIndex: 1
       }} />
 
+      {/* Massive Shield Watermark */}
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 1,
+        pointerEvents: 'none',
+        opacity: 0.05
+      }}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="600" height="600">
+          <path 
+            d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" 
+            fill="#00D9FF" 
+          />
+        </svg>
+      </div>
+
       <div style={{
         width: '100%',
         maxWidth: '420px',
