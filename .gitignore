@@ -1,5 +1,15 @@
-﻿backend/logs/
-
+backend/logs/
 frontend/android/jdk21/
 frontend/android/jdk21.zip
 *.log
+*.bak
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+venv/
+.venv/
+node_modules/
+dist/
+build/
