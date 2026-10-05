@@ -221,6 +221,7 @@ const styleContent = `
 // LoginPage is imported externally.
 
 function AppInner() {
+  const location = useLocation();
   const [jwt, setJwt] = useState(sessionStorage.getItem('ueba_jwt') || localStorage.getItem('ueba_jwt') || '');
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -476,8 +477,6 @@ function AppInner() {
       </>
     );
   }
-
-  const location = useLocation();
 
   const getHeaderDetails = () => {
     const path = location.pathname;
