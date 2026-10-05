@@ -11,7 +11,7 @@ from datetime import datetime
 import json
 import os
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "https://user-and-entity-behavior-analytics-48p3.onrender.com"
 import hmac
 import hashlib
 API_SECRET = os.environ.get("API_SECRET", "super-secret-telemetry-key-9982")
