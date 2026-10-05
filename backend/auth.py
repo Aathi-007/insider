@@ -4,9 +4,6 @@ import jwt
 import bcrypt
 from typing import Optional
 
-from dotenv import load_dotenv
-load_dotenv()
-
 # JWT settings
 SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
 if not SECRET_KEY:

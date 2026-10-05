@@ -13,7 +13,7 @@ DB_URL = f"sqlite:///{DB_PATH}"
 
 # Create SQLAlchemy engine and session factory
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-engine = create_engine(DB_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DB_URL, connect_args={"check_same_thread": False, "timeout": 15})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def get_db():
@@ -33,9 +33,12 @@ def get_connection():
     Maintained for backward compatibility during the ORM transition.
     """
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
-    # Enable foreign keys for SQLite
+    conn = sqlite3.connect(DB_PATH, timeout=15.0)
+    # Enable foreign keys and WAL mode for SQLite concurrency
     conn.execute("PRAGMA foreign_keys = 1")
+    conn.execute("PRAGMA journal_mode = WAL")
+    conn.execute("PRAGMA synchronous = NORMAL")
+    conn.execute("PRAGMA busy_timeout = 5000")
     return conn
 
 def create_tables():

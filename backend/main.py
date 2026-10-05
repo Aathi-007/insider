@@ -9,7 +9,9 @@ import logging
 import hmac
 import hashlib
 from dotenv import load_dotenv
-load_dotenv()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+load_dotenv(os.path.join(BASE_DIR, ".env"))
+
 from fastapi import FastAPI, HTTPException, Security, Depends, Request, Query
 from fastapi.security.api_key import APIKeyHeader
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -35,6 +37,8 @@ from security_utils import (
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 
 # Configure logging
 LOG_DIR = os.path.join(BASE_DIR, 'logs')
@@ -159,11 +163,8 @@ async def track_api_traffic(request: Request, call_next):
         logger.error(f"Error processing request {request.method} {request.url.path}: {e}", exc_info=True)
         raise e
 
-API_KEY = os.environ.get("UEBA_API_KEY")
-API_SECRET = os.environ.get("UEBA_API_SECRET")
-
-if not API_KEY or not API_SECRET:
-    raise ValueError("UEBA_API_KEY and UEBA_API_SECRET environment variables must be set")
+API_KEY = os.environ.get("UEBA_API_KEY", "dev-local-key")
+API_SECRET = os.environ.get("UEBA_API_SECRET", "dev-local-secret")
 
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 security_bearer = HTTPBearer(auto_error=False)
@@ -922,18 +923,29 @@ def simulate_event(event: EventSimulation, http_request: Request, api_key: str =
         # Efficient Single Event Scoring
         event_df = pd.DataFrame([event_dict])
         event_df['department_mismatch'] = (event_df['accessed_department'] != event_df['department']).astype(int)
+        event_df['after_hours_access'] = ((event_df['login_hour'] < 6) | (event_df['login_hour'] > 20)).astype(int)
+        event_df['rolling_30d_download_mb'] = event_df['download_mb']
         
-        # Safely handle unseen labels
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1 FROM activity_logs WHERE user_id = ? AND location = ? AND device_id = ? LIMIT 1", (event.user_id, event.location, event.device_id))
+        is_new_combo = 0 if cursor.fetchone() else 1
+        event_df['new_location_device_combo'] = is_new_combo
+        
+        # Safely handle unseen labels with sorting
         if event_df['location'].iloc[0] not in encoders['location'].classes_:
-            encoders['location'].classes_ = np.append(encoders['location'].classes_, event_df['location'].iloc[0])
+            encoders['location'].classes_ = np.sort(np.append(encoders['location'].classes_, event_df['location'].iloc[0]))
             
         if event_df['device_id'].iloc[0] not in encoders['device'].classes_:
-            encoders['device'].classes_ = np.append(encoders['device'].classes_, event_df['device_id'].iloc[0])
+            encoders['device'].classes_ = np.sort(np.append(encoders['device'].classes_, event_df['device_id'].iloc[0]))
             
         event_df['location_encoded'] = encoders['location'].transform(event_df['location'])
         event_df['device_encoded'] = encoders['device'].transform(event_df['device_id'])
         
-        feature_cols = ['download_mb', 'login_hour', 'location_encoded', 'device_encoded', 'department_mismatch', 'files_accessed']
+        feature_cols = [
+            'download_mb', 'login_hour', 'location_encoded', 'device_encoded', 
+            'department_mismatch', 'files_accessed', 'rolling_30d_download_mb', 
+            'new_location_device_combo', 'after_hours_access'
+        ]
         
         # Compute raw anomaly score for ONLY the new event
         raw_score = model.decision_function(event_df[feature_cols])[0]
@@ -1408,7 +1420,7 @@ def on_startup():
     conn = get_connection()
     try:
         from database import create_tables
-        create_tables(conn)
+        create_tables()
         logger.info("FastAPI startup: checked and initialized database tables.")
     except Exception as e:
         logger.error(f"Startup table creation failed: {e}")

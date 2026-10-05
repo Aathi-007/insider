@@ -166,6 +166,10 @@ def score_all_events():
         # Calculate ml_anomaly_score
         df_ml = df_logs.copy()
         df_ml['department_mismatch'] = (df_ml['accessed_department'] != df_ml['department']).astype(int)
+        df_ml['after_hours_access'] = ((df_ml['login_hour'] < 6) | (df_ml['login_hour'] > 20)).astype(int)
+        df_ml['combo_hash'] = df_ml['user_id'] + '_' + df_ml['location'] + '_' + df_ml['device_id']
+        df_ml['new_location_device_combo'] = (~df_ml.duplicated(subset=['combo_hash'], keep='first')).astype(int)
+        df_ml['rolling_30d_download_mb'] = df_ml['download_mb']
         
         # Safely handle unseen labels for transform
         unseen_locs = set(df_ml['location']) - set(encoders['location'].classes_)
@@ -180,7 +184,11 @@ def score_all_events():
         df_ml['location_encoded'] = encoders['location'].transform(df_ml['location'])
         df_ml['device_encoded'] = encoders['device'].transform(df_ml['device_id'])
         
-        feature_cols = ['download_mb', 'login_hour', 'location_encoded', 'device_encoded', 'department_mismatch', 'files_accessed']
+        feature_cols = [
+            'download_mb', 'login_hour', 'location_encoded', 'device_encoded', 
+            'department_mismatch', 'files_accessed', 'rolling_30d_download_mb', 
+            'new_location_device_combo', 'after_hours_access'
+        ]
         
         scores = model.decision_function(df_ml[feature_cols])
         scaler = MinMaxScaler(feature_range=(0, 100))
